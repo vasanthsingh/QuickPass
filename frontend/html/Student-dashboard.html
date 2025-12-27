@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>QuickPass | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#234C6A',
+                        bg: '#F8FAFC',
+                        textMain: '#0F172A',
+                        borderCol: '#E2E8F0'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-bg min-h-screen flex text-textMain">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="w-64 bg-white border-r border-borderCol flex flex-col">
+
+        <!-- Logo -->
+        <div class="px-6 py-5 flex items-center gap-3 font-extrabold text-xl text-primary">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#234C6A" stroke-width="2">
+                <path d="M13 2L3 14H11L9 22L21 9H13V2Z" />
+            </svg>
+            QuickPass
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-4 space-y-2">
+            <a
+                class="flex items-center gap-3 px-4 py-3 rounded-lg bg-bg text-primary font-semibold border-l-4 border-primary">
+                <svg width="20" height="20" fill="none" stroke="#234C6A" stroke-width="2" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                </svg>
+                Dashboard
+            </a>
+
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-bg text-textMain">
+                <svg width="20" height="20" fill="none" stroke="#0F172A" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="7" r="4" />
+                    <path d="M4 21C4 17 8 15 12 15C16 15 20 17 20 21" />
+                </svg>
+                My Profile
+            </a>
+
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-bg text-textMain">
+                <svg width="20" height="20" fill="none" stroke="#0F172A" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M12 20H21" />
+                    <path d="M16.5 3.5L20.5 7.5" />
+                    <path d="M4 17L3 21L7 20L17.5 9.5L13.5 5.5L4 17Z" />
+                </svg>
+                Edit Profile
+            </a>
+        </nav>
+
+        <!-- User Info -->
+        <div class="px-4 py-5 border-t border-borderCol">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold">
+                    VA
+                </div>
+                <div>
+                    <p class="font-semibold">vasanth</p>
+                    <p class="text-xs text-textMain opacity-60">S20230010079</p>
+                </div>
+            </div>
+
+            <button class="w-full flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-bg text-textMain font-medium">
+                <svg width="18" height="18" fill="none" stroke="#0F172A" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M9 21H5C3.9 21 3 20.1 3 19V5C3 3.9 3.9 3 5 3H9" />
+                    <path d="M16 17L21 12L16 7" />
+                    <path d="M21 12H9" />
+                </svg>
+                Sign Out
+            </button>
+        </div>
+    </aside>
+
+    <!-- ================= MAIN ================= -->
+    <main class="flex-1 p-8">
+
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-extrabold">Dashboard</h1>
+                <p class="text-textMain opacity-60">
+                    Welcome back! Manage your outings here.
+                </p>
+            </div>
+
+            <button class="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-semibold shadow">
+                <svg width="18" height="18" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M12 5V19" />
+                    <path d="M5 12H19" />
+                </svg>
+                Apply Outpass
+            </button>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid md:grid-cols-4 gap-6 mb-10">
+            <div class="bg-white rounded-2xl p-6 border border-borderCol">
+                <p class="text-sm opacity-60">TOTAL</p>
+                <h2 class="text-3xl font-extrabold">13</h2>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 border border-borderCol">
+                <p class="text-sm opacity-60">PENDING</p>
+                <h2 class="text-3xl font-extrabold">1</h2>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 border border-borderCol">
+                <p class="text-sm opacity-60">APPROVED</p>
+                <h2 class="text-3xl font-extrabold">1</h2>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 border border-borderCol">
+                <p class="text-sm opacity-60">REJECTED</p>
+                <h2 class="text-3xl font-extrabold">1</h2>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-2xl border border-borderCol overflow-hidden">
+            <div class="px-6 py-4 border-b border-borderCol font-bold text-lg">
+                Recent Activity
+            </div>
+
+            <table class="w-full text-left">
+                <thead class="bg-bg text-textMain opacity-70 text-sm">
+                    <tr>
+                        <th class="px-6 py-3">Type / Date</th>
+                        <th class="px-6 py-3">Reason</th>
+                        <th class="px-6 py-3">Timing</th>
+                        <th class="px-6 py-3">Status</th>
+                        <th class="px-6 py-3"></th>
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-borderCol">
+                    <tr class="hover:bg-bg">
+                        <td class="px-6 py-4">
+                            <p class="font-semibold text-primary">Home Pass</p>
+                            <p class="text-sm opacity-60">Dec 23, 2025</p>
+                        </td>
+                        <td class="px-6 py-4 font-medium">wfe (Dest: mall)</td>
+                        <td class="px-6 py-4 text-sm">
+                            <p><b>Out:</b> 11:36 PM</p>
+                            <p><b>In:</b> 11:36 PM</p>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 rounded-full border border-borderCol text-sm">
+                                Returned
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <svg width="18" height="18" fill="none" stroke="#0F172A" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path d="M9 18L15 12L9 6" />
+                            </svg>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+</body>
+
+</html>
