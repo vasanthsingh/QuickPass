@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuickPass | My Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#234C6A',
+                        bg: '#F8FAFC',
+                        textMain: '#0F172A',
+                        borderCol: '#E2E8F0'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: Inter, system-ui, sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-bg min-h-screen flex text-textMain">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="w-64 bg-white border-r border-borderCol flex flex-col">
+
+        <!-- Logo -->
+        <div class="px-6 py-5 flex items-center gap-3 font-extrabold text-xl text-primary">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#234C6A" stroke-width="2">
+                <path d="M13 2L3 14H11L9 22L21 9H13V2Z" />
+            </svg>
+            QuickPass
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-4 space-y-2">
+
+            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-bg text-textMain">
+                <svg width="20" height="20" fill="none" stroke="#0F172A" stroke-width="2" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                </svg>
+                Dashboard
+            </a>
+
+            <a href="profile.html"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg bg-bg text-primary font-semibold border-l-4 border-primary">
+                <svg width="20" height="20" fill="none" stroke="#234C6A" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="7" r="4" />
+                    <path d="M4 21C4 17 8 15 12 15C16 15 20 17 20 21" />
+                </svg>
+                My Profile
+            </a>
+
+            <a href="edit-profile.html" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-bg text-textMain">
+                <svg width="20" height="20" fill="none" stroke="#0F172A" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M12 20H21" />
+                    <path d="M16.5 3.5L20.5 7.5" />
+                    <path d="M4 17L3 21L7 20L17.5 9.5L13.5 5.5L4 17Z" />
+                </svg>
+                Edit Profile
+            </a>
+        </nav>
+
+        <!-- User Info -->
+        <div class="px-4 py-5 border-t border-borderCol">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold">
+                    VA
+                </div>
+                <div>
+                    <p class="font-semibold">vasanth</p>
+                    <p class="text-xs text-textMain opacity-60">S20230010079</p>
+                </div>
+            </div>
+
+            <button class="w-full flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-bg text-textMain font-medium">
+                <svg width="18" height="18" fill="none" stroke="#0F172A" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M9 21H5C3.9 21 3 20.1 3 19V5C3 3.9 3.9 3 5 3H9" />
+                    <path d="M16 17L21 12L16 7" />
+                    <path d="M21 12H9" />
+                </svg>
+                Sign Out
+            </button>
+        </div>
+    </aside>
+
+    <!-- ================= MAIN ================= -->
+    <main class="flex-1">
+
+        <!-- Top Bar -->
+        <div class="bg-white border-b border-borderCol px-8 py-5 flex justify-between items-center">
+            <h1 class="text-2xl font-extrabold">My Profile</h1>
+
+            <div class="text-xs uppercase tracking-widest font-bold opacity-60">
+                Monday, January 12
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="p-8 grid lg:grid-cols-3 gap-8">
+
+            <!-- Left Column -->
+            <div class="space-y-8">
+
+                <!-- Profile Card -->
+                <div class="bg-white border border-borderCol rounded-2xl p-8 shadow">
+                    <div class="flex flex-col items-center text-center">
+                        <div
+                            class="w-28 h-28 rounded-full bg-bg border border-borderCol flex items-center justify-center text-4xl font-extrabold text-primary">
+                            VA
+                        </div>
+
+                        <h2 class="mt-5 text-2xl font-extrabold">vasanth</h2>
+                        <p class="opacity-60 mt-1">Student • CSE</p>
+
+                        <div class="w-full mt-6 border-t border-borderCol pt-6 space-y-4 text-left">
+                            <div class="flex justify-between text-sm">
+                                <span class="opacity-70 flex items-center gap-2">
+                                    <svg width="18" height="18" fill="none" stroke="#234C6A" stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                        <rect x="3" y="4" width="18" height="14" rx="2" />
+                                        <path d="M8 2V6" />
+                                        <path d="M16 2V6" />
+                                    </svg>
+                                    Roll Number
+                                </span>
+                                <span class="font-bold font-mono">S20230010079</span>
+                            </div>
+
+                            <div class="flex justify-between text-sm">
+                                <span class="opacity-70 flex items-center gap-2">
+                                    <svg width="18" height="18" fill="none" stroke="#234C6A" stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                        <path d="M3 12H21" />
+                                        <path d="M3 6H21" />
+                                        <path d="M3 18H21" />
+                                    </svg>
+                                    Year
+                                </span>
+                                <span class="font-bold">1st Year</span>
+                            </div>
+
+                            <div class="flex justify-between text-sm">
+                                <span class="opacity-70 flex items-center gap-2">
+                                    <svg width="18" height="18" fill="none" stroke="#234C6A" stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                        <path d="M12 2L4 5V11C4 16 8 20 12 22C16 20 20 16 20 11V5L12 2Z" />
+                                        <path d="M9 12L11 14L15 10" />
+                                    </svg>
+                                    Status
+                                </span>
+                                <span
+                                    class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold border border-green-200">
+                                    Active
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hostel Details -->
+                <div class="bg-white border border-borderCol rounded-2xl p-8 shadow">
+                    <h3 class="font-extrabold text-lg mb-6">Hostel Details</h3>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-bg border border-borderCol flex items-center justify-center">
+                                <svg width="20" height="20" fill="none" stroke="#234C6A" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path d="M12 21s8-4 8-10a8 8 0 1 0-16 0c0 6 8 10 8 10Z" />
+                                    <circle cx="12" cy="11" r="3" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-bold">BH1</p>
+                                <p class="text-sm opacity-60">Block Name</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-bg border border-borderCol flex items-center justify-center">
+                                <svg width="20" height="20" fill="none" stroke="#234C6A" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path d="M3 21V8L12 3L21 8V21" />
+                                    <path d="M9 21V12H15V21" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-bold">Room 103</p>
+                                <p class="text-sm opacity-60">Room Number</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column (Info Forms) -->
+            <div class="lg:col-span-2 space-y-8">
+
+                <!-- Personal Information -->
+                <div class="bg-white border border-borderCol rounded-2xl p-8 shadow">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-xl font-extrabold">Personal Information</h2>
+
+                        <button class="flex items-center gap-2 text-primary font-bold hover:underline text-sm">
+                            <svg width="18" height="18" fill="none" stroke="#234C6A" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path d="M12 20H21" />
+                                <path d="M16.5 3.5L20.5 7.5" />
+                                <path d="M4 17L3 21L7 20L17.5 9.5L13.5 5.5L4 17Z" />
+                            </svg>
+                            Request Change
+                        </button>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-xs font-extrabold opacity-60 uppercase mb-2">Full Name</label>
+                            <input value="vasanth" readonly
+                                class="w-full bg-bg border border-borderCol rounded-xl px-4 py-3 outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-extrabold opacity-60 uppercase mb-2">Student Email</label>
+                            <div class="flex items-center gap-3 bg-bg border border-borderCol rounded-xl px-4 py-3">
+                                <svg width="18" height="18" fill="none" stroke="#234C6A" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path d="M4 4H20V20H4V4Z" />
+                                    <path d="M4 4L12 13L20 4" />
+                                </svg>
+                                <input value="e.akashahyhra@gmail.com" readonly
+                                    class="w-full bg-transparent outline-none">
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-extrabold opacity-60 uppercase mb-2">Phone
+                                    Number</label>
+                                <div class="flex items-center gap-3 bg-bg border border-borderCol rounded-xl px-4 py-3">
+                                    <svg width="18" height="18" fill="none" stroke="#234C6A" stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                        <path
+                                            d="M22 16.92V21a2 2 0 0 1-2.18 2A19.86 19.86 0 0 1 3 5.18 2 2 0 0 1 5 3h4.09a2 2 0 0 1 2 1.72c.12.86.3 1.7.54 2.5a2 2 0 0 1-.45 2.11L9.91 10.91a16 16 0 0 0 3.18 3.18l1.58-1.27a2 2 0 0 1 2.11-.45c.8.24 1.64.42 2.5.54A2 2 0 0 1 22 16.92Z" />
+                                    </svg>
+                                    <input value="9391838479" readonly class="w-full bg-transparent outline-none">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-extrabold opacity-60 uppercase mb-2">Branch</label>
+                                <input value="CSE" readonly
+                                    class="w-full bg-bg border border-borderCol rounded-xl px-4 py-3 outline-none">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guardian Details -->
+                <div class="bg-white border border-borderCol rounded-2xl p-8 shadow">
+                    <div class="flex items-center gap-3 mb-8">
+                        <svg width="22" height="22" fill="none" stroke="#234C6A" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M17 11a4 4 0 1 0 0-8" />
+                            <path d="M3 21c0-4 4-6 6-6s6 2 6 6" />
+                            <path d="M17 21c0-3 2-5 4-5" />
+                        </svg>
+                        <h2 class="text-xl font-extrabold">Guardian Details</h2>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-extrabold opacity-60 uppercase mb-2">Guardian Name</label>
+                            <input value="Akshay" readonly
+                                class="w-full bg-bg border border-borderCol rounded-xl px-4 py-3 outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-extrabold opacity-60 uppercase mb-2">Guardian Phone</label>
+                            <input value="6300842914" readonly
+                                class="w-full bg-bg border border-borderCol rounded-xl px-4 py-3 outline-none">
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-extrabold opacity-60 uppercase mb-2">Guardian Email</label>
+                            <input value="vasanthrasaputhra@gmail.com" readonly
+                                class="w-full bg-bg border border-borderCol rounded-xl px-4 py-3 outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="bg-white border border-borderCol rounded-2xl p-8 shadow">
+                    <h2 class="text-xl font-extrabold mb-5">Security Settings</h2>
+
+                    <div class="flex justify-between items-center border-t border-borderCol pt-6">
+                        <div>
+                            <p class="font-bold">Change Password</p>
+                            <p class="text-sm opacity-60">Secure your account regularly.</p>
+                        </div>
+
+                        <button class="px-6 py-2 rounded-xl border border-borderCol font-bold hover:bg-bg transition">
+                            Update
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+</body>
+
+</html>
