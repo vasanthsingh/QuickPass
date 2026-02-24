@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply Home Pass - Smart Outpass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Custom styles for the Transport Pills (Blue Theme) */
+        .transport-radio:checked + label {
+            background-color: #eff6ff; /* blue-50 */
+            color: #1d4ed8; /* blue-700 */
+            border-color: #3b82f6; /* blue-500 */
+            font-weight: 600;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-slate-200 px-4 md:px-6 py-3 flex justify-between items-center sticky top-0 z-40 shadow-sm">
+        <div class="flex items-center gap-3">
+            <a href="landing.html" class="bg-blue-600 p-1.5 rounded-lg shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition">
+                <i class="ph-bold ph-arrow-left text-white text-xl"></i>
+            </a>
+            <span class="font-bold text-lg text-slate-800 tracking-tight">Apply Home Pass</span>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <div class="hidden md:flex flex-col text-right">
+                <span id="navName" class="text-sm font-semibold text-slate-700">Loading...</span>
+                <span class="text-xs text-slate-500 font-mono">Student</span>
+            </div>
+            <div class="h-9 w-9 bg-gradient-to-br from-blue-100 to-blue-50 rounded-full flex items-center justify-center text-blue-700 font-bold text-sm border border-blue-200 shadow-sm" id="navInitials">
+                --
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+
+        <div id="defaulterBanner" class="hidden mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg shadow-2xl">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <i class="ph-fill ph-warning-circle text-red-500 text-xl"></i>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-bold text-red-800 uppercase tracking-wide">Action Blocked: Defaulter Status</h3>
+                    <p class="text-sm text-red-700 mt-1">
+                        You are currently marked as a <strong>Defaulter</strong>. You cannot create new passes until this is cleared by the Warden.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-8 border-b border-slate-100 text-center">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="ph-duotone ph-house-line text-3xl text-blue-600"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-slate-900">Home Pass Application</h1>
+                <p class="text-slate-500 mt-2 text-sm max-w-md mx-auto">
+                    For overnight stays and weekends. Requires Guardian approval via email.
+                </p>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <form id="homePassForm" class="space-y-6">
+                    
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase mb-3 flex items-center gap-1">
+                            <i class="ph-bold ph-user"></i> Student Details
+                        </h3>
+                        <div class="grid grid-cols-2 gap-y-2 text-sm">
+                            <div><span class="text-slate-500 text-xs">Name:</span> <span class="font-semibold text-slate-900" id="dispName">Loading...</span></div>
+                            <div><span class="text-slate-500 text-xs">Roll No:</span> <span class="font-semibold text-slate-900 font-mono" id="dispReg">Loading...</span></div>
+                            <div><span class="text-slate-500 text-xs">Hostel:</span> <span class="font-semibold text-slate-900">BH1 - 302</span></div>
+                            <div><span class="text-slate-500 text-xs">Guardian:</span> <span class="font-semibold text-slate-900">Ellendula Srinivasulu</span></div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Leaving On</label>
+                            <div class="grid grid-cols-5 gap-2">
+                                <input type="date" id="fromDate" required class="col-span-3 w-full bg-white border border-slate-300 rounded-xl px-3 py-3 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-sm">
+                                <input type="time" id="fromTime" required class="col-span-2 w-full bg-white border border-slate-300 rounded-xl px-2 py-3 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Returning On</label>
+                            <div class="grid grid-cols-5 gap-2">
+                                <input type="date" id="toDate" required class="col-span-3 w-full bg-white border border-slate-300 rounded-xl px-3 py-3 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-sm">
+                                <input type="time" id="toTime" required class="col-span-2 w-full bg-white border border-slate-300 rounded-xl px-2 py-3 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Destination / Address</label>
+                        <input type="text" id="destination" placeholder="Enter full address or city" required 
+                            class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Reason for Leave</label>
+                        <textarea id="reason" rows="2" placeholder="e.g. Festival, Family Function..." required 
+                            class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-sm resize-none"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-3">Mode of Transport</label>
+                        <div class="flex flex-wrap gap-2">
+                            <div class="relative"><input type="radio" name="transport" id="t_bus" value="Bus" class="transport-radio sr-only" checked><label for="t_bus" class="cursor-pointer inline-block px-4 py-2 rounded-full border border-slate-200 text-slate-500 text-xs font-medium hover:bg-slate-50 transition select-none">Bus</label></div>
+                            <div class="relative"><input type="radio" name="transport" id="t_train" value="Train" class="transport-radio sr-only"><label for="t_train" class="cursor-pointer inline-block px-4 py-2 rounded-full border border-slate-200 text-slate-500 text-xs font-medium hover:bg-slate-50 transition select-none">Train</label></div>
+                            <div class="relative"><input type="radio" name="transport" id="t_car" value="Car" class="transport-radio sr-only"><label for="t_car" class="cursor-pointer inline-block px-4 py-2 rounded-full border border-slate-200 text-slate-500 text-xs font-medium hover:bg-slate-50 transition select-none">Car</label></div>
+                            <div class="relative"><input type="radio" name="transport" id="t_bike" value="Bike" class="transport-radio sr-only"><label for="t_bike" class="cursor-pointer inline-block px-4 py-2 rounded-full border border-slate-200 text-slate-500 text-xs font-medium hover:bg-slate-50 transition select-none">Bike</label></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 p-4 rounded-xl flex gap-3 items-start border border-blue-100">
+                        <i class="ph-fill ph-info text-blue-600 mt-0.5 text-lg"></i>
+                        <div class="text-xs text-blue-800 leading-relaxed">
+                            <span class="font-bold block mb-1">Home Pass Workflow:</span>
+                            1. <span class="font-bold">Guardian Email Approval</span> (Required)<br>
+                            2. Warden Final Approval &rarr; 3. Security Scan
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 px-1">
+                        <input type="checkbox" id="termsCheck" required class="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 transition cursor-pointer">
+                        <label for="termsCheck" class="text-sm text-slate-600 cursor-pointer select-none">
+                            I agree to the <button type="button" onclick="toggleModal('termsModal')" class="text-blue-600 font-bold hover:underline">terms and conditions</button>
+                        </label>
+                    </div>
+
+                    <div id="dateError" class="hidden text-red-600 text-xs flex items-center gap-2 bg-red-50 p-3 rounded-lg border border-red-100">
+                        <i class="ph-bold ph-warning"></i>
+                        <span id="dateErrorText">Error message</span>
+                    </div>
+
+                    <div class="pt-2 flex gap-3">
+                        <a href="landing.html" class="flex-1 bg-white border border-slate-300 text-slate-700 font-bold py-3.5 px-4 rounded-xl hover:bg-slate-50 transition text-center shadow-sm">
+                            Cancel
+                        </a>
+                        <button type="submit" id="submitBtn" class="flex-[2] bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl transition shadow-lg shadow-blue-600/30 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
+                            Proceed to Preview <i class="ph-bold ph-caret-right"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div id="previewModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl w-full max-w-md mx-4 overflow-hidden transform scale-95 transition-transform duration-300 shadow-2xl" id="previewContent">
+            
+            <div class="bg-blue-600 px-6 py-4 flex justify-between items-center text-white">
+                <h3 class="font-bold text-lg">Review Application</h3>
+                <button onclick="toggleModal('previewModal')" class="hover:bg-white/20 p-1 rounded transition">
+                    <i class="ph-bold ph-x"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                    <div class="flex justify-between border-b border-slate-200 pb-2">
+                        <span class="text-xs text-slate-500 uppercase font-semibold">Leave Type</span>
+                        <span class="text-sm font-bold text-blue-700">Home Pass</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-xs text-slate-500 uppercase font-semibold">From</span>
+                        <div class="text-right">
+                            <p class="text-sm font-bold text-slate-900" id="prevFromDate">--</p>
+                            <p class="text-xs text-slate-500" id="prevFromTime">--</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-xs text-slate-500 uppercase font-semibold">To</span>
+                        <div class="text-right">
+                            <p class="text-sm font-bold text-slate-900" id="prevToDate">--</p>
+                            <p class="text-xs text-slate-500" id="prevToTime">--</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between border-t border-slate-200 pt-2">
+                        <span class="text-xs text-slate-500 uppercase font-semibold">Duration</span>
+                        <span class="text-sm font-bold text-slate-900" id="prevDuration">-- Days</span>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <p class="text-xs text-slate-500 uppercase font-semibold">Destination</p>
+                    <p class="text-sm text-slate-900 font-medium bg-slate-50 border border-slate-100 p-2 rounded-lg" id="prevDest">--</p>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-xs text-slate-500 uppercase font-semibold">Reason</p>
+                    <p class="text-sm text-slate-900 font-medium bg-slate-50 border border-slate-100 p-2 rounded-lg" id="prevReason">--</p>
+                </div>
+            </div>
+
+            <div class="px-6 pb-6 pt-2">
+                <button onclick="confirmSubmission()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-600/30 transition flex items-center justify-center gap-2 hover:-translate-y-0.5 active:translate-y-0">
+                    Confirm & Submit <i class="ph-bold ph-paper-plane-tilt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="successModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[60] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 text-center transform scale-90 transition-transform duration-300" id="successContent">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="ph-fill ph-check text-3xl text-green-600"></i>
+            </div>
+            <h2 class="text-xl font-bold text-slate-900">Request Sent!</h2>
+            <p class="text-slate-500 mt-2 mb-6 text-sm">
+                An approval link has been sent to your <strong>Guardian's Email</strong>. Please ask them to approve it.
+            </p>
+            <a href="landing.html" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-blue-600/30">
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div id="termsModal" class="fixed inset-0 z-[70] flex items-end md:items-center justify-center pointer-events-none opacity-0 transition-opacity duration-300">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="toggleModal('termsModal')"></div>
+        <div class="bg-white w-full md:w-[450px] md:rounded-2xl rounded-t-2xl p-6 shadow-2xl transform translate-y-full md:translate-y-10 transition-transform duration-300 max-h-[85vh] overflow-y-auto" id="termsContent">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-slate-900">Home Pass Rules</h3>
+                <button type="button" onclick="toggleModal('termsModal')" class="text-slate-400 hover:text-red-500 transition-colors"><i class="ph-bold ph-x text-xl"></i></button>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <h4 class="font-bold text-sm text-slate-900 mb-1 flex items-center gap-2"><i class="ph-fill ph-envelope-simple text-blue-600"></i> Guardian Approval</h4>
+                    <p class="text-xs text-slate-500">Your guardian MUST approve via the email link before the Warden sees this request.</p>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <h4 class="font-bold text-sm text-slate-900 mb-1 flex items-center gap-2"><i class="ph-fill ph-clock-countdown text-blue-600"></i> Return Policy</h4>
+                    <p class="text-xs text-slate-500">You must return by the "To Date" specified. Late returns result in immediate Defaulter status.</p>
+                </div>
+            </div>
+            <button type="button" onclick="toggleModal('termsModal')" class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-blue-600/30">I Understand</button>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA & CONFIG ---
+        const currentUser = {
+            name: "Rahul Sharma",
+            regNo: "S20230010079",
+            initials: "RS",
+            isDefaulter: false // Change to true to test block
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load User Info
+            document.getElementById('navName').textContent = currentUser.name;
+            document.getElementById('navInitials').textContent = currentUser.initials;
+            document.getElementById('dispName').textContent = currentUser.name;
+            document.getElementById('dispReg').textContent = currentUser.regNo;
+            
+            // Min Date = Today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('fromDate').min = today;
+            document.getElementById('toDate').min = today;
+
+            checkDefaulterStatus();
+        });
+
+        function checkDefaulterStatus() {
+            if (currentUser.isDefaulter) {
+                document.getElementById('defaulterBanner').classList.remove('hidden');
+                const btn = document.getElementById('submitBtn');
+                btn.disabled = true;
+                btn.innerHTML = `<i class="ph-bold ph-lock-key"></i> Locked`;
+                btn.classList.add('bg-slate-400', 'shadow-none', 'cursor-not-allowed');
+                btn.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'shadow-lg');
+            }
+        }
+
+        // --- MODAL UTILS ---
+        function toggleModal(id) {
+            const modal = document.getElementById(id);
+            const content = document.getElementById(id === 'termsModal' ? 'termsContent' : (id === 'previewModal' ? 'previewContent' : 'successContent'));
+            
+            if (modal.classList.contains('opacity-0') || modal.classList.contains('hidden')) {
+                // OPEN
+                modal.classList.remove('hidden', 'pointer-events-none', 'opacity-0');
+                if(id === 'termsModal') {
+                    content.classList.remove('translate-y-full');
+                    content.classList.add('translate-y-0', 'md:translate-y-0');
+                } else if (id === 'previewModal' || id === 'successModal') {
+                    setTimeout(() => {
+                        modal.classList.remove('opacity-0');
+                        content.classList.remove('scale-95', 'scale-90');
+                        content.classList.add('scale-100');
+                    }, 10);
+                }
+            } else {
+                // CLOSE
+                if(id === 'termsModal') {
+                    content.classList.add('translate-y-full');
+                    content.classList.remove('translate-y-0');
+                    setTimeout(() => modal.classList.add('pointer-events-none', 'opacity-0'), 300);
+                } else {
+                    modal.classList.add('opacity-0');
+                    setTimeout(() => modal.classList.add('hidden'), 300);
+                }
+            }
+        }
+
+        // --- FORM HANDLING ---
+        document.getElementById('homePassForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            const fromTime = document.getElementById('fromTime').value;
+            const toTime = document.getElementById('toTime').value;
+            const errorDiv = document.getElementById('dateError');
+            
+            errorDiv.classList.add('hidden');
+
+            // Date Validation
+            if (toDate < fromDate) {
+                document.getElementById('dateErrorText').textContent = "Return date cannot be before Leaving date.";
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            // Populate Preview Data
+            document.getElementById('prevFromDate').textContent = fromDate;
+            document.getElementById('prevFromTime').textContent = formatTime(fromTime);
+            document.getElementById('prevToDate').textContent = toDate;
+            document.getElementById('prevToTime').textContent = formatTime(toTime);
+            document.getElementById('prevDest').textContent = document.getElementById('destination').value;
+            document.getElementById('prevReason').textContent = document.getElementById('reason').value;
+
+            // Calc Duration
+            const start = new Date(fromDate);
+            const end = new Date(toDate);
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; 
+            document.getElementById('prevDuration').textContent = `${diffDays} Day(s)`;
+
+            // Open Preview
+            toggleModal('previewModal');
+        });
+
+        function confirmSubmission() {
+            toggleModal('previewModal'); // Close Preview
+            setTimeout(() => {
+                toggleModal('successModal'); // Open Success
+            }, 300);
+        }
+
+        function formatTime(timeStr) {
+            if(!timeStr) return "";
+            const [hour, min] = timeStr.split(':');
+            const h = parseInt(hour);
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            const h12 = h % 12 || 12;
+            return `${h12}:${min} ${ampm}`;
+        }
+    </script>
+</body>
+</html>

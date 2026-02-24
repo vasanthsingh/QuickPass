@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Requests - Smart Outpass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .nav-item.active { background-color: #eff6ff; color: #2563eb; border-right: 3px solid #2563eb; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased h-screen flex overflow-hidden">
+
+    <aside class="w-64 bg-white border-r border-slate-200 flex-shrink-0 flex flex-col h-full z-20">
+        <div class="h-16 flex items-center px-6 border-b border-slate-100 gap-3">
+            <div class="bg-blue-600 p-1.5 rounded-lg shadow-lg shadow-blue-600/20">
+                <i class="ph-bold ph-shield-check text-white text-lg"></i>
+            </div>
+            <span class="font-bold text-lg text-slate-800">Warden Panel</span>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-4 space-y-1">
+            <a href="warden-dashboard.html" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition"><i class="ph-bold ph-squares-four text-xl"></i><span class="font-medium text-sm">Overview</span></a>
+            <a href="warden-approvals.html" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition"><i class="ph-bold ph-stamp text-xl"></i><span class="font-medium text-sm">Pass Requests</span></a>
+            <a href="warden-requests.html" class="nav-item active w-full flex items-center gap-3 px-6 py-3 transition"><i class="ph-bold ph-user-switch text-xl"></i><span class="font-medium text-sm">Edit Requests</span></a>
+            <a href="students.html" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition"><i class="ph-bold ph-student text-xl"></i><span class="font-medium text-sm">Student Database</span></a>
+            <a href="warden-security.html" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition"><i class="ph-bold ph-police-car text-xl"></i><span class="font-medium text-sm">Security Guard</span></a>
+            <a href="warden-defaulters.html" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition"><i class="ph-bold ph-warning-octagon text-xl"></i><span class="font-medium text-sm">Defaulters</span></a>
+        </nav>
+        <div class="p-4 border-t border-slate-100">
+            <div class="flex items-center gap-3 mb-4 px-2">
+                <div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-xs border border-blue-200">WK</div>
+                <div><p class="text-sm font-bold">Warden Kumar</p><p class="text-xs text-slate-500">BH1 Hostel</p></div>
+            </div>
+            <button onclick="alert('Signed out')" class="w-full flex items-center justify-center gap-2 text-slate-500 hover:text-red-600 hover:bg-red-50 py-2 rounded-lg transition text-sm font-medium"><i class="ph-bold ph-sign-out"></i> Sign Out</button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 flex-shrink-0 z-10">
+            <h2 class="text-lg font-bold text-slate-800">Profile Update Requests</h2>
+            <div class="hidden md:block text-right"><p class="text-xs font-semibold text-slate-500 uppercase tracking-wider" id="currentDate">TODAY</p></div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-6 md:p-8 bg-slate-50">
+            
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 flex gap-3 mb-6">
+                <i class="ph-fill ph-info text-blue-600 text-xl"></i>
+                <div>
+                    <h4 class="text-sm font-bold text-blue-900">Student Profile Modification Requests</h4>
+                    <p class="text-xs text-blue-800 mt-1">Students cannot edit their personal data. Verify the requested changes below before updating the database.</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                <div class="relative w-full sm:w-auto">
+                    <i class="ph-bold ph-magnifying-glass absolute left-3 top-2.5 text-slate-400"></i>
+                    <input type="text" placeholder="Search by name or roll number..." class="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-80 shadow-sm">
+                </div>
+                <div class="relative w-full sm:w-auto">
+                    <select class="appearance-none bg-white border border-slate-200 text-slate-600 text-xs font-semibold py-2 pl-3 pr-8 rounded-lg focus:outline-none focus:border-blue-500 cursor-pointer shadow-sm w-full sm:w-auto">
+                        <option>All Requests</option>
+                        <option>Pending</option>
+                        <option>Approved</option>
+                        <option>Rejected</option>
+                    </select>
+                    <i class="ph-bold ph-caret-down absolute right-2.5 top-2.5 text-slate-400 text-xs pointer-events-none"></i>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-amber-100 text-amber-800 text-[10px] font-bold px-3 py-1 rounded-bl-xl">PENDING REVIEW</div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-600">RS</div>
+                        <div>
+                            <h4 class="font-bold text-slate-900">Rahul Sharma</h4>
+                            <p class="text-xs text-slate-500">S20230010082 • Room 302</p>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Field to Update: <span class="text-slate-900">Parent Phone Number</span></p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-3 rounded-lg bg-red-50 border border-red-100">
+                                <p class="text-[10px] font-bold text-red-500 uppercase">Old Value</p>
+                                <p class="font-mono text-sm text-slate-700 mt-1 line-through decoration-red-400">98765 43210</p>
+                            </div>
+                            <div class="p-3 rounded-lg bg-emerald-50 border border-emerald-100">
+                                <p class="text-[10px] font-bold text-emerald-600 uppercase">New Value</p>
+                                <p class="font-mono text-sm text-slate-900 mt-1 font-bold">99887 76655</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex gap-3 pt-2 border-t border-slate-100">
+                        <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-sm font-semibold transition shadow-sm" onclick="alert('Information Updated Successfully')"><i class="ph-bold ph-check-circle"></i> Verify & Update</button>
+                        <button class="flex-1 bg-white border border-slate-300 text-slate-600 hover:bg-red-50 hover:text-red-600 hover:border-red-200 py-2.5 rounded-lg text-sm font-semibold transition" onclick="alert('Request Rejected')">Reject</button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-amber-100 text-amber-800 text-[10px] font-bold px-3 py-1 rounded-bl-xl">PENDING REVIEW</div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center font-bold text-purple-600">PK</div>
+                        <div>
+                            <h4 class="font-bold text-slate-900">Priya K.</h4>
+                            <p class="text-xs text-slate-500">S20230010045 • Room 205</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4 space-y-4">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Field 1: <span class="text-slate-900">Parent Phone</span></p>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="p-2 rounded bg-red-50 border border-red-100">
+                                    <p class="text-[10px] font-bold text-red-500 uppercase">Old</p>
+                                    <p class="font-mono text-xs text-slate-700 line-through decoration-red-400">88888 11111</p>
+                                </div>
+                                <div class="p-2 rounded bg-emerald-50 border border-emerald-100">
+                                    <p class="text-[10px] font-bold text-emerald-600 uppercase">New</p>
+                                    <p class="font-mono text-xs text-slate-900 font-bold">99999 22222</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Field 2: <span class="text-slate-900">Parent Email</span></p>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="p-2 rounded bg-red-50 border border-red-100">
+                                    <p class="text-[10px] font-bold text-red-500 uppercase">Old</p>
+                                    <p class="font-mono text-xs text-slate-700 line-through decoration-red-400 truncate">old.mail@test.com</p>
+                                </div>
+                                <div class="p-2 rounded bg-emerald-50 border border-emerald-100">
+                                    <p class="text-[10px] font-bold text-emerald-600 uppercase">New</p>
+                                    <p class="font-mono text-xs text-slate-900 font-bold truncate">new.parent@gmail.com</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 pt-2 border-t border-slate-100">
+                        <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-sm font-semibold transition shadow-sm" onclick="alert('All Fields Updated Successfully')"><i class="ph-bold ph-check-circle"></i> Verify All</button>
+                        <button class="flex-1 bg-white border border-slate-300 text-slate-600 hover:bg-red-50 hover:text-red-600 hover:border-red-200 py-2.5 rounded-lg text-sm font-semibold transition" onclick="alert('Request Rejected')">Reject</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const date = new Date();
+        document.getElementById('currentDate').textContent = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    </script>
+</body>
+</html>

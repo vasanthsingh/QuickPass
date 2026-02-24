@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply Day Pass - Smart Outpass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Custom styles for the Transport Pills (Blue Theme) */
+        .transport-radio:checked + label {
+            background-color: #dbeafe; /* blue-100 */
+            color: #1d4ed8; /* blue-700 */
+            border-color: #2563eb; /* blue-600 */
+            font-weight: 600;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-slate-200 px-4 md:px-6 py-3 flex justify-between items-center sticky top-0 z-40 shadow-sm">
+        <div class="flex items-center gap-3">
+            <a href="landing.html" class="bg-blue-600 p-1.5 rounded-lg shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition">
+                <i class="ph-bold ph-arrow-left text-white text-xl"></i>
+            </a>
+            <span class="font-bold text-lg text-slate-800 tracking-tight">Apply Day Pass</span>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <div class="hidden md:flex flex-col text-right">
+                <span id="navName" class="text-sm font-semibold text-slate-700">Loading...</span>
+                <span class="text-xs text-slate-500 font-mono">Student</span>
+            </div>
+            <div class="h-9 w-9 bg-gradient-to-br from-blue-100 to-blue-50 rounded-full flex items-center justify-center text-blue-700 font-bold text-sm border border-blue-200 shadow-sm" id="navInitials">
+                --
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow container mx-auto px-4 py-8 ">
+        <div id="defaulterBanner" class="hidden mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg shadow-sm">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <i class="ph-fill ph-warning-circle text-red-500 text-xl"></i>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-bold text-red-800 uppercase tracking-wide">Action Blocked: Defaulter Status</h3>
+                    <p class="text-sm text-red-700 mt-1">
+                        You are currently marked as a <strong>Defaulter</strong> due to a previous late return. 
+                        You cannot create new passes until this is cleared.
+                    </p>
+                    <div class="mt-3">
+                        <button class="text-sm font-medium text-red-800 hover:text-red-900 underline">
+                            Contact Warden for details
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-8 border-b border-slate-100 text-center">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="ph-duotone ph-sun text-3xl text-blue-600"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-slate-900">Day Pass Application</h1>
+                <p class="text-slate-500 mt-2 text-sm max-w-md mx-auto">
+                    Valid for local outings only. You must return to campus by 9:00 PM on the same day.
+                </p>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <form id="dayPassForm" class="space-y-6">
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Date of Outing</label>
+                        <input type="date" id="date" required 
+                            class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-sm">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">
+                                Out Time <span class="text-slate-400 font-normal ml-1">(Min 5:00 AM)</span>
+                            </label>
+                            <input type="time" id="outTime" required 
+                                class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-sm">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">
+                                In Time <span class="text-slate-400 font-normal ml-1">(Max 9:00 PM)</span>
+                            </label>
+                            <input type="time" id="inTime" required 
+                                class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-sm">
+                        </div>
+                    </div>
+
+                    <div id="timeError" class="hidden text-red-600 text-sm flex items-center gap-2 bg-red-50 p-3 rounded-lg">
+                        <i class="ph-bold ph-warning"></i>
+                        <span id="timeErrorText">Error message here</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Destination</label>
+                        <input type="text" id="destination" placeholder="Enter destination (e.g. Tada)" required 
+                            class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Purpose of Visit</label>
+                        <textarea id="reason" rows="3" required placeholder="e.g. Shopping, Lunch, Movie..." 
+                            class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-sm resize-none"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-3">Mode of Transport</label>
+                        <div class="flex flex-wrap gap-2">
+                            <div class="relative">
+                                <input type="radio" name="transport" id="t_walk" value="Walk" class="transport-radio sr-only" checked>
+                                <label for="t_walk" class="cursor-pointer inline-block px-4 py-2 rounded-full border border-slate-200 text-slate-500 text-xs font-medium hover:bg-slate-50 transition select-none">Walk</label>
+                            </div>
+                            <div class="relative">
+                                <input type="radio" name="transport" id="t_auto" value="Auto" class="transport-radio sr-only">
+                                <label for="t_auto" class="cursor-pointer inline-block px-4 py-2 rounded-full border border-slate-200 text-slate-500 text-xs font-medium hover:bg-slate-50 transition select-none">Auto</label>
+                            </div>
+                            <div class="relative">
+                                <input type="radio" name="transport" id="t_bus" value="Bus" class="transport-radio sr-only">
+                                <label for="t_bus" class="cursor-pointer inline-block px-4 py-2 rounded-full border border-slate-200 text-slate-500 text-xs font-medium hover:bg-slate-50 transition select-none">Bus</label>
+                            </div>
+                            <div class="relative">
+                                <input type="radio" name="transport" id="t_bike" value="Bike" class="transport-radio sr-only">
+                                <label for="t_bike" class="cursor-pointer inline-block px-4 py-2 rounded-full border border-slate-200 text-slate-500 text-xs font-medium hover:bg-slate-50 transition select-none">Bike</label>
+                            </div>
+                            <div class="relative">
+                                <input type="radio" name="transport" id="t_train" value="Train" class="transport-radio sr-only">
+                                <label for="t_train" class="cursor-pointer inline-block px-4 py-2 rounded-full border border-slate-200 text-slate-500 text-xs font-medium hover:bg-slate-50 transition select-none">Train</label>
+                            </div>
+                            <div class="relative">
+                                <input type="radio" name="transport" id="t_car" value="Car" class="transport-radio sr-only">
+                                <label for="t_car" class="cursor-pointer inline-block px-4 py-2 rounded-full border border-slate-200 text-slate-500 text-xs font-medium hover:bg-slate-50 transition select-none">Car</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 p-4 rounded-xl flex gap-3 items-start border border-blue-100">
+                        <i class="ph-fill ph-info text-blue-600 mt-0.5 text-lg"></i>
+                        <div class="text-xs text-blue-800 leading-relaxed">
+                            <span class="font-bold block mb-1">Workflow:</span>
+                            1. Warden Approval &rarr; 2. Guardian Notified &rarr; 3. Security Scan.<br>
+                            Late return will result in <span class="font-bold text-red-600">Defaulter Status</span>.
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 px-1">
+                        <input type="checkbox" id="termsCheck" required class="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 transition cursor-pointer">
+                        <label for="termsCheck" class="text-sm text-slate-600 cursor-pointer select-none">
+                            I agree to the <button type="button" onclick="toggleModal('termsModal')" class="text-blue-600 font-bold hover:underline">terms and conditions</button>
+                        </label>
+                    </div>
+
+                    <div class="pt-2 flex gap-3">
+                        <a href="landing.html" class="flex-1 bg-white border border-slate-300 text-slate-700 font-bold py-3.5 px-4 rounded-xl hover:bg-slate-50 transition text-center">
+                            Cancel
+                        </a>
+                        <button type="submit" id="submitBtn" class="flex-[2] bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl transition shadow-lg shadow-blue-600/30 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
+                            Submit Request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div id="termsModal" class="fixed inset-0 z-50 flex items-end md:items-center justify-center pointer-events-none opacity-0 transition-opacity duration-300">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="toggleModal('termsModal')"></div>
+        <div class="bg-white w-full md:w-[450px] md:rounded-2xl rounded-t-2xl p-6 shadow-2xl transform translate-y-full md:translate-y-10 transition-transform duration-300 max-h-[85vh] overflow-y-auto" id="termsContent">
+            
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-slate-900">Terms & Conditions</h3>
+                <button type="button" onclick="toggleModal('termsModal')" class="text-slate-400 hover:text-red-500 transition-colors">
+                    <i class="ph-bold ph-x text-xl"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <div class="flex items-center gap-3 mb-2">
+                        <i class="ph-fill ph-clock-countdown text-blue-600 text-xl"></i>
+                        <h4 class="font-bold text-sm text-slate-900">Return Time Compliance</h4>
+                    </div>
+                    <p class="text-xs text-slate-500 leading-relaxed pl-8">
+                        Students must return before the specified return time (9:00 PM). Late returns will result in disciplinary action.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <div class="flex items-center gap-3 mb-2">
+                        <i class="ph-fill ph-warning-octagon text-blue-600 text-xl"></i>
+                        <h4 class="font-bold text-sm text-slate-900">Penalties for Late Return</h4>
+                    </div>
+                    <ul class="text-xs text-slate-500 leading-relaxed pl-8 list-disc list-inside space-y-1">
+                        <li>Written warning</li>
+                        <li>Parent/Guardian notification</li>
+                        <li>Restriction on future gate pass requests</li>
+                    </ul>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <div class="flex items-center gap-3 mb-2">
+                        <i class="ph-fill ph-phone-call text-blue-600 text-xl"></i>
+                        <h4 class="font-bold text-sm text-slate-900">Communication Requirement</h4>
+                    </div>
+                    <p class="text-xs text-slate-500 leading-relaxed pl-8">
+                        Must inform hostel authorities in case of any emergency or delay.
+                    </p>
+                </div>
+            </div>
+
+            <button type="button" onclick="toggleModal('termsModal')" class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition">
+                I Understand & Accept
+            </button>
+        </div>
+    </div>
+
+    <div id="successModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 text-center transform scale-90 transition-transform duration-300" id="successContent">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="ph-fill ph-check text-3xl text-green-600"></i>
+            </div>
+            <h2 class="text-xl font-bold text-slate-900">Request Submitted!</h2>
+            <p class="text-slate-500 mt-2 mb-6 text-sm">Your day pass request has been sent to the Warden for approval.</p>
+            <a href="landing.html" class="block w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition">
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. MOCK DATA & CONFIG ---
+        const currentUser = {
+            name: "Rahul Sharma",
+            regNo: "RA2111003010156",
+            initials: "RS",
+            isDefaulter: false // TOGGLE THIS TO TRUE TO TEST DEFAULTER LOGIC
+        };
+
+        const RULES = {
+            minTime: "05:00",
+            maxTime: "21:00" // 9:00 PM
+        };
+
+        // --- 2. INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load User Info
+            document.getElementById('navName').textContent = currentUser.name;
+            document.getElementById('navInitials').textContent = currentUser.initials;
+
+            // Set Date input minimum to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').min = today;
+            document.getElementById('date').value = today;
+
+            // Check Defaulter Status
+            checkDefaulterStatus();
+        });
+
+        // --- 3. DEFAULTER CHECK LOGIC ---
+        function checkDefaulterStatus() {
+            if (currentUser.isDefaulter) {
+                // Show Warning Banner
+                document.getElementById('defaulterBanner').classList.remove('hidden');
+                
+                // Disable Form Inputs
+                const formInputs = document.querySelectorAll('#dayPassForm input, #dayPassForm textarea, #dayPassForm button');
+                formInputs.forEach(input => {
+                    input.disabled = true;
+                    input.classList.add('opacity-50', 'cursor-not-allowed');
+                });
+
+                // Update Button Text
+                const btn = document.getElementById('submitBtn');
+                btn.innerHTML = `<i class="ph-bold ph-lock-key"></i> Locked`;
+                btn.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'shadow-blue-600/30');
+                btn.classList.add('bg-slate-400', 'shadow-none');
+            }
+        }
+
+        // --- 4. MODAL LOGIC (New) ---
+        function toggleModal(id) {
+            const modal = document.getElementById(id);
+            const content = document.getElementById(id === 'termsModal' ? 'termsContent' : 'successContent');
+            
+            if (modal.classList.contains('opacity-0') || modal.classList.contains('hidden')) {
+                // OPEN
+                modal.classList.remove('hidden', 'pointer-events-none', 'opacity-0');
+                if(id === 'termsModal') {
+                    // Slide up for terms
+                    content.classList.remove('translate-y-full');
+                    content.classList.add('translate-y-0', 'md:translate-y-0');
+                } else {
+                    // Scale up for success
+                    setTimeout(() => {
+                        modal.classList.remove('opacity-0');
+                        content.classList.remove('scale-90');
+                        content.classList.add('scale-100');
+                    }, 10);
+                }
+            } else {
+                // CLOSE
+                if(id === 'termsModal') {
+                    content.classList.add('translate-y-full');
+                    content.classList.remove('translate-y-0');
+                    setTimeout(() => modal.classList.add('pointer-events-none', 'opacity-0'), 300);
+                } else {
+                    modal.classList.add('opacity-0');
+                    setTimeout(() => modal.classList.add('hidden'), 300);
+                }
+            }
+        }
+
+        // --- 5. FORM VALIDATION & SUBMISSION ---
+        document.getElementById('dayPassForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const outTime = document.getElementById('outTime').value;
+            const inTime = document.getElementById('inTime').value;
+            const errorDiv = document.getElementById('timeError');
+            const errorText = document.getElementById('timeErrorText');
+
+            // Reset Error
+            errorDiv.classList.add('hidden');
+
+            // A. Check if Out Time is after 5:00 AM
+            if (outTime < RULES.minTime) {
+                showError(`Out time cannot be before ${formatTime(RULES.minTime)}.`);
+                return;
+            }
+
+            // B. Check if In Time is before 9:00 PM
+            if (inTime > RULES.maxTime) {
+                showError(`Return time cannot be later than ${formatTime(RULES.maxTime)}.`);
+                return;
+            }
+
+            // C. Check if In Time is after Out Time
+            if (inTime <= outTime) {
+                showError("Return time must be after Out time.");
+                return;
+            }
+
+            // If Valid: Show Success Modal
+            toggleModal('successModal');
+        });
+
+        // Helper: Show Error
+        function showError(msg) {
+            const errorDiv = document.getElementById('timeError');
+            const errorText = document.getElementById('timeErrorText');
+            errorText.textContent = msg;
+            errorDiv.classList.remove('hidden');
+            
+            // Shake animation
+            errorDiv.classList.add('animate-pulse');
+            setTimeout(() => errorDiv.classList.remove('animate-pulse'), 500);
+        }
+
+        // Helper: Format Time string (05:00 -> 5:00 AM)
+        function formatTime(timeStr) {
+            const [hour, min] = timeStr.split(':');
+            const h = parseInt(hour);
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            const h12 = h % 12 || 12;
+            return `${h12}:${min} ${ampm}`;
+        }
+    </script>
+</body>
+</html>

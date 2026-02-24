@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Database - Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .nav-item.active { background-color: #eff6ff; color: #2563eb; border-right: 3px solid #2563eb; }
+        
+        /* Modal Transition */
+        .modal { opacity: 0; pointer-events: none; transition: all 0.2s ease-in-out; }
+        .modal.active { opacity: 1; pointer-events: auto; }
+        .modal-content { transform: scale(0.95); transition: transform 0.2s ease; }
+        .modal.active .modal-content { transform: scale(1); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased h-screen flex overflow-hidden">
+
+    <aside class="w-64 bg-white border-r border-slate-200 flex-shrink-0 flex flex-col h-full z-20">
+        <div class="h-16 flex items-center px-6 border-b border-slate-100 gap-3">
+            <div class="bg-blue-600 p-1.5 rounded-lg shadow-lg shadow-blue-600/20"><i class="ph-bold ph-shield-star text-white text-lg"></i></div>
+            <span class="font-bold text-lg text-slate-800 tracking-wide">Admin Panel</span>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-4 space-y-1">
+            <a href="admin-dashboard.html" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition"><i class="ph-bold ph-squares-four text-xl"></i><span class="font-medium text-sm">Dashboard</span></a>
+            <p class="px-6 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider mt-4">User Management</p>
+            <a href="admin-wardens.html" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition"><i class="ph-bold ph-user-gear text-xl"></i><span class="font-medium text-sm">Wardens</span></a>
+            <a href="admin-guards.html" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition"><i class="ph-bold ph-police-car text-xl"></i><span class="font-medium text-sm">Security Guards</span></a>
+            <a href="admin-students.html" class="nav-item active w-full flex items-center gap-3 px-6 py-3 transition"><i class="ph-bold ph-student text-xl"></i><span class="font-medium text-sm">Students</span></a>
+            <p class="px-6 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider mt-4">Configuration</p>
+            <a href="admin-reports.html" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition"><i class="ph-bold ph-chart-bar text-xl"></i><span class="font-medium text-sm">Reports</span></a>
+            <a href="admin-settings.html" class="nav-item w-full flex items-center gap-3 px-6 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition"><i class="ph-bold ph-sliders text-xl"></i><span class="font-medium text-sm">Global Settings</span></a>
+        </nav>
+        <div class="p-4 border-t border-slate-100">
+            <div class="flex items-center gap-3 px-2">
+                <div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-xs border border-blue-200">AD</div>
+                <div><p class="text-sm font-bold text-slate-800">Administrator</p><p class="text-[10px] text-slate-500 uppercase">Super Admin</p></div>
+            </div>
+            <button onclick="alert('Signed out')" class="w-full flex items-center justify-center gap-2 text-slate-500 hover:text-red-600 hover:bg-red-50 py-2 rounded-lg transition text-sm font-medium mt-3">
+                <i class="ph-bold ph-sign-out"></i> Sign Out
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 flex-shrink-0 z-10">
+            <h2 class="text-lg font-bold text-slate-800">Student Database</h2>
+            <div class="hidden md:block text-right"><p class="text-xs font-semibold text-slate-500 uppercase tracking-wider" id="currentDate">TODAY</p></div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-6 md:p-8 bg-slate-50">
+            
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
+                <div class="flex gap-3 w-full lg:w-auto">
+                    <div class="relative w-full lg:w-64">
+                        <i class="ph-bold ph-magnifying-glass absolute left-3 top-2.5 text-slate-400"></i>
+                        <input type="text" placeholder="Search Roll No or Name..." class="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm w-full focus:outline-none focus:border-blue-500 shadow-sm">
+                    </div>
+                    <select class="border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white text-slate-600 focus:outline-none shadow-sm cursor-pointer">
+                        <option>All Hostels</option>
+                        <option>Boys Hostel 1</option>
+                        <option>Boys Hostel 2</option>
+                        <option>Girls Hostel 1</option>
+                    </select>
+                    <select class="border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white text-slate-600 focus:outline-none shadow-sm cursor-pointer">
+                        <option>Status: All</option>
+                        <option>Active</option>
+                        <option>Defaulters</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-slate-50 border-b border-slate-100 uppercase text-xs font-semibold text-slate-500">
+                        <tr>
+                            <th class="px-6 py-4">Student Details</th>
+                            <th class="px-6 py-4">Hostel Info</th>
+                            <th class="px-6 py-4">Contact</th>
+                            <th class="px-6 py-4 text-right">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
+                        
+                        <tr class="hover:bg-slate-50 transition group cursor-pointer">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">AE</div>
+                                    <div>
+                                        <p class="font-bold text-slate-900">Akshay Ellendula</p>
+                                        <p class="text-xs text-slate-500 font-mono">S20230010079</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <p class="text-slate-900 font-medium">Boys Hostel 1</p>
+                                <p class="text-xs text-slate-500">Room 304</p>
+                            </td>
+                            <td class="px-6 py-4 text-xs">
+                                <p><i class="ph-fill ph-phone text-slate-400"></i> +91 98765 43210</p>
+                                <p><i class="ph-fill ph-envelope text-slate-400"></i> akshay@uni.edu</p>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold inline-flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-600"></span> Active
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr class="bg-red-50/30 hover:bg-red-50/50 transition group cursor-pointer">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold text-xs">PR</div>
+                                    <div>
+                                        <p class="font-bold text-slate-900">Priya Reddy</p>
+                                        <p class="text-xs text-slate-500 font-mono">S20230010045</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <p class="text-slate-900 font-medium">Girls Hostel 1</p>
+                                <p class="text-xs text-slate-500">Room 102</p>
+                            </td>
+                            <td class="px-6 py-4 text-xs">
+                                <p><i class="ph-fill ph-phone text-slate-400"></i> +91 99887 77665</p>
+                                <p><i class="ph-fill ph-envelope text-slate-400"></i> priya@uni.edu</p>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold inline-flex items-center gap-1">
+                                    <i class="ph-fill ph-warning-circle"></i> Defaulter
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr class="hover:bg-slate-50 transition group cursor-pointer">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-xs">RS</div>
+                                    <div>
+                                        <p class="font-bold text-slate-900">Rahul Sharma</p>
+                                        <p class="text-xs text-slate-500 font-mono">S20230010082</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <p class="text-slate-900 font-medium">Boys Hostel 2</p>
+                                <p class="text-xs text-slate-500">Room 210</p>
+                            </td>
+                            <td class="px-6 py-4 text-xs">
+                                <p><i class="ph-fill ph-phone text-slate-400"></i> +91 88990 00112</p>
+                                <p><i class="ph-fill ph-envelope text-slate-400"></i> rahul@uni.edu</p>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold inline-flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-600"></span> Active
+                                </span>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                
+                <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
+                    <p class="text-xs text-slate-500">Showing 1-3 of 1240 students</p>
+                    <div class="flex gap-2">
+                        <button class="px-3 py-1 text-xs font-bold text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 disabled:opacity-50" disabled>Previous</button>
+                        <button class="px-3 py-1 text-xs font-bold text-slate-600 bg-white border border-slate-200 rounded hover:bg-slate-50">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="addStudentModal" class="modal fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="modal-content bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-lg text-slate-900">Add New Student</h3>
+                <button onclick="toggleModal('addStudentModal')" class="text-slate-400 hover:text-red-500 transition"><i class="ph-bold ph-x text-xl"></i></button>
+            </div>
+            
+            <form class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <h4 class="text-xs font-bold text-blue-600 uppercase tracking-wider border-b border-blue-100 pb-1">Personal Details</h4>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 block mb-1">Full Name</label>
+                        <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. John Doe">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 block mb-1">Roll Number</label>
+                        <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none uppercase font-mono" placeholder="S2023...">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 block mb-1">Email Address</label>
+                        <input type="email" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="student@university.edu">
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="text-xs font-bold text-blue-600 uppercase tracking-wider border-b border-blue-100 pb-1">Accommodation & Guardian</h4>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 block mb-1">Hostel Block</label>
+                            <select class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                                <option>BH1</option>
+                                <option>BH2</option>
+                                <option>GH1</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 block mb-1">Room No</label>
+                            <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="101">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 block mb-1">Guardian Email</label>
+                        <input type="email" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="parent@email.com">
+                        <p class="text-[10px] text-slate-400 mt-1">Used for Home Pass approvals.</p>
+                    </div>
+                </div>
+
+                <div class="md:col-span-2 pt-4 border-t border-slate-100 flex justify-end gap-3">
+                    <button type="button" onclick="toggleModal('addStudentModal')" class="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50 rounded-lg transition">Cancel</button>
+                    <button type="button" onclick="alert('Student Added!'); toggleModal('addStudentModal')" class="px-6 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md transition">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const date = new Date();
+        document.getElementById('currentDate').textContent = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => modal.classList.add('active'), 10);
+            } else {
+                modal.classList.remove('active');
+                setTimeout(() => modal.classList.add('hidden'), 200);
+            }
+        }
+    </script>
+</body>
+</html>
