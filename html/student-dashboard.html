@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Smart Outpass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .modal { transition: opacity 0.25s ease; }
+        body.modal-active { overflow: hidden; }
+        
+        /* Custom Scrollbar for Table */
+        .table-container::-webkit-scrollbar { height: 6px; }
+        .table-container::-webkit-scrollbar-track { background: #f1f1f1; }
+        .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-slate-200 px-4 md:px-6 py-3 flex justify-between items-center sticky top-0 z-40 shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="bg-blue-600 p-1.5 rounded-lg shadow-lg shadow-blue-600/20">
+                <i class="ph-bold ph-paper-plane-tilt text-white text-xl"></i>
+            </div>
+            <span class="font-bold text-lg text-slate-800 tracking-tight">Smart Outpass</span>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <div class="hidden md:flex flex-col text-right">
+                <span id="navName" class="text-sm font-semibold text-slate-700">Loading...</span>
+                <span id="navRegNo" class="text-xs text-slate-500 font-mono">Loading...</span>
+            </div>
+            <div class="h-9 w-9 bg-gradient-to-br from-blue-100 to-blue-50 rounded-full flex items-center justify-center text-blue-700 font-bold text-sm border border-blue-200 shadow-sm" id="navInitials">
+                --
+            </div>
+            <button onclick="alert('Logged out!')" class="text-slate-400 hover:text-red-600 transition p-1">
+                <i class="ph-bold ph-sign-out text-xl"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-6xl">
+        
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900">Dashboard</h1>
+                <p class="text-slate-500 text-sm mt-1">Welcome back! Manage your outings here.</p>
+            </div>
+            <button onclick="toggleModal('outpassModal')" class="w-full md:w-auto group bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl shadow-lg shadow-blue-600/30 font-bold flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 active:translate-y-0">
+                <i class="ph-bold ph-plus-circle text-xl group-hover:rotate-90 transition-transform"></i>
+                Apply Outpass
+            </button>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white p-4 md:p-5 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider">Total</p>
+                        <p class="text-2xl md:text-3xl font-bold text-slate-900 mt-1" id="statTotal">0</p>
+                    </div>
+                    <div class="p-2 bg-slate-100 rounded-lg text-slate-600"><i class="ph-fill ph-files text-xl"></i></div>
+                </div>
+            </div>
+            <div class="bg-white p-4 md:p-5 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden">
+                <div class="flex justify-between items-start relative z-10">
+                    <div>
+                        <p class="text-[10px] md:text-xs font-bold text-blue-600 uppercase tracking-wider">Pending</p>
+                        <p class="text-2xl md:text-3xl font-bold text-slate-900 mt-1" id="statPending">0</p>
+                    </div>
+                    <div class="p-2 bg-blue-50 rounded-lg text-blue-600"><i class="ph-fill ph-hourglass-medium text-xl"></i></div>
+                </div>
+            </div>
+            <div class="bg-white p-4 md:p-5 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-[10px] md:text-xs font-bold text-emerald-600 uppercase tracking-wider">Approved</p>
+                        <p class="text-2xl md:text-3xl font-bold text-slate-900 mt-1" id="statApproved">0</p>
+                    </div>
+                    <div class="p-2 bg-emerald-50 rounded-lg text-emerald-600"><i class="ph-fill ph-check-circle text-xl"></i></div>
+                </div>
+            </div>
+            <div class="bg-white p-4 md:p-5 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-[10px] md:text-xs font-bold text-red-600 uppercase tracking-wider">Rejected</p>
+                        <p class="text-2xl md:text-3xl font-bold text-slate-900 mt-1" id="statRejected">0</p>
+                    </div>
+                    <div class="p-2 bg-red-50 rounded-lg text-red-600"><i class="ph-fill ph-x-circle text-xl"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 class="font-semibold text-slate-900 flex items-center gap-2">
+                    <i class="ph-duotone ph-list-dashes text-slate-500"></i> Recent Activity
+                </h3>
+            </div>
+            
+            <div class="overflow-x-auto table-container">
+                <table class="w-full text-left border-collapse min-w-[600px]">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-100 text-xs uppercase text-slate-500 font-semibold tracking-wide">
+                            <th class="px-6 py-4">Type / Date</th>
+                            <th class="px-6 py-4">Reason / Destination</th>
+                            <th class="px-6 py-4">Timing</th>
+                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4 text-right">View</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requestsTableBody" class="text-sm text-slate-700 divide-y divide-slate-100">
+                        </tbody>
+                </table>
+            </div>
+            
+            <div id="emptyState" class="hidden py-12 flex flex-col items-center justify-center text-center">
+                <div class="bg-slate-50 p-4 rounded-full mb-3"><i class="ph-duotone ph-clipboard-text text-3xl text-slate-400"></i></div>
+                <p class="text-slate-900 font-medium">No requests found</p>
+            </div>
+        </div>
+    </main>
+
+    <div id="outpassModal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50 transition-opacity duration-300">
+        <div class="modal-overlay absolute w-full h-full bg-slate-900/60 backdrop-blur-sm" onclick="toggleModal('outpassModal')"></div>
+        
+        <div class="modal-container bg-white w-11/12 md:max-w-2xl mx-auto rounded-2xl shadow-2xl z-50 overflow-y-auto transform scale-95 transition-transform duration-300" id="modalContent">
+            
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl">
+                <h3 class="text-lg font-bold text-slate-900">Select Pass Type</h3>
+                <button onclick="toggleModal('outpassModal')" class="text-slate-400 hover:text-red-500 transition-colors">
+                    <i class="ph-bold ph-x text-lg"></i>
+                </button>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    
+                    <a href="student-day-pass.html" class="group relative flex flex-col items-center justify-center p-6 rounded-2xl border-2 border-slate-100 hover:border-blue-600 bg-white hover:bg-blue-50/50 transition-all duration-300 text-center cursor-pointer shadow-sm hover:shadow-xl hover:-translate-y-1">
+                        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4 group-hover:bg-blue-600 transition-colors duration-300">
+                            <i class="ph-fill ph-sun text-3xl text-blue-600 group-hover:text-white transition-colors"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-slate-900 mb-1">Day Pass</h4>
+                        <p class="text-sm text-slate-500 mb-4">Local outings (5AM - 9PM). Same day return.</p>
+                        <span class="text-xs font-bold text-blue-600 bg-blue-100 px-4 py-2 rounded-full group-hover:bg-blue-600 group-hover:text-white transition-colors">Select &rarr;</span>
+                    </a>
+
+                    <a href="student-home-pass.html" class="group relative flex flex-col items-center justify-center p-6 rounded-2xl border-2 border-slate-100 hover:border-emerald-600 bg-white hover:bg-emerald-50/50 transition-all duration-300 text-center cursor-pointer shadow-sm hover:shadow-xl hover:-translate-y-1">
+                        <div class="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mb-4 group-hover:bg-emerald-600 transition-colors duration-300">
+                            <i class="ph-fill ph-house-line text-3xl text-emerald-600 group-hover:text-white transition-colors"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-slate-900 mb-1">Home Pass</h4>
+                        <p class="text-sm text-slate-500 mb-4">Overnight stays & weekends. Requires Guardian approval.</p>
+                        <span class="text-xs font-bold text-emerald-600 bg-emerald-100 px-4 py-2 rounded-full group-hover:bg-emerald-600 group-hover:text-white transition-colors">Select &rarr;</span>
+                    </a>
+
+                </div>
+            </div>
+            
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-100 text-center">
+                <p class="text-xs text-slate-500 font-medium">Please ensure you are not a Defaulter before applying.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. MOCK DATA ---
+        const currentUser = { name: "Rahul Sharma", regNo: "RA2111003010156", initials: "RS" };
+        
+        // Mixed Data: Day Passes and Home Passes
+        let requests = [
+            { id: 101, type: 'Day Pass', appliedOn: "2023-10-25 08:30", reason: "Market Visit", from: "2023-10-25 10:00", to: "2023-10-25 18:00", status: "Approved" },
+            { id: 102, type: 'Home Pass', appliedOn: "2023-10-20 15:00", reason: "Sister's Wedding", from: "2023-10-21 08:00", to: "2023-10-24 20:00", status: "Used" },
+            { id: 103, type: 'Day Pass', appliedOn: "2023-10-18 09:00", reason: "Movie", from: "2023-10-18 11:00", to: "2023-10-18 21:00", status: "Rejected" },
+            { id: 104, type: 'Home Pass', appliedOn: "2023-10-15 14:00", reason: "Weekend", from: "2023-10-16 17:00", to: "2023-10-18 08:00", status: "Approved" },
+        ];
+
+        // --- 2. INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('navName').textContent = currentUser.name;
+            document.getElementById('navRegNo').textContent = currentUser.regNo;
+            document.getElementById('navInitials').textContent = currentUser.initials;
+            updateDashboard();
+        });
+
+        // --- 3. RENDER LOGIC ---
+        function updateDashboard() {
+            renderStats();
+            renderTable();
+        }
+
+        function renderStats() {
+            document.getElementById('statTotal').innerText = requests.length;
+            document.getElementById('statPending').innerText = requests.filter(r => r.status === 'Pending').length;
+            document.getElementById('statApproved').innerText = requests.filter(r => r.status === 'Approved').length;
+            document.getElementById('statRejected').innerText = requests.filter(r => r.status === 'Rejected').length;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('requestsTableBody');
+            const emptyState = document.getElementById('emptyState');
+            tbody.innerHTML = '';
+
+            if (requests.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            requests.forEach(req => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors group border-b border-slate-50 last:border-0";
+                
+                // Format Date Helpers
+                const dateStr = new Date(req.appliedOn).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                const timeStr = new Date(req.appliedOn).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+                // Icons
+                const typeIcon = req.type === 'Day Pass' ? '<i class="ph-fill ph-sun text-blue-500"></i>' : '<i class="ph-fill ph-house-line text-emerald-500"></i>';
+                
+                // Status Badge
+                let badge = '';
+                if(req.status === 'Approved') badge = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">Approved</span>`;
+                else if(req.status === 'Rejected') badge = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">Rejected</span>`;
+                else if(req.status === 'Used') badge = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">Used</span>`;
+                else badge = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">Pending</span>`;
+
+                // Link Logic
+                const link = req.type === 'Day Pass' ? 'student-day-pass-action.html' : 'student-home-pass-action.html';
+
+                tr.innerHTML = `
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                            ${typeIcon}
+                            <span class="font-bold text-slate-700">${req.type}</span>
+                        </div>
+                        <div class="text-xs text-slate-400 mt-0.5 ml-6">${dateStr}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-slate-900 font-medium">${req.reason}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-xs text-slate-500"><span class="font-bold text-slate-700">Out:</span> ${req.from.split(' ')[1]}</div>
+                        <div class="text-xs text-slate-500"><span class="font-bold text-slate-700">In:</span> &nbsp;&nbsp;${req.to.split(' ')[1]}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">${badge}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right">
+                        <a href="${link}" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition">
+                            <i class="ph-bold ph-caret-right"></i>
+                        </a>
+                    </td>
+                `;
+                tbody.appendChild(tr);  
+            });
+        }
+
+        // --- 4. MODAL LOGIC ---
+        function toggleModal(modalID) {
+            const modal = document.getElementById(modalID);
+            const content = document.getElementById('modalContent');
+            const body = document.querySelector('body');
+            
+            if (modal.classList.contains('opacity-0')) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                body.classList.add('modal-active');
+                setTimeout(() => { content.classList.remove('scale-95'); content.classList.add('scale-100'); }, 10);
+            } else {
+                content.classList.remove('scale-100'); content.classList.add('scale-95');
+                setTimeout(() => { modal.classList.add('opacity-0', 'pointer-events-none'); body.classList.remove('modal-active'); }, 150);
+            }
+        }
+    </script>
+</body>
+</html>

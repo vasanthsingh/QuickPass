@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Pass Ticket - Smart Outpass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .ticket-scallop { position: absolute; height: 20px; width: 20px; background-color: #f8fafc; border-radius: 50%; z-index: 10; }
+        .scallop-left { bottom: -10px; left: -10px; }
+        .scallop-right { bottom: -10px; right: -10px; }
+
+        @keyframes scan { 
+            0%, 100% { top: 0%; opacity: 0; } 
+            10% { opacity: 1; } 
+            50% { top: 100%; opacity: 1; } 
+            90% { opacity: 1; } 
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-slate-200 px-4 py-3 flex justify-between items-center sticky top-0 z-40 shadow-sm">
+        <div class="flex items-center gap-3">
+            <a href="landing.html" class="bg-slate-100 p-2 rounded-lg hover:bg-slate-200 transition text-slate-600">
+                <i class="ph-bold ph-arrow-left text-lg"></i>
+            </a>
+            <span class="font-bold text-lg text-slate-800">Home Pass Ticket</span>
+        </div>
+        <button onclick="toggleDemoStatus()" class="text-xs font-mono bg-slate-100 px-3 py-1.5 rounded border border-slate-200 text-slate-600 hover:bg-slate-200 transition font-bold">
+            Cycle Status ↻
+        </button>
+    </nav>
+
+    <main class="flex-grow container mx-auto px-4 py-6 max-w-md">
+
+        <div id="statusBanner" class="mb-6 rounded-2xl p-6 text-white shadow-lg bg-blue-600 flex justify-between items-center transition-colors duration-300">
+            <div>
+                <p class="text-xs font-medium opacity-90 uppercase tracking-wider mb-1">Status</p>
+                <h2 class="text-2xl font-bold flex items-center gap-2" id="statusText">
+                    <i class="ph-fill ph-check-circle"></i> Approved
+                </h2>
+            </div>
+            <div class="text-right">
+                <p class="text-xs opacity-90">Pass ID</p>
+                <p class="font-mono font-bold text-lg">#HP-592</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200 mb-6">
+            
+            <div class="p-8 flex flex-col items-center justify-center bg-white relative border-b-2 border-dashed border-slate-200">
+                
+                <div class="relative w-48 h-48 bg-slate-50 rounded-xl border-2 border-slate-100 flex items-center justify-center mb-4 overflow-hidden group">
+                    
+                    <div id="qrActive" class="absolute inset-0 flex items-center justify-center">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=HomePass-Approved" alt="QR" class="w-40 h-40 object-contain mix-blend-multiply opacity-90">
+                        <div class="absolute w-full h-1 bg-blue-500/50 shadow-[0_0_10px_rgba(59,130,246,0.6)] top-0 animate-[scan_2s_ease-in-out_infinite]"></div>
+                    </div>
+
+                    <div id="qrLocked" class="hidden absolute inset-0 bg-slate-100 flex flex-col items-center justify-center text-slate-400">
+                        <i class="ph-fill ph-lock-key text-4xl mb-2"></i>
+                        <span class="text-xs font-bold uppercase tracking-wide">QR Locked</span>
+                    </div>
+
+                    <div id="qrRejected" class="hidden absolute inset-0 bg-red-50 flex flex-col items-center justify-center text-red-400">
+                        <i class="ph-fill ph-x-circle text-4xl mb-2"></i>
+                        <span class="text-xs font-bold uppercase tracking-wide">Invalid</span>
+                    </div>
+
+                     <div id="qrUsed" class="hidden absolute inset-0 bg-slate-100 flex flex-col items-center justify-center text-slate-500">
+                        <i class="ph-fill ph-check-square-offset text-4xl mb-2"></i>
+                        <span class="text-xs font-bold uppercase tracking-wide">Already Scanned</span>
+                    </div>
+
+                </div>
+
+                <div class="text-center">
+                    <p class="text-slate-900 font-bold text-lg">Rahul Sharma</p>
+                    <p class="text-slate-500 text-xs font-mono">RA2111003010156</p>
+                </div>
+                <div class="ticket-scallop scallop-left border-r border-t border-slate-200"></div>
+                <div class="ticket-scallop scallop-right border-l border-t border-slate-200"></div>
+            </div>
+
+            <div class="p-6 bg-slate-50/50">
+                <div class="grid grid-cols-2 gap-6 mb-4">
+                    <div>
+                        <p class="text-xs text-slate-500 font-semibold uppercase mb-1">Leaving On</p>
+                        <p class="text-slate-900 font-bold text-lg">Oct 24</p>
+                        <p class="text-xs text-slate-500">10:00 AM</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-semibold uppercase mb-1">Returning On</p>
+                        <p class="text-slate-900 font-bold text-lg">Oct 26</p>
+                        <p class="text-xs text-slate-500">08:00 PM</p>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <p class="text-xs text-slate-500 font-semibold uppercase mb-1">Destination Address</p>
+                    <p class="text-slate-900 font-medium text-sm flex items-start gap-1.5">
+                        <i class="ph-fill ph-house text-slate-400 mt-0.5"></i>
+                        H.No 4-22, Karimnagar
+                    </p>
+                </div>
+
+                <button id="downloadBtn" class="w-full bg-white border border-slate-300 text-slate-700 py-2.5 rounded-xl text-sm font-bold shadow-sm hover:bg-slate-50 transition flex items-center justify-center gap-2">
+                    <i class="ph-bold ph-download-simple"></i> Download Ticket
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const statusConfig = {
+            'Approved': {
+                bg: 'bg-blue-600',
+                icon: 'ph-check-circle',
+                text: 'Approved',
+                qrView: 'qrActive'
+            },
+            'Pending': {
+                bg: 'bg-amber-500',
+                icon: 'ph-hourglass-medium',
+                text: 'Pending Approval',
+                qrView: 'qrLocked'
+            },
+            'Rejected': {
+                bg: 'bg-red-600',
+                icon: 'ph-x-circle',
+                text: 'Rejected',
+                qrView: 'qrRejected'
+            },
+            'Used': {
+                bg: 'bg-slate-500',
+                icon: 'ph-archive-box',
+                text: 'Pass Used',
+                qrView: 'qrUsed'
+            }
+        };
+
+        let currentStatus = 'Approved';
+
+        function toggleDemoStatus() {
+            if (currentStatus === 'Approved') currentStatus = 'Pending';
+            else if (currentStatus === 'Pending') currentStatus = 'Rejected';
+            else if (currentStatus === 'Rejected') currentStatus = 'Used';
+            else currentStatus = 'Approved';
+            renderPage();
+        }
+
+        function renderPage() {
+            const config = statusConfig[currentStatus];
+            
+            // 1. Update Banner
+            const banner = document.getElementById('statusBanner');
+            const statusText = document.getElementById('statusText');
+            banner.className = `mb-6 rounded-2xl p-6 text-white shadow-lg flex justify-between items-center transition-colors duration-300 ${config.bg}`;
+            statusText.innerHTML = `<i class="ph-fill ${config.icon}"></i> ${config.text}`;
+
+            // 2. Update QR
+            ['qrActive', 'qrLocked', 'qrRejected', 'qrUsed'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(config.qrView).classList.remove('hidden');
+
+            // 3. Update Button State
+            const btn = document.getElementById('downloadBtn');
+            if(currentStatus === 'Approved') {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="ph-bold ph-download-simple"></i> Download Ticket`;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else if (currentStatus === 'Used') {
+                 btn.disabled = true;
+                btn.innerHTML = `<i class="ph-bold ph-check"></i> Completed`;
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                btn.disabled = true;
+                btn.innerHTML = `<i class="ph-bold ph-prohibit"></i> Action Unavailable`;
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+    </script>
+</body>
+</html>
