@@ -13,12 +13,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Database Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/smart-outpass', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('Database Connection Error:', err));
+mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://rasaputhravasanth_db_user:Quickpass123quickpass.exxfdy9.mongodb.net/?appName=QuickPass')
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('Database Connection Error:', err));
 
 // Routes
 app.use('/api/admin', require('./routes/adminRoutes'));
