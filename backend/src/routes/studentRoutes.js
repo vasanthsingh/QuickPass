@@ -1,29 +1,32 @@
 // routes/studentRoutes.js
 const express = require('express');
 const router = express.Router();
+const {
+    createStudent,
+    studentLogin,
+    getAllStudents,
+    getStudentById,
+    updateStudent,
+    deleteStudent
+} = require('../controller/studentController');
+const { verifyToken, isAdmin } = require('../middleware/authMiddleware');
 
+// POST /api/students/login - Student login (Public)
+router.post('/login', studentLogin);
 
-// @route   POST /api/students/add
-// @desc    Register a new student
-router.post('/add', async (req, res) => {
-    try {
-        const { rollNumber } = req.body;
+// POST /api/students/add - Create student (Admin only)
+router.post('/add', verifyToken, isAdmin, createStudent);
 
-        // 1. Check if student exists
-        let student = await Student.findOne({ rollNumber });
-        if (student) {
-            return res.status(400).json({ message: 'Student with this Roll Number already exists' });
-        }
+// GET /api/students - Get all students (Admin only)
+router.get('/', verifyToken, isAdmin, getAllStudents);
 
-        // 2. Create new student
-        student = new Student(req.body);
-        await student.save();
+// GET /api/students/:id - Get student by ID (Admin only)
+router.get('/:id', verifyToken, isAdmin, getStudentById);
 
-        res.status(201).json({ message: 'Student created successfully!' });
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ message: 'Server Error', error: err.message });
-    }
-});
+// PUT /api/students/:id - Update student (Admin only)
+router.put('/:id', verifyToken, isAdmin, updateStudent);
+
+// DELETE /api/students/:id - Delete student (Admin only)
+router.delete('/:id', verifyToken, isAdmin, deleteStudent);
 
 module.exports = router;

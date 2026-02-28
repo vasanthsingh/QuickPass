@@ -4,6 +4,8 @@ const router = express.Router();
 const {
     createAdmin,
     adminLogin,
+    wardenLogin,
+    securityLogin,
     getAllAdmins,
     getAdminById,
     updateAdmin,
@@ -24,6 +26,12 @@ const { verifyToken, isAdmin } = require('../middleware/authMiddleware');
 
 // POST /api/admin/login - Admin login (Public)
 router.post('/login', adminLogin);
+
+// POST /api/admin/wardens/login - Warden login (Public)
+router.post('/wardens/login', wardenLogin);
+
+// POST /api/admin/security/login - Security guard login (Public)
+router.post('/security/login', securityLogin);
 
 // GET /api/admin/dashboard - Get dashboard stats (Admin only)
 router.get('/dashboard', verifyToken, isAdmin, getDashboardStats);

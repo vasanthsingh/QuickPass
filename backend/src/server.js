@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Database Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://rasaputhravasanth_db_user:Quickpass123quickpass.exxfdy9.mongodb.net/?appName=QuickPass')
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/smart-outpass')
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('Database Connection Error:', err));
 

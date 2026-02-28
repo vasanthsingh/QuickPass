@@ -101,6 +101,98 @@ const adminLogin = async (req, res) => {
     }
 };
 
+// @desc    Warden login
+// @access  Public
+const wardenLogin = async (req, res) => {
+    try {
+        const { wardenId, password } = req.body;
+
+        if (!wardenId || !password) {
+            return res.status(400).json({ message: 'wardenId and password are required' });
+        }
+
+        const warden = await Warden.findOne({ wardenId });
+        if (!warden) {
+            return res.status(401).json({ message: 'Invalid wardenId or password' });
+        }
+
+        const isPasswordValid = await bcryptjs.compare(password, warden.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: 'Invalid wardenId or password' });
+        }
+
+        const token = jwt.sign(
+            { id: warden._id, wardenId: warden.wardenId, role: 'Warden' },
+            process.env.JWT_SECRET || 'your-secret-key',
+            { expiresIn: '7d' }
+        );
+
+        return res.json({
+            message: 'Warden login successful',
+            token,
+            warden: {
+                id: warden._id,
+                fullName: warden.fullName,
+                wardenId: warden.wardenId,
+                email: warden.email,
+                phoneNumber: warden.phoneNumber,
+                assignedHostel: warden.assignedHostel,
+                isActive: warden.isActive
+            }
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error', error: err.message });
+    }
+};
+
+// @desc    Security guard login
+// @access  Public
+const securityLogin = async (req, res) => {
+    try {
+        const { guardId, password } = req.body;
+
+        if (!guardId || !password) {
+            return res.status(400).json({ message: 'guardId and password are required' });
+        }
+
+        const guard = await Guard.findOne({ guardId });
+        if (!guard) {
+            return res.status(401).json({ message: 'Invalid guardId or password' });
+        }
+
+        const isPasswordValid = await bcryptjs.compare(password, guard.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: 'Invalid guardId or password' });
+        }
+
+        const token = jwt.sign(
+            { id: guard._id, guardId: guard.guardId, role: 'Security' },
+            process.env.JWT_SECRET || 'your-secret-key',
+            { expiresIn: '7d' }
+        );
+
+        return res.json({
+            message: 'Security login successful',
+            token,
+            security: {
+                id: guard._id,
+                fullName: guard.fullName,
+                guardId: guard.guardId,
+                phoneNumber: guard.phoneNumber,
+                email: guard.email,
+                assignedGate: guard.assignedGate,
+                shiftTime: guard.shiftTime,
+                status: guard.status,
+                dateJoined: guard.dateJoined
+            }
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error', error: err.message });
+    }
+};
+
 // @desc    Get all admins
 // @access  Private - Admin only
 const getAllAdmins = async (req, res) => {
@@ -510,6 +602,8 @@ const deleteSecurity = async (req, res) => {
 module.exports = {
     createAdmin,
     adminLogin,
+    wardenLogin,
+    securityLogin,
     getAllAdmins,
     getAdminById,
     updateAdmin,
