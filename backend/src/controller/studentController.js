@@ -1,4 +1,5 @@
 const Student = require('../models/studentModel');
+const ProfileRequest = require('../models/profileRequestModel');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -130,6 +131,254 @@ const studentLogin = async (req, res) => {
     }
 };
 
+// @desc    Update student password
+// @access  Private - Student self
+const updateStudentPassword = async (req, res) => {
+    try {
+        if (!req.user || req.user.role !== 'Student') {
+            return res.status(403).json({ message: 'Student access required' });
+        }
+
+        const { currentPassword, newPassword, confirmPassword } = req.body;
+
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ message: 'currentPassword and newPassword are required' });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({ message: 'New password must be at least 6 characters long' });
+        }
+
+        if (confirmPassword !== undefined && newPassword !== confirmPassword) {
+            return res.status(400).json({ message: 'newPassword and confirmPassword do not match' });
+        }
+
+        const student = await Student.findById(req.user.id);
+        if (!student) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+
+        const isCurrentPasswordValid = await bcryptjs.compare(currentPassword, student.password);
+        if (!isCurrentPasswordValid) {
+            return res.status(401).json({ message: 'Current password is incorrect' });
+        }
+
+        const salt = await bcryptjs.genSalt(10);
+        student.password = await bcryptjs.hash(newPassword, salt);
+        await student.save();
+
+        return res.json({ message: 'Password updated successfully' });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error', error: err.message });
+    }
+};
+
+// @desc    Get own student profile
+// @access  Private - Student self
+const getStudentProfile = async (req, res) => {
+    try {
+        if (!req.user || req.user.role !== 'Student') {
+            return res.status(403).json({ message: 'Student access required' });
+        }
+
+        const student = await Student.findById(req.user.id).select('-password');
+        if (!student) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+
+        return res.json({
+            message: 'Student profile retrieved successfully',
+            profile: {
+                id: student._id,
+                fullName: student.fullName,
+                rollNumber: student.rollNumber,
+                studentPhone: student.studentPhone,
+                parentPhone: student.parentPhone,
+                studentEmail: student.studentEmail,
+                parentEmail: student.parentEmail,
+                hostelBlock: student.hostelBlock,
+                roomNumber: student.roomNumber,
+                year: student.year,
+                branch: student.branch,
+                isDefaulter: student.isDefaulter,
+                createdAt: student.createdAt
+            }
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error', error: err.message });
+    }
+};
+
+// @desc    Update own student profile details
+// @access  Private - Student self
+const updateStudentProfile = async (req, res) => {
+    try {
+        if (!req.user || req.user.role !== 'Student') {
+            return res.status(403).json({ message: 'Student access required' });
+        }
+
+        const {
+            fullName,
+            studentPhone,
+            parentPhone,
+            studentEmail,
+            parentEmail,
+            year,
+            branch
+        } = req.body;
+
+        const student = await Student.findById(req.user.id);
+        if (!student) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+
+        const hasAnyField = [
+            fullName,
+            studentPhone,
+            parentPhone,
+            studentEmail,
+            parentEmail,
+            year,
+            branch
+        ].some((value) => value !== undefined);
+
+        if (!hasAnyField) {
+            return res.status(400).json({
+                message: 'At least one of fullName, studentPhone, parentPhone, studentEmail, parentEmail, year or branch is required'
+            });
+        }
+
+        if (fullName !== undefined) student.fullName = fullName;
+        if (studentPhone !== undefined) student.studentPhone = studentPhone;
+        if (parentPhone !== undefined) student.parentPhone = parentPhone;
+        if (studentEmail !== undefined) student.studentEmail = studentEmail;
+        if (parentEmail !== undefined) student.parentEmail = parentEmail;
+        if (year !== undefined) student.year = year;
+        if (branch !== undefined) student.branch = branch;
+
+        await student.save();
+
+        return res.json({
+            message: 'Student profile updated successfully',
+            profile: {
+                id: student._id,
+                fullName: student.fullName,
+                rollNumber: student.rollNumber,
+                studentPhone: student.studentPhone,
+                parentPhone: student.parentPhone,
+                studentEmail: student.studentEmail,
+                parentEmail: student.parentEmail,
+                hostelBlock: student.hostelBlock,
+                roomNumber: student.roomNumber,
+                year: student.year,
+                branch: student.branch,
+                isDefaulter: student.isDefaulter,
+                createdAt: student.createdAt
+            }
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error', error: formatMongoError(err) });
+    }
+};
+
+// @desc    Create profile change request
+// @access  Private - Student self
+const createProfileChangeRequest = async (req, res) => {
+    try {
+        if (!req.user || req.user.role !== 'Student') {
+            return res.status(403).json({ message: 'Student access required' });
+        }
+
+        const student = await Student.findById(req.user.id);
+        if (!student) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+
+        const allowedFields = {
+            fullName: 'Full Name',
+            studentPhone: 'Phone Number',
+            studentEmail: 'Student Email',
+            parentPhone: 'Guardian Phone',
+            parentEmail: 'Guardian Email',
+            year: 'Year',
+            branch: 'Branch'
+        };
+
+        let changes = Array.isArray(req.body.changes) ? req.body.changes : [];
+
+        if (changes.length === 0 && req.body.updates && typeof req.body.updates === 'object') {
+            changes = Object.entries(req.body.updates)
+                .filter(([field, newValue]) => allowedFields[field] && newValue !== undefined)
+                .map(([field, newValue]) => ({
+                    field,
+                    label: allowedFields[field],
+                    oldValue: student[field] !== undefined && student[field] !== null ? String(student[field]) : '',
+                    newValue: String(newValue)
+                }));
+        }
+
+        if (!Array.isArray(changes) || changes.length === 0) {
+            return res.status(400).json({
+                message: 'Provide changes array or updates object with at least one editable field'
+            });
+        }
+
+        const normalizedChanges = changes
+            .filter((change) => change && allowedFields[change.field])
+            .map((change) => ({
+                field: change.field,
+                label: change.label || allowedFields[change.field],
+                oldValue: change.oldValue !== undefined
+                    ? String(change.oldValue)
+                    : (student[change.field] !== undefined && student[change.field] !== null ? String(student[change.field]) : ''),
+                newValue: String(change.newValue || '')
+            }))
+            .filter((change) => change.newValue.trim() !== '');
+
+        if (normalizedChanges.length === 0) {
+            return res.status(400).json({ message: 'No valid profile changes found' });
+        }
+
+        const profileRequest = await ProfileRequest.create({
+            studentId: student._id,
+            changes: normalizedChanges
+        });
+
+        return res.status(201).json({
+            message: 'Profile change request submitted successfully',
+            request: profileRequest
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error', error: formatMongoError(err) });
+    }
+};
+
+// @desc    Get own profile change requests
+// @access  Private - Student self
+const getMyProfileChangeRequests = async (req, res) => {
+    try {
+        if (!req.user || req.user.role !== 'Student') {
+            return res.status(403).json({ message: 'Student access required' });
+        }
+
+        const requests = await ProfileRequest.find({ studentId: req.user.id })
+            .sort({ requestDate: -1 });
+
+        return res.json({
+            message: 'Profile change requests retrieved successfully',
+            count: requests.length,
+            requests
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error', error: err.message });
+    }
+};
+
 // @desc    Get all students
 // @access  Private - Admin only
 const getAllStudents = async (req, res) => {
@@ -248,6 +497,11 @@ const deleteStudent = async (req, res) => {
 module.exports = {
     createStudent,
     studentLogin,
+    updateStudentPassword,
+    getStudentProfile,
+    updateStudentProfile,
+    createProfileChangeRequest,
+    getMyProfileChangeRequests,
     getAllStudents,
     getStudentById,
     updateStudent,

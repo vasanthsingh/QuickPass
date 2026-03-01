@@ -4,11 +4,10 @@ const router = express.Router();
 const {
     createAdmin,
     adminLogin,
-    wardenLogin,
-    securityLogin,
     getAllAdmins,
     getAdminById,
     updateAdmin,
+    updateAdminPassword,
     deleteAdmin,
     getDashboardStats,
     createWarden,
@@ -22,16 +21,17 @@ const {
     updateSecurity,
     deleteSecurity
 } = require('../controller/adminController');
+const {
+    createStudent,
+    getAllStudents,
+    getStudentById,
+    updateStudent,
+    deleteStudent
+} = require('../controller/studentController');
 const { verifyToken, isAdmin } = require('../middleware/authMiddleware');
 
 // POST /api/admin/login - Admin login (Public)
 router.post('/login', adminLogin);
-
-// POST /api/admin/wardens/login - Warden login (Public)
-router.post('/wardens/login', wardenLogin);
-
-// POST /api/admin/security/login - Security guard login (Public)
-router.post('/security/login', securityLogin);
 
 // GET /api/admin/dashboard - Get dashboard stats (Admin only)
 router.get('/dashboard', verifyToken, isAdmin, getDashboardStats);
@@ -71,6 +71,24 @@ router.put('/security/:id', verifyToken, isAdmin, updateSecurity);
 
 // DELETE /api/admin/security/:id - Delete security guard (Admin only)
 router.delete('/security/:id', verifyToken, isAdmin, deleteSecurity);
+
+// POST /api/admin/students - Create student (Admin only)
+router.post('/students', verifyToken, isAdmin, createStudent);
+
+// GET /api/admin/students - Get all students (Admin only)
+router.get('/students', verifyToken, isAdmin, getAllStudents);
+
+// GET /api/admin/students/:id - Get student by ID (Admin only)
+router.get('/students/:id', verifyToken, isAdmin, getStudentById);
+
+// PUT /api/admin/students/:id - Update student (Admin only)
+router.put('/students/:id', verifyToken, isAdmin, updateStudent);
+
+// DELETE /api/admin/students/:id - Delete student (Admin only)
+router.delete('/students/:id', verifyToken, isAdmin, deleteStudent);
+
+// PUT /api/admin/update-password - Update own password (Admin only)
+router.put('/update-password', verifyToken, isAdmin, updateAdminPassword);
 
 // GET /api/admin/:id - Get admin by ID (Admin only)
 router.get('/:id', verifyToken, isAdmin, getAdminById);

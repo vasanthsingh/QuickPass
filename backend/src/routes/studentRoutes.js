@@ -2,31 +2,36 @@
 const express = require('express');
 const router = express.Router();
 const {
-    createStudent,
     studentLogin,
+    updateStudentPassword,
+    getStudentProfile,
+    updateStudentProfile,
+    createProfileChangeRequest,
+    getMyProfileChangeRequests,
     getAllStudents,
-    getStudentById,
-    updateStudent,
-    deleteStudent
+    getStudentById
 } = require('../controller/studentController');
 const { verifyToken, isAdmin } = require('../middleware/authMiddleware');
 
 // POST /api/students/login - Student login (Public)
 router.post('/login', studentLogin);
 
-// POST /api/students/add - Create student (Admin only)
-router.post('/add', verifyToken, isAdmin, createStudent);
+// GET /api/students/profile - Get own profile (Student only)
+router.get('/profile', verifyToken, getStudentProfile);
 
-// GET /api/students - Get all students (Admin only)
-router.get('/', verifyToken, isAdmin, getAllStudents);
+// PUT /api/students/profile - Update own profile details (Student only)
+router.put('/profile', verifyToken, updateStudentProfile);
+
+// POST /api/students/profile-requests - Submit profile change request (Student only)
+router.post('/profile-requests', verifyToken, createProfileChangeRequest);
+
+// GET /api/students/profile-requests - Get own profile change requests (Student only)
+router.get('/profile-requests', verifyToken, getMyProfileChangeRequests);
+
+// PUT /api/students/update-password - Update own password (Student only)
+router.put('/update-password', verifyToken, updateStudentPassword);
 
 // GET /api/students/:id - Get student by ID (Admin only)
 router.get('/:id', verifyToken, isAdmin, getStudentById);
-
-// PUT /api/students/:id - Update student (Admin only)
-router.put('/:id', verifyToken, isAdmin, updateStudent);
-
-// DELETE /api/students/:id - Delete student (Admin only)
-router.delete('/:id', verifyToken, isAdmin, deleteStudent);
 
 module.exports = router;

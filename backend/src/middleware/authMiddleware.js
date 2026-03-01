@@ -30,4 +30,13 @@ const isAdmin = (req, res, next) => {
     }
 };
 
-module.exports = { verifyToken, isAdmin };
+// Check if user is warden
+const isWarden = (req, res, next) => {
+    if (req.user && req.user.role === 'Warden') {
+        next();
+    } else {
+        res.status(403).json({ message: 'Warden access required' });
+    }
+};
+
+module.exports = { verifyToken, isAdmin, isWarden };

@@ -9,6 +9,7 @@ const wardenSchema = new mongoose.Schema({
 
     // Assignment
     assignedHostel: { type: String, enum: ['BH1', 'BH2', 'GH1', 'GH2'], required: true },
+    officeLocation: { type: String },
 
     isActive: { type: Boolean, default: true },
     createdAt: { type: Date, default: Date.now }

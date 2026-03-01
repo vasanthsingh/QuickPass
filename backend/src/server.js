@@ -13,13 +13,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Database Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/smart-outpass')
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('Database Connection Error:', err));
 
 // Routes
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/students', require('./routes/studentRoutes'));
+app.use('/api/warden', require('./routes/wardenRoutes'));
+app.use('/api/security', require('./routes/securityRoutes'));
 
 // Health Check
 app.get('/api/health', (req, res) => {
