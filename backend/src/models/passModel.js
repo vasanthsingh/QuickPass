@@ -24,11 +24,20 @@ const passSchema = new mongoose.Schema({
         default: 'Pending'
     },
 
-    // Home Pass Specific: Guardian Approval via Email
-    isGuardianApproved: { type: Boolean, default: false }, // Only relevant for Home Pass
+    // Home Pass Specific: Guardian Approval via Phone Link
+    isGuardianApproved: { type: Boolean, default: false },
+    guardianApprovalStatus: {
+        type: String,
+        enum: ['NotRequired', 'Pending', 'Approved', 'Rejected'],
+        default: 'NotRequired'
+    },
+    guardianApprovalToken: { type: String },
+    guardianApprovalAt: { type: Date },
+    guardianRejectionReason: { type: String },
 
     // Tracking Who Approved/ rejected
     approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Warden' },
+    rejectedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Warden' },
     rejectionReason: { type: String },
 
     // Lifecycle timestamps

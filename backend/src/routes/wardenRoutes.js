@@ -18,6 +18,11 @@ const {
     updateStudentByWarden,
     deleteStudentByWarden
 } = require('../controller/wardenController');
+const {
+    getPassRequestsForWarden,
+    approvePassByWarden,
+    rejectPassByWarden
+} = require('../controller/passController');
 
 const { verifyToken, isWarden } = require('../middleware/authMiddleware');
 
@@ -65,5 +70,14 @@ router.put('/students/:id', verifyToken, isWarden, updateStudentByWarden);
 
 // DELETE /api/warden/students/:id - Delete student (Warden only)
 router.delete('/students/:id', verifyToken, isWarden, deleteStudentByWarden);
+
+// GET /api/warden/pass-requests - Pass requests for warden page
+router.get('/pass-requests', verifyToken, isWarden, getPassRequestsForWarden);
+
+// PUT /api/warden/pass-requests/:id/approve - Approve pass request (Warden only)
+router.put('/pass-requests/:id/approve', verifyToken, isWarden, approvePassByWarden);
+
+// PUT /api/warden/pass-requests/:id/reject - Reject pass request (Warden only)
+router.put('/pass-requests/:id/reject', verifyToken, isWarden, rejectPassByWarden);
 
 module.exports = router;
