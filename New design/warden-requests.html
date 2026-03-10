@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Requests - QuickPass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .nav-active {
+            background: linear-gradient(to right, #eef2ff, #faf5ff);
+            color: #4f46e5;
+            border-right: 3px solid #4f46e5;
+            font-weight: 700;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-[#f4f7fb] text-slate-800 antialiased h-screen flex overflow-hidden selection:bg-indigo-100 selection:text-indigo-900">
+
+    <aside
+        class="w-64 bg-white/90 backdrop-blur-xl border-r border-slate-100 flex-shrink-0 flex flex-col h-full z-20 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+        <div class="h-20 flex items-center px-8 gap-3">
+            <div class="bg-gradient-to-br from-indigo-600 to-violet-600 p-2 rounded-xl shadow-md shadow-indigo-200">
+                <i class="ph-bold ph-shield-check text-white text-lg"></i>
+            </div>
+            <span class="font-bold text-xl text-slate-900 tracking-tight">QuickPass</span>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-6 space-y-1 px-4">
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Management</p>
+            <a href="warden-dashboard.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-squares-four text-xl"></i><span class="text-sm font-semibold">Overview</span>
+            </a>
+            <a href="warden-approvals.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-stamp text-xl"></i><span class="text-sm font-semibold">Pass Approvals</span>
+            </a>
+            <a href="#" class="nav-active flex items-center gap-3 px-4 py-3 rounded-xl transition-all">
+                <i class="ph-fill ph-user-switch text-xl"></i><span class="text-sm">Edit Requests</span>
+            </a>
+
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6">Database</p>
+            <a href="warden-students.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-users text-xl"></i><span class="text-sm font-semibold">Students</span>
+            </a>
+            <a href="warden-security.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-police-car text-xl"></i><span class="text-sm font-semibold">Security Guards</span>
+            </a>
+            <a href="warden-defaulters.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-red-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-warning-octagon text-xl"></i><span class="text-sm font-semibold">Defaulters</span>
+            </a>
+        </nav>
+
+        <div class="p-6">
+            <button onclick="logout()"
+                class="w-full flex items-center justify-center gap-2 text-slate-600 hover:text-red-600 bg-slate-50 hover:bg-red-50 py-3 rounded-xl transition-all text-sm font-bold border border-slate-100">
+                <i class="ph-bold ph-sign-out"></i> Log Out
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <header
+            class="h-20 glass-panel border-b border-white flex items-center justify-between px-10 flex-shrink-0 z-10">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Profile Update Requests</h2>
+                <p class="text-sm font-medium text-slate-500 mt-0.5" id="currentDate">Loading Date...</p>
+            </div>
+
+            <div
+                class="bg-white px-4 py-2 rounded-xl border border-slate-100 shadow-sm flex items-center gap-3 hidden md:flex">
+                <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm"
+                    id="wardenInitials">W</div>
+                <span class="text-sm font-bold text-slate-700" id="wardenName">Loading...</span>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-6 md:p-10">
+            <div class="max-w-5xl mx-auto">
+
+                <div
+                    class="bg-indigo-50 border border-indigo-100 rounded-2xl p-5 flex gap-4 mb-8 relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-100 rounded-full opacity-50"></div>
+                    <div class="mt-0.5 bg-white p-1.5 rounded-lg shadow-sm h-fit"><i
+                            class="ph-fill ph-info text-indigo-600 text-xl"></i></div>
+                    <div class="relative z-10">
+                        <h4 class="text-sm font-bold text-indigo-900">Student Profile Modification Requests</h4>
+                        <p class="text-xs text-indigo-800 mt-1 font-medium leading-relaxed">Students cannot edit their
+                            personal or guardian data directly. Verify the requested changes below before authorizing
+                            the update to the central database.</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+                    <div class="relative w-full sm:w-96">
+                        <i class="ph-bold ph-magnifying-glass absolute left-4 top-3.5 text-slate-400 text-lg"></i>
+                        <input type="text" placeholder="Search by name or roll number..."
+                            class="pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm font-medium w-full shadow-sm">
+                    </div>
+
+                    <div class="relative w-full sm:w-auto">
+                        <select
+                            class="appearance-none bg-white border border-slate-200 text-slate-700 text-sm font-bold py-3 pl-5 pr-12 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 cursor-pointer shadow-sm w-full sm:w-auto transition-all">
+                            <option>All Requests</option>
+                            <option>Pending</option>
+                            <option>Approved</option>
+                            <option>Rejected</option>
+                        </select>
+                        <i
+                            class="ph-bold ph-caret-down absolute right-4 top-3.5 text-slate-400 pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                    <div
+                        class="bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 relative overflow-hidden hover:shadow-lg transition-shadow flex flex-col h-full">
+                        <div
+                            class="absolute top-0 right-0 bg-amber-100 text-amber-800 text-[10px] font-bold px-4 py-1.5 rounded-bl-2xl">
+                            PENDING REVIEW</div>
+
+                        <div class="flex items-center gap-4 mb-6">
+                            <div
+                                class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-100 to-indigo-50 flex items-center justify-center font-bold text-lg text-indigo-700 border border-indigo-200 shadow-sm">
+                                RS</div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-lg">Rahul Sharma</h4>
+                                <p class="text-sm text-slate-500 font-medium">S20230010082 • Room 302</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-6 flex-grow">
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Field to Update:
+                                <span class="text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded ml-1">Parent Phone</span>
+                            </p>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="p-4 rounded-2xl bg-rose-50 border border-rose-100">
+                                    <p class="text-[10px] font-bold text-rose-500 uppercase flex items-center gap-1"><i
+                                            class="ph-bold ph-minus-circle"></i> Old Value</p>
+                                    <p class="font-mono text-sm text-slate-700 mt-2 line-through decoration-rose-400">
+                                        98765 43210</p>
+                                </div>
+                                <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-100 shadow-sm">
+                                    <p class="text-[10px] font-bold text-emerald-600 uppercase flex items-center gap-1">
+                                        <i class="ph-bold ph-plus-circle"></i> New Value</p>
+                                    <p class="font-mono text-sm text-slate-900 mt-2 font-bold text-emerald-800">99887
+                                        76655</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 pt-6 border-t border-slate-100">
+                            <button
+                                class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl text-sm font-bold transition-all transform hover:-translate-y-0.5 shadow-lg shadow-indigo-200 flex items-center justify-center gap-2"
+                                onclick="handleAction(this, 'Approved')"><i class="ph-bold ph-check-circle text-lg"></i>
+                                Verify & Update</button>
+                            <button
+                                class="flex-1 bg-white border-2 border-slate-200 text-slate-600 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 py-3 rounded-xl text-sm font-bold transition-all"
+                                onclick="handleAction(this, 'Rejected')">Reject</button>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 relative overflow-hidden hover:shadow-lg transition-shadow flex flex-col h-full">
+                        <div
+                            class="absolute top-0 right-0 bg-amber-100 text-amber-800 text-[10px] font-bold px-4 py-1.5 rounded-bl-2xl">
+                            PENDING REVIEW</div>
+
+                        <div class="flex items-center gap-4 mb-6">
+                            <div
+                                class="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-100 to-violet-50 flex items-center justify-center font-bold text-lg text-violet-700 border border-violet-200 shadow-sm">
+                                PK</div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-lg">Priya K.</h4>
+                                <p class="text-sm text-slate-500 font-medium">S20230010045 • Room 205</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-6 space-y-5 flex-grow">
+                            <div>
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Field 1: <span
+                                        class="text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded ml-1">Parent
+                                        Phone</span></p>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="p-3 rounded-xl bg-rose-50 border border-rose-100">
+                                        <p class="text-[10px] font-bold text-rose-500 uppercase">Old</p>
+                                        <p
+                                            class="font-mono text-xs text-slate-700 mt-1 line-through decoration-rose-400">
+                                            88888 11111</p>
+                                    </div>
+                                    <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-100">
+                                        <p class="text-[10px] font-bold text-emerald-600 uppercase">New</p>
+                                        <p class="font-mono text-xs text-slate-900 mt-1 font-bold text-emerald-800">
+                                            99999 22222</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Field 2: <span
+                                        class="text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded ml-1">Parent
+                                        Email</span></p>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="p-3 rounded-xl bg-rose-50 border border-rose-100">
+                                        <p class="text-[10px] font-bold text-rose-500 uppercase">Old</p>
+                                        <p class="font-mono text-xs text-slate-700 mt-1 line-through decoration-rose-400 truncate"
+                                            title="old.mail@test.com">old.mail@test.com</p>
+                                    </div>
+                                    <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-100 shadow-sm">
+                                        <p class="text-[10px] font-bold text-emerald-600 uppercase">New</p>
+                                        <p class="font-mono text-xs text-slate-900 mt-1 font-bold text-emerald-800 truncate"
+                                            title="new.parent@gmail.com">new.parent@gmail.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 pt-6 border-t border-slate-100">
+                            <button
+                                class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl text-sm font-bold transition-all transform hover:-translate-y-0.5 shadow-lg shadow-indigo-200 flex items-center justify-center gap-2"
+                                onclick="handleAction(this, 'Approved')"><i
+                                    class="ph-bold ph-check-circles text-lg"></i> Verify All</button>
+                            <button
+                                class="flex-1 bg-white border-2 border-slate-200 text-slate-600 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 py-3 rounded-xl text-sm font-bold transition-all"
+                                onclick="handleAction(this, 'Rejected')">Reject All</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current date
+            const date = new Date();
+            document.getElementById('currentDate').textContent = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+            // Handle preview logic for Warden Profile
+            const urlParams = new URLSearchParams(window.location.search);
+            const isPreviewMode = urlParams.get('preview') === 'true';
+            const wardenStr = localStorage.getItem('wardenUser');
+            let warden;
+
+            if (isPreviewMode && !wardenStr) {
+                warden = { name: "Warden Kumar", wardenId: "EMP-001" };
+            } else if (wardenStr) {
+                warden = JSON.parse(wardenStr);
+            } else {
+                window.location.href = 'warden-login.html';
+                return;
+            }
+
+            document.getElementById('wardenName').textContent = warden.name || "Warden";
+            if (warden.name) {
+                const initials = warden.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('wardenInitials').textContent = initials || "W";
+            }
+        });
+
+        // Handle Card Disappearance on Action
+        function handleAction(btn, actionStr) {
+            alert(`Action: ${actionStr} successfully!`);
+            const card = btn.closest('.bg-white');
+            card.style.transition = "all 0.3s ease";
+            card.style.opacity = '0';
+            card.style.transform = "scale(0.95)";
+
+            setTimeout(() => {
+                card.style.display = 'none';
+            }, 300);
+        }
+
+        function logout() {
+            localStorage.removeItem('wardenUser');
+            window.location.href = 'warden-login.html';
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warden Dashboard - QuickPass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .nav-active {
+            background: linear-gradient(to right, #eef2ff, #faf5ff);
+            color: #4f46e5;
+            border-right: 3px solid #4f46e5;
+            font-weight: 700;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-[#f4f7fb] text-slate-800 antialiased h-screen flex overflow-hidden selection:bg-indigo-100 selection:text-indigo-900">
+
+    <aside
+        class="w-64 bg-white/90 backdrop-blur-xl border-r border-slate-100 flex-shrink-0 flex flex-col h-full z-20 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+        <div class="h-20 flex items-center px-8 gap-3">
+            <div class="bg-gradient-to-br from-indigo-600 to-violet-600 p-2 rounded-xl shadow-md shadow-indigo-200">
+                <i class="ph-bold ph-shield-check text-white text-lg"></i>
+            </div>
+            <span class="font-bold text-xl text-slate-900 tracking-tight">QuickPass</span>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-6 space-y-1 px-4">
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Management</p>
+            <a href="#" class="nav-active flex items-center gap-3 px-4 py-3 rounded-xl transition-all">
+                <i class="ph-fill ph-squares-four text-xl"></i><span class="text-sm">Overview</span>
+            </a>
+            <a href="warden-approvals.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-stamp text-xl"></i><span class="text-sm font-semibold">Pass Approvals</span>
+                <span
+                    class="ml-auto bg-amber-100 text-amber-700 py-0.5 px-2 rounded-full text-[10px] font-bold shadow-sm">12</span>
+            </a>
+            <a href="warden-requests.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-user-switch text-xl"></i><span class="text-sm font-semibold">Edit Requests</span>
+            </a>
+
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6">Database</p>
+            <a href="warden-students.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-users text-xl"></i><span class="text-sm font-semibold">Students</span>
+            </a>
+            <a href="warden-security.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-police-car text-xl"></i><span class="text-sm font-semibold">Security Guards</span>
+            </a>
+            <a href="warden-defaulters.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-red-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-warning-octagon text-xl"></i><span class="text-sm font-semibold">Defaulters</span>
+            </a>
+        </nav>
+
+        <div class="p-6">
+            <button onclick="logout()"
+                class="w-full flex items-center justify-center gap-2 text-slate-600 hover:text-red-600 bg-slate-50 hover:bg-red-50 py-3 rounded-xl transition-all text-sm font-bold border border-slate-100">
+                <i class="ph-bold ph-sign-out"></i> Log Out
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <header
+            class="h-20 glass-panel border-b border-white flex items-center justify-between px-10 flex-shrink-0 z-10">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Hostel Overview</h2>
+                <p class="text-sm font-medium text-slate-500 mt-0.5" id="wardenHostel">Loading Block Management...</p>
+            </div>
+
+            <div class="bg-white px-4 py-2 rounded-xl border border-slate-100 shadow-sm flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm"
+                    id="wardenInitials">W</div>
+                <span class="text-sm font-bold text-slate-700" id="wardenName">Loading...</span>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-10 space-y-8">
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <a href="warden-approvals.html"
+                    class="block bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(245,158,11,0.15)] relative overflow-hidden group transform hover:-translate-y-1 transition-all">
+                    <div
+                        class="absolute -right-6 -top-6 w-24 h-24 bg-amber-50 rounded-full transition-transform group-hover:scale-150">
+                    </div>
+                    <div class="flex justify-between items-start relative z-10">
+                        <div>
+                            <p class="text-sm font-bold text-slate-500 uppercase tracking-wider">Pending Passes</p>
+                            <h3 class="text-4xl font-bold text-slate-900 mt-2">12</h3>
+                        </div>
+                        <div
+                            class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-2xl">
+                            <i class="ph-fill ph-clock"></i></div>
+                    </div>
+                    <p class="text-sm font-medium text-amber-600 mt-4 relative z-10 flex items-center gap-1"><i
+                            class="ph-bold ph-arrow-right"></i> Requires review today</p>
+                </a>
+
+                <div
+                    class="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group">
+                    <div
+                        class="absolute -right-6 -top-6 w-24 h-24 bg-indigo-50 rounded-full transition-transform group-hover:scale-150">
+                    </div>
+                    <div class="flex justify-between items-start relative z-10">
+                        <div>
+                            <p class="text-sm font-bold text-slate-500 uppercase tracking-wider">Students Out</p>
+                            <h3 class="text-4xl font-bold text-slate-900 mt-2">45</h3>
+                        </div>
+                        <div
+                            class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl">
+                            <i class="ph-fill ph-sign-out"></i></div>
+                    </div>
+                    <p class="text-sm font-medium text-slate-500 mt-4 relative z-10">Currently off-campus</p>
+                </div>
+
+                <a href="warden-defaulters.html"
+                    class="block bg-gradient-to-br from-red-500 to-rose-600 rounded-3xl p-6 shadow-lg hover:shadow-rose-500/30 relative overflow-hidden text-white group transform hover:-translate-y-1 transition-all">
+                    <div
+                        class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjwvc3ZnPg==')]">
+                    </div>
+                    <div class="flex justify-between items-start relative z-10">
+                        <div>
+                            <p class="text-sm font-bold text-red-100 uppercase tracking-wider">Defaulters</p>
+                            <h3 class="text-4xl font-bold text-white mt-2">3</h3>
+                        </div>
+                        <div
+                            class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-2xl border border-white/30">
+                            <i class="ph-fill ph-warning-circle"></i></div>
+                    </div>
+                    <p class="text-sm font-medium text-red-100 mt-4 relative z-10 flex items-center gap-1">Late returns
+                        / Blocked <i class="ph-bold ph-arrow-right"></i></p>
+                </a>
+            </div>
+
+            <div
+                class="bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+                <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <h3 class="font-bold text-lg text-slate-900">Recent Pass Activity</h3>
+                    <button class="text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors">View
+                        All</button>
+                </div>
+                <div class="p-12 text-center">
+                    <div
+                        class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-100">
+                        <i class="ph-fill ph-folder-open text-4xl text-slate-300"></i>
+                    </div>
+                    <h4 class="text-slate-700 font-bold mb-1">No Recent Activity</h4>
+                    <p class="text-slate-500 font-medium text-sm">Activity logs will appear here once passes are
+                        approved and scanned at the gate.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const isPreviewMode = urlParams.get('preview') === 'true';
+            const wardenStr = localStorage.getItem('wardenUser');
+            let warden;
+
+            // PREVIEW BYPASS
+            if (isPreviewMode && !wardenStr) {
+                console.log("Preview Mode Active!");
+                warden = {
+                    name: "Warden Kumar",
+                    wardenId: "EMP-001",
+                    hostel: "BH-1 Block"
+                };
+            } else {
+                // SECURITY CHECK
+                if (!wardenStr) {
+                    window.location.href = 'warden-login.html';
+                    return;
+                }
+                warden = JSON.parse(wardenStr);
+            }
+
+            // Populate dashboard with data
+            document.getElementById('wardenName').textContent = warden.name || "Warden";
+            document.getElementById('wardenHostel').textContent = `${warden.hostel || 'Hostel'} Management`;
+
+            // Generate Initials
+            if (warden.name) {
+                const initials = warden.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('wardenInitials').textContent = initials || "W";
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('wardenUser');
+            window.location.href = 'warden-login.html';
+        }
+    </script>
+</body>
+
+</html>

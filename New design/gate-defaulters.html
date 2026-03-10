@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Defaulter List - QuickPass Security</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .nav-active {
+            background: linear-gradient(to right, #fff1f2, #fef2f2);
+            color: #e11d48;
+            border-right: 3px solid #e11d48;
+            font-weight: 700;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-[#f4f7fb] text-slate-800 antialiased h-screen flex overflow-hidden selection:bg-rose-100 selection:text-rose-900">
+
+    <aside
+        class="w-64 bg-white/90 backdrop-blur-xl border-r border-slate-100 flex-shrink-0 flex flex-col h-full z-20 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+        <div class="h-20 flex items-center px-8 gap-3">
+            <div class="bg-gradient-to-br from-slate-700 to-slate-900 p-2 rounded-xl shadow-md shadow-slate-300">
+                <i class="ph-bold ph-scan text-white text-lg"></i>
+            </div>
+            <span class="font-bold text-xl text-slate-900 tracking-tight">QuickPass</span>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-6 space-y-1 px-4">
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Security Tasks</p>
+            <a href="gate-dashboard.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-qr-code text-xl"></i><span class="text-sm font-semibold">Scan & Verify</span>
+            </a>
+            <a href="gate-logs.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-clock-counter-clockwise text-xl"></i><span class="text-sm font-semibold">Log
+                    History</span>
+            </a>
+            <a href="#" class="nav-active flex items-center gap-3 px-4 py-3 rounded-xl transition-all">
+                <i class="ph-fill ph-warning-octagon text-xl"></i><span class="text-sm">Defaulter List</span>
+            </a>
+
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6">System</p>
+            <a href="gate-settings.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-gear text-xl"></i><span class="text-sm font-semibold">Settings</span>
+            </a>
+        </nav>
+
+        <div class="p-6">
+            <button onclick="logout()"
+                class="w-full flex items-center justify-center gap-2 text-slate-600 hover:text-rose-600 bg-slate-50 hover:bg-rose-50 py-3 rounded-xl transition-all text-sm font-bold border border-slate-100">
+                <i class="ph-bold ph-sign-out"></i> Log Out
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <header
+            class="h-20 glass-panel border-b border-white flex items-center justify-between px-10 flex-shrink-0 z-10">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Defaulter Watchlist</h2>
+                <p class="text-sm font-medium text-slate-500 mt-0.5" id="currentDate">Loading Date...</p>
+            </div>
+
+            <div
+                class="bg-white px-4 py-2 rounded-xl border border-slate-100 shadow-sm flex items-center gap-3 hidden md:flex">
+                <div class="w-8 h-8 rounded-lg bg-slate-800 text-white flex items-center justify-center font-bold text-sm"
+                    id="guardInitials">G</div>
+                <div>
+                    <span class="text-sm font-bold text-slate-700 block leading-none" id="guardName">Guard Name</span>
+                    <span class="text-[10px] font-bold text-rose-600 flex items-center gap-1 mt-0.5"><span
+                            class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span> <span
+                            id="gateLocation">Main Gate 1</span></span>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-6 md:p-10">
+            <div class="max-w-6xl mx-auto">
+
+                <div class="mb-8">
+                    <div class="relative max-w-md">
+                        <i class="ph-bold ph-magnifying-glass absolute left-4 top-3.5 text-slate-400 text-lg"></i>
+                        <input type="text" placeholder="Check student block status..."
+                            class="pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500 transition-all text-sm font-medium w-full shadow-sm">
+                    </div>
+                </div>
+
+                <div
+                    class="bg-rose-50 border border-rose-100 rounded-3xl p-6 mb-8 flex items-start gap-4 relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-rose-100 rounded-full opacity-40"></div>
+                    <div class="bg-white p-2.5 rounded-xl shadow-sm h-fit"><i
+                            class="ph-fill ph-warning-diamond text-rose-600 text-xl"></i></div>
+                    <div>
+                        <h4 class="text-sm font-bold text-rose-900">Important Instruction</h4>
+                        <p class="text-xs text-rose-800 mt-1 font-medium leading-relaxed max-w-2xl">Students listed
+                            below are restricted from campus exit due to disciplinary reasons or pending late-return
+                            penalties. If a student on this list attempts to scan their pass, the system will
+                            automatically deny access. <b>Do not allow manual exit.</b></p>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm whitespace-nowrap">
+                            <thead class="bg-slate-50/50 border-b border-slate-100">
+                                <tr>
+                                    <th
+                                        class="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                        Student Info</th>
+                                    <th
+                                        class="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                        Room / Hostel</th>
+                                    <th
+                                        class="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                        Reason for Block</th>
+                                    <th
+                                        class="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">
+                                        Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+
+                                <tr class="hover:bg-rose-50/20 transition-colors">
+                                    <td class="px-8 py-5">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-sm">
+                                                SK</div>
+                                            <div>
+                                                <p class="font-bold text-slate-900 text-base">Suresh K.</p>
+                                                <p class="text-xs font-mono text-slate-500">S2023001099</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-8 py-5">
+                                        <p class="text-sm font-bold text-slate-700">Room 204</p>
+                                        <p class="text-xs text-slate-500 font-medium">BH-1 Block</p>
+                                    </td>
+                                    <td class="px-8 py-5">
+                                        <p class="text-sm font-bold text-rose-600">Late Return (+2h 15m)</p>
+                                        <p class="text-xs text-slate-400 font-medium">Reported by: Gate 1</p>
+                                    </td>
+                                    <td class="px-8 py-5 text-right">
+                                        <span
+                                            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-rose-600 text-white shadow-md uppercase tracking-wider">
+                                            <i class="ph-bold ph-lock-key"></i> Blocked
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr class="hover:bg-rose-50/20 transition-colors">
+                                    <td class="px-8 py-5">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-sm">
+                                                AV</div>
+                                            <div>
+                                                <p class="font-bold text-slate-900 text-base">Amit Verma</p>
+                                                <p class="text-xs font-mono text-slate-500">S2023001102</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-8 py-5">
+                                        <p class="text-sm font-bold text-slate-700">Room 101</p>
+                                        <p class="text-xs text-slate-500 font-medium">BH-2 Block</p>
+                                    </td>
+                                    <td class="px-8 py-5">
+                                        <p class="text-sm font-bold text-rose-600">Unauthorized Outing</p>
+                                        <p class="text-xs text-slate-400 font-medium">Warden Decision</p>
+                                    </td>
+                                    <td class="px-8 py-5 text-right">
+                                        <span
+                                            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-rose-600 text-white shadow-md uppercase tracking-wider">
+                                            <i class="ph-bold ph-lock-key"></i> Blocked
+                                        </span>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const now = new Date();
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const isPreviewMode = urlParams.get('preview') === 'true';
+            const guardStr = localStorage.getItem('securityUser');
+            let guard;
+
+            if (isPreviewMode && !guardStr) {
+                guard = { name: "Ramesh Singh", guardId: "SEC-001", gate: "Main Gate 1" };
+            } else if (guardStr) {
+                guard = JSON.parse(guardStr);
+            } else {
+                window.location.href = 'security-login.html';
+                return;
+            }
+
+            if (guard.name) {
+                document.getElementById('guardName').textContent = guard.name;
+                const initials = guard.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('guardInitials').textContent = initials;
+            }
+            if (guard.gate) {
+                document.getElementById('gateLocation').textContent = guard.gate;
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('securityUser');
+            window.location.href = 'security-login.html';
+        }
+    </script>
+</body>
+
+</html>

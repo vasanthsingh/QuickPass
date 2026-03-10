@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Student - QuickPass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .nav-active {
+            background: linear-gradient(to right, #eef2ff, #faf5ff);
+            color: #4f46e5;
+            border-right: 3px solid #4f46e5;
+            font-weight: 700;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-[#f4f7fb] text-slate-800 antialiased h-screen flex overflow-hidden selection:bg-indigo-100 selection:text-indigo-900">
+
+    <aside
+        class="w-64 bg-white/90 backdrop-blur-xl border-r border-slate-100 flex-shrink-0 flex flex-col h-full z-20 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+        <div class="h-20 flex items-center px-8 gap-3">
+            <div class="bg-gradient-to-br from-indigo-600 to-violet-600 p-2 rounded-xl shadow-md shadow-indigo-200">
+                <i class="ph-bold ph-shield-check text-white text-lg"></i>
+            </div>
+            <span class="font-bold text-xl text-slate-900 tracking-tight">QuickPass</span>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-6 space-y-1 px-4">
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Management</p>
+            <a href="warden-dashboard.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-squares-four text-xl"></i><span class="text-sm font-semibold">Overview</span>
+            </a>
+            <a href="warden-approvals.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-stamp text-xl"></i><span class="text-sm font-semibold">Pass Approvals</span>
+            </a>
+            <a href="warden-requests.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-user-switch text-xl"></i><span class="text-sm font-semibold">Edit Requests</span>
+            </a>
+
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6">Database</p>
+            <a href="warden-students.html"
+                class="nav-active flex items-center gap-3 px-4 py-3 rounded-xl transition-all">
+                <i class="ph-fill ph-users text-xl"></i><span class="text-sm">Students</span>
+            </a>
+            <a href="warden-security.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-police-car text-xl"></i><span class="text-sm font-semibold">Security Guards</span>
+            </a>
+            <a href="warden-defaulters.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-red-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-warning-octagon text-xl"></i><span class="text-sm font-semibold">Defaulters</span>
+            </a>
+        </nav>
+
+        <div class="p-6">
+            <button onclick="logout()"
+                class="w-full flex items-center justify-center gap-2 text-slate-600 hover:text-red-600 bg-slate-50 hover:bg-red-50 py-3 rounded-xl transition-all text-sm font-bold border border-slate-100">
+                <i class="ph-bold ph-sign-out"></i> Log Out
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <header
+            class="h-20 glass-panel border-b border-white flex items-center justify-between px-10 flex-shrink-0 z-10">
+            <div class="flex items-center gap-4">
+                <a href="warden-students.html"
+                    class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-indigo-600 hover:border-indigo-200 transition-colors shadow-sm"><i
+                        class="ph-bold ph-arrow-left"></i></a>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 tracking-tight">Add New Student</h2>
+                    <p class="text-xs font-medium text-slate-500 mt-0.5">Register a new student into the database.</p>
+                </div>
+            </div>
+
+            <div
+                class="bg-white px-4 py-2 rounded-xl border border-slate-100 shadow-sm flex items-center gap-3 hidden md:flex">
+                <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm"
+                    id="wardenInitials">W</div>
+                <span class="text-sm font-bold text-slate-700" id="wardenName">Loading...</span>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-6 md:p-10">
+            <div class="max-w-4xl mx-auto">
+
+                <form id="addStudentForm"
+                    class="bg-white rounded-3xl p-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-8">
+
+                    <div>
+                        <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
+                            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2"><i
+                                    class="ph-fill ph-student text-indigo-500"></i> Student Information</h3>
+                            <span class="text-xs font-bold text-slate-400">* Required Fields</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Full Name *</label>
+                                <input type="text" id="fullName" placeholder="e.g. John Doe" required
+                                    class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Roll Number /
+                                    Registration ID *</label>
+                                <input type="text" id="rollNumber" placeholder="e.g. 21BCE1045" required
+                                    class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm font-medium">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Year</label>
+                                <div class="relative">
+                                    <select id="year"
+                                        class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm font-medium appearance-none cursor-pointer">
+                                        <option value="" disabled selected>Select Year</option>
+                                        <option>1st Year</option>
+                                        <option>2nd Year</option>
+                                        <option>3rd Year</option>
+                                        <option>4th Year</option>
+                                    </select>
+                                    <i
+                                        class="ph-bold ph-caret-down absolute right-4 top-3.5 text-slate-400 pointer-events-none"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Branch / Major</label>
+                                <input type="text" id="branch" placeholder="e.g. Computer Science"
+                                    class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm font-medium">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center gap-2 mb-6 border-b border-slate-100 pb-4">
+                            <h3 class="text-base font-bold text-slate-900"><i
+                                    class="ph-fill ph-bed text-indigo-500"></i> Hostel Allocation</h3>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Hostel Block *</label>
+                                <div class="relative">
+                                    <select id="hostelBlock" required
+                                        class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm font-medium appearance-none cursor-pointer">
+                                        <option value="" disabled selected>Select Block</option>
+                                        <option>BH1</option>
+                                        <option>BH2</option>
+                                        <option>GH1</option>
+                                    </select>
+                                    <i
+                                        class="ph-bold ph-caret-down absolute right-4 top-3.5 text-slate-400 pointer-events-none"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Room Number *</label>
+                                <input type="text" id="roomNumber" placeholder="e.g. 101" required
+                                    class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm font-medium">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center gap-2 mb-6 border-b border-slate-100 pb-4">
+                            <h3 class="text-base font-bold text-slate-900"><i
+                                    class="ph-fill ph-address-book text-indigo-500"></i> Contact Details</h3>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Student Phone *</label>
+                                <input type="tel" id="studentPhone" placeholder="+91 99999 99999" required
+                                    class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Student Email</label>
+                                <input type="email" id="studentEmail" placeholder="student@university.edu"
+                                    class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Parent/Guardian Phone
+                                    *</label>
+                                <input type="tel" id="parentPhone" placeholder="+91 88888 88888" required
+                                    class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Parent/Guardian
+                                    Email</label>
+                                <input type="email" id="parentEmail" placeholder="parent@gmail.com"
+                                    class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm font-medium">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-6 mt-6 border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-3">
+                        <a href="warden-students.html"
+                            class="px-6 py-3 rounded-xl text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors text-center">Cancel</a>
+                        <button type="submit"
+                            class="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white px-8 py-3 rounded-xl font-bold text-sm transition-all transform hover:-translate-y-0.5 shadow-lg shadow-indigo-200 flex items-center justify-center gap-2">
+                            <i class="ph-bold ph-plus-circle"></i> Create Student Account
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Handle preview logic for Warden Profile
+            const urlParams = new URLSearchParams(window.location.search);
+            const isPreviewMode = urlParams.get('preview') === 'true';
+            const wardenStr = localStorage.getItem('wardenUser');
+            let warden;
+
+            if (isPreviewMode && !wardenStr) {
+                warden = { name: "Warden Kumar", wardenId: "EMP-001" };
+            } else if (wardenStr) {
+                warden = JSON.parse(wardenStr);
+            } else {
+                window.location.href = 'warden-login.html';
+                return;
+            }
+
+            document.getElementById('wardenName').textContent = warden.name || "Warden";
+            if (warden.name) {
+                const initials = warden.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('wardenInitials').textContent = initials || "W";
+            }
+        });
+
+        // Handle Form Submission
+        document.getElementById('addStudentForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const btn = this.querySelector('button[type="submit"]');
+            const originalContent = btn.innerHTML;
+
+            btn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> Creating...';
+            btn.disabled = true;
+
+            // Simulate backend delay
+            setTimeout(() => {
+                alert("Student Account Created Successfully!");
+                window.location.href = 'warden-students.html';
+            }, 1000);
+        });
+
+        function logout() {
+            localStorage.removeItem('wardenUser');
+            window.location.href = 'warden-login.html';
+        }
+    </script>
+</body>
+
+</html>

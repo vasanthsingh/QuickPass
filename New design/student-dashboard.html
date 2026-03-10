@@ -106,8 +106,7 @@
                     </div>
                     <div
                         class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl mb-4 relative z-10">
-                        <i class="ph-fill ph-sun"></i>
-                    </div>
+                        <i class="ph-fill ph-sun"></i></div>
                     <h3 class="font-bold text-lg text-slate-900 relative z-10">Apply Day Pass</h3>
                     <p class="text-sm text-slate-500 mt-1 font-medium relative z-10">Return by 9:00 PM today.</p>
                     <div class="mt-4 flex items-center text-indigo-600 text-sm font-bold relative z-10">Start
@@ -123,8 +122,7 @@
                     </div>
                     <div
                         class="w-12 h-12 bg-violet-50 text-violet-600 rounded-2xl flex items-center justify-center text-2xl mb-4 relative z-10">
-                        <i class="ph-fill ph-house-line"></i>
-                    </div>
+                        <i class="ph-fill ph-house-line"></i></div>
                     <h3 class="font-bold text-lg text-slate-900 relative z-10">Apply Home Pass</h3>
                     <p class="text-sm text-slate-500 mt-1 font-medium relative z-10">Leave for multiple days.</p>
                     <div class="mt-4 flex items-center text-violet-600 text-sm font-bold relative z-10">Start
@@ -141,8 +139,7 @@
                     <div class="relative z-10">
                         <div
                             class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-xl mb-4 border border-white/20">
-                            <i class="ph-fill ph-bed"></i>
-                        </div>
+                            <i class="ph-fill ph-bed"></i></div>
                         <p class="text-slate-400 text-sm font-medium">Assigned Room</p>
                         <h3 class="font-bold text-2xl mt-1" id="studentRoom">Block & Room</h3>
                     </div>
@@ -164,19 +161,36 @@
         </div>
     </main>
 
-    <script>
+<script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Load user data from localStorage
-            const userStr = localStorage.getItem('studentUser');
+            // 1. Check for the secret preview flag in the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const isPreviewMode = urlParams.get('preview') === 'true';
 
-            // Redirect if not logged in
-            if (!userStr) {
-                window.location.href = 'student-login.html';
-                return;
+            // 2. Load user data from localStorage
+            const userStr = localStorage.getItem('studentUser');
+            let user;
+
+            // 3. SECURITY CHECK vs PREVIEW BYPASS
+            if (isPreviewMode && !userStr) {
+                // If preview mode is ON, inject dummy data (Skip redirect)
+                console.log("Preview Mode Active!");
+                user = {
+                    name: "John Doe (Preview)",
+                    rollNumber: "21BCE9999",
+                    block: "BH-1",
+                    room: "104"
+                };
+            } else {
+                // YOUR ORIGINAL STRICT SECURITY CODE
+                if(!userStr) {
+                    window.location.href = 'student-login.html';
+                    return; // Stop execution and redirect
+                }
+                user = JSON.parse(userStr);
             }
 
-            // Populate dashboard with real data
-            const user = JSON.parse(userStr);
+            // 4. Populate dashboard with data
             document.getElementById('studentName').textContent = user.name || "Student";
             document.getElementById('studentRoll').textContent = "ID: " + (user.rollNumber || "N/A");
             document.getElementById('studentRoom').textContent = `${user.block || 'Hostel'} - ${user.room || 'Room'}`;

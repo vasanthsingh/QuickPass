@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Management - QuickPass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .nav-active {
+            background: linear-gradient(to right, #eef2ff, #faf5ff);
+            color: #4f46e5;
+            border-right: 3px solid #4f46e5;
+            font-weight: 700;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-[#f4f7fb] text-slate-800 antialiased h-screen flex overflow-hidden selection:bg-indigo-100 selection:text-indigo-900">
+
+    <aside
+        class="w-64 bg-white/90 backdrop-blur-xl border-r border-slate-100 flex-shrink-0 flex flex-col h-full z-20 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+        <div class="h-20 flex items-center px-8 gap-3">
+            <div class="bg-gradient-to-br from-indigo-600 to-violet-600 p-2 rounded-xl shadow-md shadow-indigo-200">
+                <i class="ph-bold ph-shield-check text-white text-lg"></i>
+            </div>
+            <span class="font-bold text-xl text-slate-900 tracking-tight">QuickPass</span>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-6 space-y-1 px-4">
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Management</p>
+            <a href="warden-dashboard.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-squares-four text-xl"></i><span class="text-sm font-semibold">Overview</span>
+            </a>
+            <a href="warden-approvals.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-stamp text-xl"></i><span class="text-sm font-semibold">Pass Approvals</span>
+            </a>
+            <a href="warden-requests.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-user-switch text-xl"></i><span class="text-sm font-semibold">Edit Requests</span>
+            </a>
+
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6">Database</p>
+            <a href="warden-students.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-users text-xl"></i><span class="text-sm font-semibold">Students</span>
+            </a>
+            <a href="#" class="nav-active flex items-center gap-3 px-4 py-3 rounded-xl transition-all">
+                <i class="ph-fill ph-police-car text-xl"></i><span class="text-sm">Security Guards</span>
+            </a>
+            <a href="warden-defaulters.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-red-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-warning-octagon text-xl"></i><span class="text-sm font-semibold">Defaulters</span>
+            </a>
+        </nav>
+
+        <div class="p-6">
+            <button onclick="logout()"
+                class="w-full flex items-center justify-center gap-2 text-slate-600 hover:text-red-600 bg-slate-50 hover:bg-red-50 py-3 rounded-xl transition-all text-sm font-bold border border-slate-100">
+                <i class="ph-bold ph-sign-out"></i> Log Out
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <header
+            class="h-20 glass-panel border-b border-white flex items-center justify-between px-10 flex-shrink-0 z-10">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Security Personnel</h2>
+                <p class="text-sm font-medium text-slate-500 mt-0.5" id="currentDate">Loading Date...</p>
+            </div>
+
+            <div
+                class="bg-white px-4 py-2 rounded-xl border border-slate-100 shadow-sm flex items-center gap-3 hidden md:flex">
+                <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm"
+                    id="wardenInitials">W</div>
+                <span class="text-sm font-bold text-slate-700" id="wardenName">Loading...</span>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-6 md:p-10">
+            <div class="max-w-6xl mx-auto">
+
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+                    <h3 class="font-bold text-slate-900 text-xl flex items-center gap-2"><i
+                            class="ph-fill ph-shield-star text-indigo-500"></i> Active Guards</h3>
+
+                    <a href="warden-add-security.html"
+                        class="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-slate-200 hover:-translate-y-0.5">
+                        <i class="ph-bold ph-user-plus text-lg"></i> Register New Guard
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    <div
+                        class="bg-white p-8 rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col items-center text-center hover:shadow-lg transition-all relative overflow-hidden group transform hover:-translate-y-1">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-full -z-10 opacity-50">
+                        </div>
+
+                        <div class="absolute top-6 right-6">
+                            <span
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 shadow-sm">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> On Duty
+                            </span>
+                        </div>
+
+                        <div
+                            class="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-100 to-indigo-50 flex items-center justify-center text-4xl border border-indigo-200 shadow-sm mt-4 mb-4">
+                            👮‍♂️</div>
+
+                        <h4 class="text-lg font-bold text-slate-900">Ramesh Singh</h4>
+                        <p class="text-xs text-slate-500 mb-5 font-mono bg-slate-100 px-3 py-1 rounded-lg mt-2">ID:
+                            SEC-001</p>
+
+                        <div
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50/50 border border-indigo-100 rounded-xl text-sm font-bold text-indigo-700 mb-8 w-full justify-center">
+                            <i class="ph-fill ph-map-pin"></i> Gate 1 (Main)
+                        </div>
+
+                        <div class="w-full flex gap-3 mt-auto pt-4 border-t border-slate-100">
+                            <a href="security-profile.html"
+                                class="flex-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 py-3 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2">
+                                <i class="ph-bold ph-identification-card"></i> Profile
+                            </a>
+                            <button
+                                class="flex-1 bg-white border-2 border-slate-100 text-slate-500 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2">
+                                <i class="ph-bold ph-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-white p-8 rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col items-center text-center hover:shadow-lg transition-all relative overflow-hidden group transform hover:-translate-y-1">
+
+                        <div class="absolute top-6 right-6">
+                            <span
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500 border border-slate-200 shadow-sm">
+                                <span class="w-2 h-2 rounded-full bg-slate-400"></span> Off Duty
+                            </span>
+                        </div>
+
+                        <div
+                            class="w-20 h-20 rounded-2xl bg-slate-50 flex items-center justify-center text-4xl border border-slate-200 shadow-sm mt-4 mb-4 grayscale opacity-70">
+                            👮‍♂️</div>
+
+                        <h4 class="text-lg font-bold text-slate-700">Suresh Kumar</h4>
+                        <p
+                            class="text-xs text-slate-400 mb-5 font-mono bg-slate-50 px-3 py-1 rounded-lg mt-2 border border-slate-100">
+                            ID: SEC-002</p>
+
+                        <div
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold text-slate-500 mb-8 w-full justify-center">
+                            <i class="ph-fill ph-map-pin"></i> Gate 2 (Back)
+                        </div>
+
+                        <div class="w-full flex gap-3 mt-auto pt-4 border-t border-slate-100">
+                            <a href="#"
+                                class="flex-1 bg-slate-50 hover:bg-slate-100 text-slate-600 py-3 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2">
+                                <i class="ph-bold ph-identification-card"></i> Profile
+                            </a>
+                            <button
+                                class="flex-1 bg-white border-2 border-slate-100 text-slate-500 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2">
+                                <i class="ph-bold ph-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current date
+            const date = new Date();
+            document.getElementById('currentDate').textContent = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+            // Handle preview logic for Warden Profile
+            const urlParams = new URLSearchParams(window.location.search);
+            const isPreviewMode = urlParams.get('preview') === 'true';
+            const wardenStr = localStorage.getItem('wardenUser');
+            let warden;
+
+            if (isPreviewMode && !wardenStr) {
+                warden = { name: "Warden Kumar", wardenId: "EMP-001" };
+            } else if (wardenStr) {
+                warden = JSON.parse(wardenStr);
+            } else {
+                window.location.href = 'warden-login.html';
+                return;
+            }
+
+            document.getElementById('wardenName').textContent = warden.name || "Warden";
+            if (warden.name) {
+                const initials = warden.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('wardenInitials').textContent = initials || "W";
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('wardenUser');
+            window.location.href = 'warden-login.html';
+        }
+    </script>
+</body>
+
+</html>

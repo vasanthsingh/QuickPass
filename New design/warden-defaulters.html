@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Defaulters - QuickPass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .nav-active {
+            background: linear-gradient(to right, #fff1f2, #ffe4e6);
+            color: #e11d48;
+            border-right: 3px solid #e11d48;
+            font-weight: 700;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-[#f4f7fb] text-slate-800 antialiased h-screen flex overflow-hidden selection:bg-rose-100 selection:text-rose-900">
+
+    <aside
+        class="w-64 bg-white/90 backdrop-blur-xl border-r border-slate-100 flex-shrink-0 flex flex-col h-full z-20 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+        <div class="h-20 flex items-center px-8 gap-3">
+            <div class="bg-gradient-to-br from-indigo-600 to-violet-600 p-2 rounded-xl shadow-md shadow-indigo-200">
+                <i class="ph-bold ph-shield-check text-white text-lg"></i>
+            </div>
+            <span class="font-bold text-xl text-slate-900 tracking-tight">QuickPass</span>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-6 space-y-1 px-4">
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Management</p>
+            <a href="warden-dashboard.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-squares-four text-xl"></i><span class="text-sm font-semibold">Overview</span>
+            </a>
+            <a href="warden-approvals.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-stamp text-xl"></i><span class="text-sm font-semibold">Pass Approvals</span>
+            </a>
+            <a href="warden-requests.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-user-switch text-xl"></i><span class="text-sm font-semibold">Edit Requests</span>
+            </a>
+
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6">Database</p>
+            <a href="warden-students.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-users text-xl"></i><span class="text-sm font-semibold">Students</span>
+            </a>
+            <a href="warden-security.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-police-car text-xl"></i><span class="text-sm font-semibold">Security Guards</span>
+            </a>
+            <a href="#" class="nav-active flex items-center gap-3 px-4 py-3 rounded-xl transition-all">
+                <i class="ph-fill ph-warning-octagon text-xl"></i><span class="text-sm">Defaulters</span>
+            </a>
+        </nav>
+
+        <div class="p-6">
+            <button onclick="logout()"
+                class="w-full flex items-center justify-center gap-2 text-slate-600 hover:text-red-600 bg-slate-50 hover:bg-red-50 py-3 rounded-xl transition-all text-sm font-bold border border-slate-100">
+                <i class="ph-bold ph-sign-out"></i> Log Out
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <header
+            class="h-20 glass-panel border-b border-white flex items-center justify-between px-10 flex-shrink-0 z-10">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Defaulter Management</h2>
+                <p class="text-sm font-medium text-slate-500 mt-0.5" id="currentDate">Loading Date...</p>
+            </div>
+
+            <div
+                class="bg-white px-4 py-2 rounded-xl border border-slate-100 shadow-sm flex items-center gap-3 hidden md:flex">
+                <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm"
+                    id="wardenInitials">W</div>
+                <span class="text-sm font-bold text-slate-700" id="wardenName">Loading...</span>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-6 md:p-10">
+            <div class="max-w-6xl mx-auto">
+
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+                    <div class="relative w-full sm:w-96">
+                        <i class="ph-bold ph-magnifying-glass absolute left-4 top-3.5 text-slate-400 text-lg"></i>
+                        <input type="text" placeholder="Search defaulter..."
+                            class="pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500 transition-all text-sm font-medium w-full shadow-sm">
+                    </div>
+
+                    <div class="relative w-full sm:w-auto">
+                        <select
+                            class="appearance-none bg-white border border-slate-200 text-slate-700 text-sm font-bold py-3 pl-5 pr-12 rounded-2xl focus:outline-none focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500 cursor-pointer shadow-sm w-full sm:w-auto transition-all">
+                            <option>Status: All</option>
+                            <option>Status: Blocked</option>
+                            <option>Status: Warning</option>
+                        </select>
+                        <i
+                            class="ph-bold ph-caret-down absolute right-4 top-3.5 text-slate-400 pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+
+                    <div
+                        class="px-8 py-5 border-b border-slate-100 bg-gradient-to-r from-rose-50 to-red-50 flex justify-between items-center">
+                        <div class="flex items-center gap-3 text-rose-700">
+                            <div class="bg-white p-2 rounded-xl shadow-sm"><i
+                                    class="ph-fill ph-warning-circle text-xl"></i></div>
+                            <h3 class="font-bold text-lg">Active Defaulters List</h3>
+                        </div>
+                        <span
+                            class="text-xs font-bold bg-white text-rose-600 border border-rose-100 px-4 py-1.5 rounded-full shadow-sm">8
+                            Students Blocked</span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm whitespace-nowrap">
+                            <thead class="bg-white border-b border-slate-100">
+                                <tr>
+                                    <th
+                                        class="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                        Student Info</th>
+                                    <th
+                                        class="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                        Date Reported</th>
+                                    <th
+                                        class="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                        Reason</th>
+                                    <th
+                                        class="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                        Late By</th>
+                                    <th
+                                        class="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">
+                                        Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr class="hover:bg-slate-50/80 transition-colors group">
+                                    <td class="px-8 py-5">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-sm">
+                                                SK</div>
+                                            <div>
+                                                <p class="font-bold text-slate-900 text-base">Suresh K.</p>
+                                                <p class="text-xs font-mono text-slate-500">S2023001099</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-8 py-5 font-medium text-slate-600">Oct 24, 2023</td>
+                                    <td class="px-8 py-5 font-bold text-slate-700">Late Return (Day Pass)</td>
+                                    <td class="px-8 py-5">
+                                        <span
+                                            class="bg-rose-50 text-rose-600 border border-rose-100 px-2.5 py-1 rounded-lg text-xs font-bold shadow-sm inline-flex items-center gap-1">
+                                            <i class="ph-bold ph-clock"></i> +2h 15m
+                                        </span>
+                                    </td>
+                                    <td class="px-8 py-5 text-right">
+                                        <button onclick="clearDefaulter(this)"
+                                            class="inline-flex items-center justify-center gap-2 text-indigo-600 hover:bg-indigo-50 px-4 py-2 rounded-xl transition-colors text-sm font-bold border border-transparent hover:border-indigo-100 w-36">
+                                            <i class="ph-bold ph-eraser"></i> Clear Status
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <tr class="hover:bg-slate-50/80 transition-colors group">
+                                    <td class="px-8 py-5">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-sm">
+                                                AV</div>
+                                            <div>
+                                                <p class="font-bold text-slate-900 text-base">Amit Verma</p>
+                                                <p class="text-xs font-mono text-slate-500">S2023001102</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-8 py-5 font-medium text-slate-600">Oct 20, 2023</td>
+                                    <td class="px-8 py-5 font-bold text-slate-700">Unauthorized Outing</td>
+                                    <td class="px-8 py-5">
+                                        <span
+                                            class="bg-slate-100 text-slate-500 border border-slate-200 px-2.5 py-1 rounded-lg text-xs font-bold shadow-sm">
+                                            N/A
+                                        </span>
+                                    </td>
+                                    <td class="px-8 py-5 text-right">
+                                        <button onclick="clearDefaulter(this)"
+                                            class="inline-flex items-center justify-center gap-2 text-indigo-600 hover:bg-indigo-50 px-4 py-2 rounded-xl transition-colors text-sm font-bold border border-transparent hover:border-indigo-100 w-36">
+                                            <i class="ph-bold ph-eraser"></i> Clear Status
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current date
+            const date = new Date();
+            document.getElementById('currentDate').textContent = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+            // Handle preview logic for Warden Profile
+            const urlParams = new URLSearchParams(window.location.search);
+            const isPreviewMode = urlParams.get('preview') === 'true';
+            const wardenStr = localStorage.getItem('wardenUser');
+            let warden;
+
+            if (isPreviewMode && !wardenStr) {
+                warden = { name: "Warden Kumar", wardenId: "EMP-001" };
+            } else if (wardenStr) {
+                warden = JSON.parse(wardenStr);
+            } else {
+                window.location.href = 'warden-login.html';
+                return;
+            }
+
+            document.getElementById('wardenName').textContent = warden.name || "Warden";
+            if (warden.name) {
+                const initials = warden.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('wardenInitials').textContent = initials || "W";
+            }
+        });
+
+        // Clear Defaulter Logic
+        function clearDefaulter(btn) {
+            if (confirm("Are you sure you want to clear this student's defaulter status?")) {
+                btn.innerHTML = '<i class="ph-bold ph-check"></i> Cleared';
+                btn.classList.remove('text-indigo-600', 'hover:bg-indigo-50', 'hover:border-indigo-100');
+                btn.classList.add('bg-emerald-50', 'text-emerald-600', 'border-emerald-200', 'cursor-not-allowed', 'opacity-70');
+                btn.disabled = true;
+
+                // Optional: Fade out the row after a delay
+                const row = btn.closest('tr');
+                setTimeout(() => {
+                    row.style.transition = "all 0.4s ease";
+                    row.style.opacity = "0";
+                    setTimeout(() => row.style.display = "none", 400);
+                }, 1500);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('wardenUser');
+            window.location.href = 'warden-login.html';
+        }
+    </script>
+</body>
+
+</html>

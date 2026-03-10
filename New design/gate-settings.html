@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Settings - QuickPass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .nav-active { background: linear-gradient(to right, #f1f5f9, #f8fafc); color: #0f172a; border-right: 3px solid #0f172a; font-weight: 700; }
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.6); }
+    </style>
+</head>
+<body class="bg-[#f4f7fb] text-slate-800 antialiased h-screen flex overflow-hidden selection:bg-slate-200 selection:text-slate-900">
+
+    <aside class="w-64 bg-white/90 backdrop-blur-xl border-r border-slate-100 flex-shrink-0 flex flex-col h-full z-20 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+        <div class="h-20 flex items-center px-8 gap-3">
+            <div class="bg-gradient-to-br from-slate-700 to-slate-900 p-2 rounded-xl shadow-md shadow-slate-300">
+                <i class="ph-bold ph-scan text-white text-lg"></i>
+            </div>
+            <span class="font-bold text-xl text-slate-900 tracking-tight">QuickPass</span>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-6 space-y-1 px-4">
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Security Tasks</p>
+            <a href="gate-dashboard.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-qr-code text-xl"></i><span class="text-sm font-semibold">Scan & Verify</span>
+            </a>
+            <a href="gate-logs.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-clock-counter-clockwise text-xl"></i><span class="text-sm font-semibold">Log History</span>
+            </a>
+            <a href="gate-defaulters.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-rose-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-warning-octagon text-xl"></i><span class="text-sm font-semibold">Defaulter List</span>
+            </a>
+            
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6">System</p>
+            <a href="#" class="nav-active flex items-center gap-3 px-4 py-3 rounded-xl transition-all">
+                <i class="ph-fill ph-gear text-xl"></i><span class="text-sm">Settings</span>
+            </a>
+        </nav>
+
+        <div class="p-6">
+            <button onclick="logout()" class="w-full flex items-center justify-center gap-2 text-slate-600 hover:text-rose-600 bg-slate-50 hover:bg-rose-50 py-3 rounded-xl transition-all text-sm font-bold border border-slate-100">
+                <i class="ph-bold ph-sign-out"></i> Log Out
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <header class="h-20 glass-panel border-b border-white flex items-center justify-between px-10 flex-shrink-0 z-10">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Account Settings</h2>
+                <p class="text-sm font-medium text-slate-500 mt-0.5">Manage scanner and personnel preferences.</p>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-6 md:p-10">
+            <div class="max-w-4xl mx-auto space-y-8">
+                
+                <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
+                    <div class="absolute -right-10 -top-10 w-40 h-40 bg-slate-50 rounded-full"></div>
+                    
+                    <div class="w-24 h-24 rounded-3xl bg-slate-900 text-white flex items-center justify-center text-4xl shadow-xl shadow-slate-200 relative z-10" id="guardInitials">G</div>
+                    
+                    <div class="text-center md:text-left relative z-10">
+                        <h1 class="text-2xl font-bold text-slate-900" id="guardName">Guard Name</h1>
+                        <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-3">
+                            <span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-lg text-xs font-bold font-mono border border-slate-200" id="guardId">ID: SEC-001</span>
+                            <span class="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold border border-emerald-100 flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> Active Duty</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-6">
+                        <h3 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2"><i class="ph-fill ph-shield-check text-slate-800"></i> Personnel Info</h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Assigned Location</label>
+                                <p class="text-sm font-bold text-slate-800" id="gateLocation">Main Gate 1</p>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Current Shift</label>
+                                <p class="text-sm font-bold text-slate-800">Day (08:00 AM - 08:00 PM)</p>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Device UUID</label>
+                                <p class="text-xs font-mono text-slate-500">f47ac10b-58cc-4372-a567-0e02b2c3d479</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="passcodeForm" class="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-6">
+                        <h3 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2"><i class="ph-fill ph-lock-key text-slate-800"></i> Security Passcode</h3>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">New 4-Digit Passcode</label>
+                            <input type="password" maxlength="4" pattern="\d{4}" placeholder="••••" class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-center text-xl font-mono tracking-widest focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-500/30 focus:border-slate-500 transition-all" required>
+                        </div>
+
+                        <button type="submit" class="w-full bg-slate-900 hover:bg-black text-white py-3.5 rounded-xl text-sm font-bold transition-all shadow-lg shadow-slate-200">
+                            Update Passcode
+                        </button>
+                    </form>
+                </div>
+
+                <div class="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                    <h3 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 mb-6 flex items-center gap-2"><i class="ph-fill ph-wrench text-slate-800"></i> Scanner Preferences</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">Sound Feedback</p>
+                                <p class="text-xs text-slate-500">Play beep on successful scan</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-slate-800"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">Auto-Log Entry</p>
+                                <p class="text-xs text-slate-500">Skip confirmation for valid passes</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer">
+                                <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-slate-800"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const isPreviewMode = urlParams.get('preview') === 'true';
+            const guardStr = localStorage.getItem('securityUser');
+            let guard;
+
+            if (isPreviewMode && !guardStr) {
+                guard = { name: "Ramesh Singh", guardId: "SEC-001", gate: "Main Gate 1" };
+            } else if (guardStr) {
+                guard = JSON.parse(guardStr);
+            } else {
+                window.location.href = 'security-login.html';
+                return;
+            }
+
+            // Populate page
+            document.getElementById('guardName').textContent = guard.name || "Guard Name";
+            document.getElementById('guardId').textContent = "ID: " + (guard.guardId || "N/A");
+            document.getElementById('gateLocation').textContent = guard.gate || "Assigned Gate";
+            
+            if(guard.name) {
+                const initials = guard.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('guardInitials').textContent = initials;
+            }
+        });
+
+        document.getElementById('passcodeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert("Passcode updated successfully!");
+            this.reset();
+        });
+
+        function logout() {
+            localStorage.removeItem('securityUser');
+            window.location.href = 'security-login.html';
+        }
+    </script>
+</body>
+</html>

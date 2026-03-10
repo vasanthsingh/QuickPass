@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pass Approvals - QuickPass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .nav-active {
+            background: linear-gradient(to right, #eef2ff, #faf5ff);
+            color: #4f46e5;
+            border-right: 3px solid #4f46e5;
+            font-weight: 700;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-[#f4f7fb] text-slate-800 antialiased h-screen flex overflow-hidden selection:bg-indigo-100 selection:text-indigo-900">
+
+    <aside
+        class="w-64 bg-white/90 backdrop-blur-xl border-r border-slate-100 flex-shrink-0 flex flex-col h-full z-20 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+        <div class="h-20 flex items-center px-8 gap-3">
+            <div class="bg-gradient-to-br from-indigo-600 to-violet-600 p-2 rounded-xl shadow-md shadow-indigo-200">
+                <i class="ph-bold ph-shield-check text-white text-lg"></i>
+            </div>
+            <span class="font-bold text-xl text-slate-900 tracking-tight">QuickPass</span>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-6 space-y-1 px-4">
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Management</p>
+            <a href="warden-dashboard.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-squares-four text-xl"></i><span class="text-sm font-semibold">Overview</span>
+            </a>
+            <a href="#" class="nav-active flex items-center gap-3 px-4 py-3 rounded-xl transition-all">
+                <i class="ph-fill ph-stamp text-xl"></i><span class="text-sm">Pass Approvals</span>
+                <span
+                    class="ml-auto bg-indigo-600 text-white py-0.5 px-2 rounded-full text-[10px] font-bold shadow-sm">2</span>
+            </a>
+            <a href="warden-requests.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-user-switch text-xl"></i><span class="text-sm font-semibold">Edit Requests</span>
+            </a>
+
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6">Database</p>
+            <a href="warden-students.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-users text-xl"></i><span class="text-sm font-semibold">Students</span>
+            </a>
+            <a href="warden-security.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-police-car text-xl"></i><span class="text-sm font-semibold">Security Guards</span>
+            </a>
+            <a href="warden-defaulters.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-red-600 rounded-xl transition-all hover:translate-x-1">
+                <i class="ph-bold ph-warning-octagon text-xl"></i><span class="text-sm font-semibold">Defaulters</span>
+            </a>
+        </nav>
+
+        <div class="p-6">
+            <button onclick="logout()"
+                class="w-full flex items-center justify-center gap-2 text-slate-600 hover:text-red-600 bg-slate-50 hover:bg-red-50 py-3 rounded-xl transition-all text-sm font-bold border border-slate-100">
+                <i class="ph-bold ph-sign-out"></i> Log Out
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <header
+            class="h-20 glass-panel border-b border-white flex items-center justify-between px-10 flex-shrink-0 z-10">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Pending Approvals</h2>
+                <p class="text-sm font-medium text-slate-500 mt-0.5" id="currentDate">Loading Date...</p>
+            </div>
+
+            <div
+                class="bg-white px-4 py-2 rounded-xl border border-slate-100 shadow-sm flex items-center gap-3 hidden md:flex">
+                <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm"
+                    id="wardenInitials">W</div>
+                <span class="text-sm font-bold text-slate-700" id="wardenName">Loading...</span>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-6 md:p-10">
+            <div class="max-w-5xl mx-auto">
+
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+                    <div class="relative w-full sm:w-96">
+                        <i class="ph-bold ph-magnifying-glass absolute left-4 top-3.5 text-slate-400 text-lg"></i>
+                        <input type="text" placeholder="Search by name or roll number..."
+                            class="pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm font-medium w-full shadow-sm">
+                    </div>
+
+                    <div class="relative w-full sm:w-auto">
+                        <select
+                            class="appearance-none bg-white border border-slate-200 text-slate-700 text-sm font-bold py-3 pl-5 pr-12 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 cursor-pointer shadow-sm w-full sm:w-auto transition-all">
+                            <option>All Pass Types</option>
+                            <option>Day Pass</option>
+                            <option>Home Pass</option>
+                        </select>
+                        <i
+                            class="ph-bold ph-caret-down absolute right-4 top-3.5 text-slate-400 pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+
+                    <div
+                        class="bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 flex flex-col lg:flex-row gap-8 items-start hover:shadow-lg transition-shadow relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-full -z-10 opacity-50">
+                        </div>
+
+                        <div
+                            class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-100 to-indigo-50 flex items-center justify-center flex-shrink-0 font-bold text-xl text-indigo-700 border border-indigo-200 shadow-sm">
+                            RS</div>
+
+                        <div class="flex-1 w-full">
+                            <div class="flex flex-col md:flex-row justify-between items-start mb-6 gap-4">
+                                <div>
+                                    <h3 class="text-xl font-bold text-slate-900 flex items-center gap-3">
+                                        Rahul Sharma
+                                        <span
+                                            class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-lg text-xs font-bold font-mono border border-slate-200">S20230010082</span>
+                                    </h3>
+                                    <p class="text-sm font-medium text-slate-500 mt-1 flex items-center gap-1"><i
+                                            class="ph-fill ph-bed text-slate-400"></i> BH1 - Room 302</p>
+                                </div>
+                                <span
+                                    class="bg-indigo-50 text-indigo-700 border border-indigo-100 px-4 py-1.5 rounded-xl text-sm font-bold flex items-center gap-2 shadow-sm"><i
+                                        class="ph-fill ph-sun text-lg"></i> Day Pass</span>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Time
+                                        Out</p>
+                                    <p class="font-bold text-slate-900 text-sm">Today, 11:00 AM</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Time
+                                        In</p>
+                                    <p class="font-bold text-slate-900 text-sm">Today, 07:00 PM</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Reason
+                                    </p>
+                                    <p class="font-bold text-slate-900 text-sm truncate" title="Medical Checkup">Medical
+                                        Checkup</p>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-wrap gap-3">
+                                <button onclick="handleAction(this)"
+                                    class="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-6 py-3 rounded-xl font-bold text-sm transition-all transform hover:-translate-y-0.5 shadow-lg shadow-emerald-200 flex items-center gap-2"><i
+                                        class="ph-bold ph-check-circle text-lg"></i> Approve</button>
+                                <button onclick="handleAction(this)"
+                                    class="bg-white border-2 border-slate-200 text-slate-600 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2"><i
+                                        class="ph-bold ph-x-circle text-lg"></i> Reject</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 flex flex-col lg:flex-row gap-8 items-start hover:shadow-lg transition-shadow relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-violet-50 rounded-bl-full -z-10 opacity-50">
+                        </div>
+
+                        <div
+                            class="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-100 to-violet-50 flex items-center justify-center flex-shrink-0 font-bold text-xl text-violet-700 border border-violet-200 shadow-sm">
+                            AS</div>
+
+                        <div class="flex-1 w-full">
+                            <div class="flex flex-col md:flex-row justify-between items-start mb-6 gap-4">
+                                <div>
+                                    <h3 class="text-xl font-bold text-slate-900 flex items-center gap-3">
+                                        Ankit Singh
+                                        <span
+                                            class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-lg text-xs font-bold font-mono border border-slate-200">S20230010095</span>
+                                    </h3>
+                                    <p class="text-sm font-medium text-slate-500 mt-1 flex items-center gap-1"><i
+                                            class="ph-fill ph-bed text-slate-400"></i> BH2 - Room 104</p>
+                                </div>
+                                <span
+                                    class="bg-violet-50 text-violet-700 border border-violet-100 px-4 py-1.5 rounded-xl text-sm font-bold flex items-center gap-2 shadow-sm"><i
+                                        class="ph-fill ph-house-line text-lg"></i> Home Pass</span>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                        Leaving</p>
+                                    <p class="font-bold text-slate-900 text-sm">Tomorrow, 5:00 PM</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                        Returning</p>
+                                    <p class="font-bold text-slate-900 text-sm">Monday, 8:00 AM</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Reason
+                                    </p>
+                                    <p class="font-bold text-slate-900 text-sm truncate" title="Family Function">Family
+                                        Function</p>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-wrap gap-3">
+                                <button onclick="handleAction(this)"
+                                    class="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-6 py-3 rounded-xl font-bold text-sm transition-all transform hover:-translate-y-0.5 shadow-lg shadow-emerald-200 flex items-center gap-2"><i
+                                        class="ph-bold ph-check-circle text-lg"></i> Approve</button>
+                                <button onclick="handleAction(this)"
+                                    class="bg-white border-2 border-slate-200 text-slate-600 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2"><i
+                                        class="ph-bold ph-x-circle text-lg"></i> Reject</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current date
+            const date = new Date();
+            document.getElementById('currentDate').textContent = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+            // Handle preview logic for Warden Profile
+            const urlParams = new URLSearchParams(window.location.search);
+            const isPreviewMode = urlParams.get('preview') === 'true';
+            const wardenStr = localStorage.getItem('wardenUser');
+            let warden;
+
+            if (isPreviewMode && !wardenStr) {
+                warden = { name: "Warden Kumar", wardenId: "EMP-001" };
+            } else if (wardenStr) {
+                warden = JSON.parse(wardenStr);
+            } else {
+                window.location.href = 'warden-login.html';
+                return;
+            }
+
+            document.getElementById('wardenName').textContent = warden.name || "Warden";
+            if (warden.name) {
+                const initials = warden.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('wardenInitials').textContent = initials || "W";
+            }
+        });
+
+        // Handle Card Disappearance on Action
+        function handleAction(btn) {
+            const card = btn.closest('.bg-white');
+            card.style.transition = "all 0.3s ease";
+            card.style.opacity = '0';
+            card.style.transform = "scale(0.95)";
+
+            setTimeout(() => {
+                card.style.display = 'none';
+                // Optional: Check if no more cards exist, show an empty state here
+            }, 300);
+        }
+
+        function logout() {
+            localStorage.removeItem('wardenUser');
+            window.location.href = 'warden-login.html';
+        }
+    </script>
+</body>
+
+</html>
