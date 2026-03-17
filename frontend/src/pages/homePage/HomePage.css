@@ -1,0 +1,362 @@
+.landing-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: #0f172a;
+    background: radial-gradient(circle at top right, #eef2ff 0%, #ffffff 50%, #f5f3ff 100%);
+}
+
+.landing-nav {
+    height: 96px;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 10;
+}
+
+.brand-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.brand-icon-box {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: #ffffff;
+    width: 48px;
+    height: 48px;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 12px 24px rgba(79, 70, 229, 0.28);
+}
+
+.brand-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.nav-links {
+    display: none;
+    align-items: center;
+    gap: 2rem;
+}
+
+.nav-links a {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #64748b;
+    transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+    color: #4f46e5;
+}
+
+.nav-divider {
+    width: 1px;
+    height: 18px;
+    background: #e2e8f0;
+}
+
+.nav-version {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+
+.admin-mini-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.45rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid #dbeafe;
+    color: #1e3a8a;
+    background: #eff6ff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.admin-mini-link:hover {
+    background: #dbeafe;
+    border-color: #bfdbfe;
+}
+
+.landing-main {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.bg-orb {
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(80px);
+    z-index: 0;
+}
+
+.bg-orb-one {
+    top: 11rem;
+    left: 2rem;
+    width: 16rem;
+    height: 16rem;
+    background: rgba(165, 180, 252, 0.4);
+}
+
+.bg-orb-two {
+    bottom: 2rem;
+    right: 2rem;
+    width: 20rem;
+    height: 20rem;
+    background: rgba(196, 181, 253, 0.35);
+}
+
+.hero-copy,
+.portal-grid {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-copy {
+    width: 100%;
+    max-width: 64rem;
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.hero-copy h1 {
+    margin: 0 0 1.25rem;
+    font-size: clamp(2.2rem, 6vw, 4.7rem);
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+}
+
+.hero-highlight {
+    background: linear-gradient(to right, #4f46e5, #7c3aed);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.hero-copy p {
+    margin: 0 auto;
+    max-width: 40rem;
+    color: #64748b;
+    font-size: clamp(1rem, 2.3vw, 1.25rem);
+    font-weight: 500;
+    line-height: 1.7;
+}
+
+.portal-grid {
+    width: 100%;
+    max-width: 74rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding-bottom: 4rem;
+}
+
+.portal-card {
+    padding: 2rem;
+    border-radius: 2.2rem;
+    text-decoration: none;
+    display: block;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.portal-card:hover {
+    transform: translateY(-8px);
+}
+
+.portal-card .icon-box {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 1rem;
+    display: grid;
+    place-items: center;
+    margin-bottom: 1.75rem;
+    transition: transform 0.3s ease;
+}
+
+.portal-card:hover .icon-box {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+.portal-card h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+}
+
+.portal-card p {
+    margin: 0 0 1.75rem;
+    font-size: 0.93rem;
+    font-weight: 500;
+    line-height: 1.7;
+}
+
+.portal-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    transition: gap 0.25s ease;
+}
+
+.portal-card:hover .portal-cta {
+    gap: 1rem;
+}
+
+.portal-card.student,
+.portal-card.warden {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.05);
+}
+
+.portal-card.student:hover,
+.portal-card.warden:hover {
+    box-shadow: 0 30px 60px rgba(79, 70, 229, 0.12);
+}
+
+.portal-card.student .icon-box {
+    background: #e0e7ff;
+    color: #4f46e5;
+}
+
+.portal-card.warden .icon-box {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+
+.portal-card.student h3,
+.portal-card.warden h3 {
+    color: #0f172a;
+}
+
+.portal-card.student p,
+.portal-card.warden p {
+    color: #64748b;
+}
+
+.portal-card.student .portal-cta {
+    color: #4f46e5;
+}
+
+.portal-card.warden .portal-cta {
+    color: #7c3aed;
+}
+
+.portal-card.security {
+    background: #0f172a;
+    box-shadow: 0 24px 45px rgba(15, 23, 42, 0.3);
+}
+
+.portal-card.security .icon-box {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+}
+
+.portal-card.security h3 {
+    color: #ffffff;
+}
+
+.portal-card.security p {
+    color: #94a3b8;
+}
+
+.portal-card.security .portal-cta {
+    color: #818cf8;
+}
+
+.landing-footer {
+    padding: 2rem;
+    border-top: 1px solid #f1f5f9;
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(6px);
+    position: relative;
+    z-index: 10;
+}
+
+.footer-content {
+    max-width: 74rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.footer-title {
+    margin: 0;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #0f172a;
+    text-align: center;
+}
+
+.footer-subtitle {
+    margin: 0.35rem 0 0;
+    font-size: 0.77rem;
+    color: #64748b;
+    font-weight: 500;
+    text-align: center;
+}
+
+.footer-links {
+    display: flex;
+    gap: 1.1rem;
+}
+
+.footer-links a {
+    color: #94a3b8;
+    transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+    color: #4f46e5;
+}
+
+@media (min-width: 768px) {
+    .landing-nav {
+        padding: 0 4rem;
+    }
+
+    .nav-links {
+        display: flex;
+    }
+
+    .portal-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 2rem;
+    }
+
+    .footer-content {
+        flex-direction: row;
+    }
+
+    .footer-title,
+    .footer-subtitle {
+        text-align: left;
+    }
+}
