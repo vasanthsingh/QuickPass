@@ -16,7 +16,7 @@
 .auth-bg-gradient {
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at top right, #e0e7ff 0%, #ffffff 55%, #f5f3ff 100%);
+    background: radial-gradient(ellipse at top right, #dfdef3 0%, #ffffff 55%, #f0effa 100%);
 }
 
 .auth-blob {
@@ -31,7 +31,7 @@
     height: 22rem;
     top: -5rem;
     right: -5rem;
-    background: #818cf8;
+    background: #7a78bf;
 }
 
 .auth-blob.two {
@@ -39,7 +39,7 @@
     height: 18rem;
     top: 12rem;
     left: -6rem;
-    background: #c4b5fd;
+    background: #d0cfef;
 }
 
 .auth-nav {
@@ -70,20 +70,20 @@
 
 .auth-brand-icon.student,
 .auth-brand-icon.warden {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    background: linear-gradient(135deg, #5351A2, #020202);
 }
 
 .auth-brand-icon.admin {
-    background: linear-gradient(135deg, #1e40af, #1d4ed8);
+    background: linear-gradient(135deg, #3f3d87, #2d2b63);
 }
 
 .auth-brand-icon.security {
-    background: linear-gradient(135deg, #334155, #0f172a);
+    background: linear-gradient(135deg, #3f3f55, #15151c);
 }
 
 .auth-brand-title {
     font-weight: 700;
-    color: #1e293b;
+    color: #23232f;
 }
 
 .auth-back {
@@ -92,7 +92,7 @@
     gap: 0.4rem;
     padding: 0.55rem 0.9rem;
     border-radius: 999px;
-    color: #64748b;
+    color: #58586a;
     font-size: 0.88rem;
     font-weight: 600;
     background: rgba(255, 255, 255, 0.7);
@@ -119,12 +119,12 @@
     margin: 0;
     font-size: clamp(1.9rem, 4vw, 2.5rem);
     letter-spacing: -0.03em;
-    color: #0f172a;
+    color: #15151c;
 }
 
 .auth-header p {
     margin: 0.7rem 0 0;
-    color: #64748b;
+    color: #58586a;
     font-weight: 500;
 }
 
@@ -149,7 +149,7 @@
     display: block;
     font-size: 0.85rem;
     font-weight: 600;
-    color: #334155;
+    color: #3f3f55;
     margin-bottom: 0.5rem;
 }
 
@@ -162,7 +162,7 @@
     left: 0.8rem;
     top: 50%;
     transform: translateY(-50%);
-    color: #94a3b8;
+    color: #7b7b90;
 }
 
 .form-input {
@@ -172,14 +172,14 @@
     border: 1px solid #e2e8f0;
     background: rgba(255, 255, 255, 0.8);
     padding: 0 0.9rem 0 2.55rem;
-    color: #0f172a;
+    color: #15151c;
     font-weight: 500;
     outline: none;
 }
 
 .form-input:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.16);
+    border-color: #5351A2;
+    box-shadow: 0 0 0 4px rgba(83, 81, 162, 0.16);
 }
 
 .auth-row {
@@ -195,11 +195,11 @@
     align-items: center;
     gap: 0.4rem;
     font-size: 0.85rem;
-    color: #475569;
+    color: #4c4c5f;
 }
 
 .auth-help {
-    color: #4f46e5;
+    color: #5351A2;
     font-size: 0.83rem;
     font-weight: 700;
 }
@@ -231,15 +231,15 @@
 
 .auth-button.student,
 .auth-button.warden {
-    background: linear-gradient(90deg, #4f46e5, #7c3aed);
+    background: linear-gradient(90deg, #5351A2, #020202);
 }
 
 .auth-button.admin {
-    background: linear-gradient(90deg, #1e3a8a, #1d4ed8);
+    background: linear-gradient(90deg, #3f3d87, #2d2b63);
 }
 
 .auth-button.security {
-    background: linear-gradient(90deg, #1e293b, #020617);
+    background: linear-gradient(90deg, #23232f, #020617);
 }
 
 .auth-error {
@@ -260,7 +260,7 @@
 }
 
 .auth-status-title {
-    color: #94a3b8;
+    color: #7b7b90;
     font-size: 0.68rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -278,7 +278,7 @@
     padding: 0.45rem 0.8rem;
     font-size: 0.75rem;
     font-weight: 700;
-    color: #334155;
+    color: #3f3f55;
 }
 
 .status-dot {
@@ -291,7 +291,7 @@
 .auth-footnote {
     margin-top: 1.2rem;
     font-size: 0.73rem;
-    color: #64748b;
+    color: #58586a;
     text-align: center;
 }
 
@@ -299,7 +299,7 @@
     min-height: 100vh;
     display: grid;
     place-items: center;
-    background: linear-gradient(145deg, #f8fafc, #eef2ff);
+    background: linear-gradient(145deg, #f8fafc, #ececf8);
     padding: 2rem;
 }
 
@@ -315,10 +315,10 @@
 
 .placeholder-card h2 {
     margin: 0 0 0.65rem;
-    color: #0f172a;
+    color: #15151c;
 }
 
 .placeholder-card p {
     margin: 0;
-    color: #64748b;
+    color: #58586a;
 }

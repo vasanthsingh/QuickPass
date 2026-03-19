@@ -17,8 +17,6 @@ function AuthLayout({
     loading,
     error,
 }) {
-    const roleTitle = role.charAt(0).toUpperCase() + role.slice(1)
-
     return (
         <div className="auth-page">
             <div className="auth-bg" aria-hidden="true">
@@ -32,7 +30,7 @@ function AuthLayout({
                     <div className={`auth-brand-icon ${role}`}>
                         <PaperPlaneTiltIcon size={20} weight="fill" />
                     </div>
-                    <span className="auth-brand-title">QuickPass {roleTitle}</span>
+                    <span className="auth-brand-title">QuickPass</span>
                 </div>
                 <Link className="auth-back" to="/">
                     <ArrowLeftIcon size={14} weight="bold" /> Back to Home

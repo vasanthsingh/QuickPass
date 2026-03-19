@@ -16,6 +16,7 @@ import StudentHomePassPage from './pages/student/StudentHomePassPage'
 import StudentPassHistoryPage from './pages/student/StudentPassHistoryPage'
 import StudentProfilePage from './pages/student/StudentProfilePage'
 import WardenDashboard from './pages/warden/WardenDashboard'
+import WardenPassRequestsPage from './pages/warden/WardenPassRequestsPage'
 
 function App() {
   return (
@@ -82,6 +83,14 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['warden']}>
               <WardenDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/warden/pass-requests"
+          element={
+            <ProtectedRoute allowedRoles={['warden']}>
+              <WardenPassRequestsPage />
             </ProtectedRoute>
           }
         />

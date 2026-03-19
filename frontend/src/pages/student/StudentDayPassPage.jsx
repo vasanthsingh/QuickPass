@@ -42,10 +42,15 @@ function StudentDayPassPage() {
 
         try {
             setIsSubmitting(true)
-            await api.post('/passes/day', payload, { headers: getAuthHeaders(token) })
-            navigate('/student')
+            const response = await api.post('/passes/day', payload, { headers: getAuthHeaders(token) })
+            setError('')
+            // Show success message briefly before redirect
+            setTimeout(() => {
+                navigate('/student')
+            }, 1000)
         } catch (err) {
-            setError(err.response?.data?.message || 'Request could not be sent to server. Please check backend connection.')
+            const errorMsg = err.response?.data?.message || 'Request could not be sent to server. Please check backend connection.'
+            setError(errorMsg)
         } finally {
             setIsSubmitting(false)
         }

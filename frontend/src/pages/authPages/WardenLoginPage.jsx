@@ -34,7 +34,7 @@ function WardenLoginPage() {
                 user: payload.warden,
             })
 
-            navigate('/warden')
+            navigate('/warden', { replace: true })
         } catch (err) {
             setError(err.response?.data?.message || 'Login failed. Please try again.')
         } finally {

@@ -2,8 +2,8 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    color: #0f172a;
-    background: radial-gradient(circle at top right, #eef2ff 0%, #ffffff 50%, #f5f3ff 100%);
+    color: #15151c;
+    background: radial-gradient(circle at top right, #ececf8 0%, #ffffff 50%, #f0effa 100%);
 }
 
 .landing-nav {
@@ -23,14 +23,14 @@
 }
 
 .brand-icon-box {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    background: linear-gradient(135deg, #5351A2, #020202);
     color: #ffffff;
     width: 48px;
     height: 48px;
     border-radius: 18px;
     display: grid;
     place-items: center;
-    box-shadow: 0 12px 24px rgba(79, 70, 229, 0.28);
+    box-shadow: 0 12px 24px rgba(83, 81, 162, 0.28);
 }
 
 .brand-name {
@@ -54,12 +54,12 @@
 .nav-links a {
     font-size: 0.85rem;
     font-weight: 700;
-    color: #64748b;
+    color: #58586a;
     transition: color 0.2s ease;
 }
 
 .nav-links a:hover {
-    color: #4f46e5;
+    color: #5351A2;
 }
 
 .nav-divider {
@@ -73,7 +73,7 @@
     font-weight: 700;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: #94a3b8;
+    color: #7b7b90;
 }
 
 .admin-mini-link {
@@ -82,17 +82,17 @@
     gap: 0.3rem;
     padding: 0.45rem 0.75rem;
     border-radius: 999px;
-    border: 1px solid #dbeafe;
-    color: #1e3a8a;
-    background: #eff6ff;
+    border: 1px solid #e3e2f3;
+    color: #3f3d87;
+    background: #ececf8;
     font-size: 0.78rem;
     font-weight: 700;
     transition: all 0.2s ease;
 }
 
 .admin-mini-link:hover {
-    background: #dbeafe;
-    border-color: #bfdbfe;
+    background: #e3e2f3;
+    border-color: #d2d1ec;
 }
 
 .landing-main {
@@ -117,7 +117,7 @@
     left: 2rem;
     width: 16rem;
     height: 16rem;
-    background: rgba(165, 180, 252, 0.4);
+    background: rgba(83, 81, 162, 0.28);
 }
 
 .bg-orb-two {
@@ -125,7 +125,7 @@
     right: 2rem;
     width: 20rem;
     height: 20rem;
-    background: rgba(196, 181, 253, 0.35);
+    background: rgba(2, 2, 2, 0.14);
 }
 
 .hero-copy,
@@ -149,7 +149,7 @@
 }
 
 .hero-highlight {
-    background: linear-gradient(to right, #4f46e5, #7c3aed);
+    background: linear-gradient(to right, #5351A2, #020202);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -158,7 +158,7 @@
 .hero-copy p {
     margin: 0 auto;
     max-width: 40rem;
-    color: #64748b;
+    color: #58586a;
     font-size: clamp(1rem, 2.3vw, 1.25rem);
     font-weight: 500;
     line-height: 1.7;
@@ -235,39 +235,39 @@
 
 .portal-card.student:hover,
 .portal-card.warden:hover {
-    box-shadow: 0 30px 60px rgba(79, 70, 229, 0.12);
+    box-shadow: 0 30px 60px rgba(83, 81, 162, 0.12);
 }
 
 .portal-card.student .icon-box {
-    background: #e0e7ff;
-    color: #4f46e5;
+    background: #dfdef3;
+    color: #5351A2;
 }
 
 .portal-card.warden .icon-box {
-    background: #ede9fe;
-    color: #7c3aed;
+    background: #e6e5f5;
+    color: #020202;
 }
 
 .portal-card.student h3,
 .portal-card.warden h3 {
-    color: #0f172a;
+    color: #15151c;
 }
 
 .portal-card.student p,
 .portal-card.warden p {
-    color: #64748b;
+    color: #58586a;
 }
 
 .portal-card.student .portal-cta {
-    color: #4f46e5;
+    color: #5351A2;
 }
 
 .portal-card.warden .portal-cta {
-    color: #7c3aed;
+    color: #020202;
 }
 
 .portal-card.security {
-    background: #0f172a;
+    background: #15151c;
     box-shadow: 0 24px 45px rgba(15, 23, 42, 0.3);
 }
 
@@ -281,11 +281,11 @@
 }
 
 .portal-card.security p {
-    color: #94a3b8;
+    color: #7b7b90;
 }
 
 .portal-card.security .portal-cta {
-    color: #818cf8;
+    color: #7a78bf;
 }
 
 .landing-footer {
@@ -311,14 +311,14 @@
     margin: 0;
     font-size: 0.88rem;
     font-weight: 700;
-    color: #0f172a;
+    color: #15151c;
     text-align: center;
 }
 
 .footer-subtitle {
     margin: 0.35rem 0 0;
     font-size: 0.77rem;
-    color: #64748b;
+    color: #58586a;
     font-weight: 500;
     text-align: center;
 }
@@ -329,12 +329,12 @@
 }
 
 .footer-links a {
-    color: #94a3b8;
+    color: #7b7b90;
     transition: color 0.2s ease;
 }
 
 .footer-links a:hover {
-    color: #4f46e5;
+    color: #5351A2;
 }
 
 @media (min-width: 768px) {
