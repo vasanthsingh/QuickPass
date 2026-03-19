@@ -28,6 +28,7 @@ function StudentHomePassPage() {
     })
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState('')
+    const [successMessage, setSuccessMessage] = useState('')
 
     const handleChange = (event) => {
         const { name, value } = event.target
@@ -37,6 +38,7 @@ function StudentHomePassPage() {
     const handleSubmit = async (event) => {
         event.preventDefault()
         setError('')
+        setSuccessMessage('')
 
         // Check if parentPhone is set
         if (!user?.parentPhone) {
@@ -58,10 +60,8 @@ function StudentHomePassPage() {
             setIsSubmitting(true)
             const response = await api.post('/passes/home', payload, { headers: getAuthHeaders(token) })
             setError('')
-            // Show success message briefly before redirect
-            setTimeout(() => {
-                navigate('/student')
-            }, 1000)
+            const backendMessage = response?.data?.message || 'Home Pass request submitted successfully.'
+            setSuccessMessage(backendMessage)
         } catch (err) {
             const errorMsg = err.response?.data?.message || 'Failed to submit home pass. Please try again.'
             setError(errorMsg)
@@ -199,6 +199,7 @@ function StudentHomePassPage() {
                     </div>
 
                     {error ? <p className="form-error">{error}</p> : null}
+                    {successMessage ? <p className="history-meta" style={{ marginTop: '0.8rem', color: '#166534', fontWeight: 600 }}>{successMessage}</p> : null}
                 </form>
             </main>
         </div>

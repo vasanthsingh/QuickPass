@@ -15,7 +15,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import api from '../../lib/axios'
-import './WardenPassRequestsPage.css'
+import './WardenEditRequestsPage.css'
 
 const getAuthHeaders = (token) => ({
     Authorization: `Bearer ${token}`,
@@ -34,13 +34,12 @@ const formatDateTime = (value) => {
     })
 }
 
-function WardenPassRequestsPage() {
+function WardenEditRequestsPage() {
     const navigate = useNavigate()
     const { token, user, logout } = useAuth()
 
     const [profile, setProfile] = useState(user || null)
     const [requests, setRequests] = useState([])
-    const [passTypeFilter, setPassTypeFilter] = useState('All')
     const [loading, setLoading] = useState(true)
     const [errorMessage, setErrorMessage] = useState('')
     const [actionBusyId, setActionBusyId] = useState(null)
@@ -49,31 +48,26 @@ function WardenPassRequestsPage() {
     const wardenId = profile?.wardenId || user?.wardenId || 'N/A'
     const assignedHostel = profile?.assignedHostel || user?.assignedHostel || 'Not assigned'
 
-    const dayCount = useMemo(() => requests.filter((item) => item.passType === 'Day Pass').length, [requests])
-    const homeCount = useMemo(() => requests.filter((item) => item.passType === 'Home Pass').length, [requests])
-
-    const visibleRequests = useMemo(() => {
-        if (passTypeFilter === 'All') return requests
-        return requests.filter((item) => item.passType === passTypeFilter)
-    }, [requests, passTypeFilter])
+    const pendingCount = useMemo(() => requests.filter((item) => item.status === 'Pending').length, [requests])
 
     const loadData = async () => {
         if (!token) return
+
         setLoading(true)
         setErrorMessage('')
 
         try {
             const headers = getAuthHeaders(token)
 
-            const [profileResponse, pendingResponse] = await Promise.all([
+            const [profileResponse, editRequestsResponse] = await Promise.all([
                 api.get('/warden/profile', { headers }),
-                api.get('/warden/pass-requests?status=Pending', { headers }),
+                api.get('/warden/profile-requests?status=Pending', { headers }),
             ])
 
             setProfile(profileResponse.data?.profile || user)
-            setRequests(pendingResponse.data?.requests || [])
+            setRequests(editRequestsResponse.data?.requests || [])
         } catch (error) {
-            setErrorMessage(error.response?.data?.message || 'Unable to load pass requests.')
+            setErrorMessage(error.response?.data?.message || 'Unable to load edit requests.')
         } finally {
             setLoading(false)
         }
@@ -97,22 +91,22 @@ function WardenPassRequestsPage() {
 
             const endpoint =
                 decision === 'approve'
-                    ? `/warden/pass-requests/${requestId}/approve`
-                    : `/warden/pass-requests/${requestId}/reject`
+                    ? `/warden/profile-requests/${requestId}/approve`
+                    : `/warden/profile-requests/${requestId}/reject`
 
-            const body = decision === 'reject' ? { reason: 'Rejected by warden from pass requests page' } : undefined
+            const body = decision === 'reject' ? { rejectionReason: 'Rejected by warden from edit requests page' } : undefined
 
             await api.put(endpoint, body, { headers: getAuthHeaders(token) })
             setRequests((prev) => prev.filter((item) => item._id !== requestId))
         } catch (error) {
-            setErrorMessage(error.response?.data?.message || 'Unable to update request status.')
+            setErrorMessage(error.response?.data?.message || 'Unable to update edit request status.')
         } finally {
             setActionBusyId(null)
         }
     }
 
     return (
-        <div className="warden-requests-page-shell">
+        <div className="warden-edit-page-shell">
             <aside className="warden-sidebar">
                 <div className="warden-brand">
                     <div className="warden-brand-icon">
@@ -126,11 +120,11 @@ function WardenPassRequestsPage() {
                         <CalendarBlankIcon size={18} weight="bold" />
                         <span>Overview</span>
                     </button>
-                    <button type="button" className="warden-menu-item active">
+                    <button type="button" className="warden-menu-item" onClick={() => navigate('/warden/pass-requests')}>
                         <ClockIcon size={18} weight="bold" />
                         <span>Pass Requests</span>
                     </button>
-                    <button type="button" className="warden-menu-item" onClick={() => navigate('/warden/edit-requests')}>
+                    <button type="button" className="warden-menu-item active">
                         <NotePencilIcon size={18} weight="bold" />
                         <span>Edit Requests</span>
                     </button>
@@ -168,44 +162,27 @@ function WardenPassRequestsPage() {
 
             <main className="warden-main">
                 <header className="warden-header">
-                    <h1>Pass Requests</h1>
-                    <p className="date-label">Review and process pending Day/Home passes</p>
+                    <h1>Edit Requests</h1>
+                    <p className="date-label">Review student profile update requests</p>
                 </header>
 
-                <section className="pass-requests-content">
+                <section className="edit-requests-content">
                     <div className="request-summary-grid">
                         <article className="summary-card">
                             <p>Total Pending</p>
-                            <h2>{requests.length}</h2>
-                        </article>
-                        <article className="summary-card">
-                            <p>Day Pass</p>
-                            <h2>{dayCount}</h2>
-                        </article>
-                        <article className="summary-card">
-                            <p>Home Pass</p>
-                            <h2>{homeCount}</h2>
+                            <h2>{pendingCount}</h2>
                         </article>
                     </div>
 
-                    <div className="requests-toolbar">
-                        <h3>Student Requests</h3>
-                        <select value={passTypeFilter} onChange={(event) => setPassTypeFilter(event.target.value)}>
-                            <option value="All">All Pass Types</option>
-                            <option value="Day Pass">Day Pass</option>
-                            <option value="Home Pass">Home Pass</option>
-                        </select>
-                    </div>
-
-                    {loading ? <p className="panel-empty">Loading pending requests...</p> : null}
+                    {loading ? <p className="panel-empty">Loading pending edit requests...</p> : null}
                     {!loading && errorMessage ? <p className="panel-error">{errorMessage}</p> : null}
-                    {!loading && !errorMessage && visibleRequests.length === 0 ? (
-                        <p className="panel-empty">No pending requests available for the selected type.</p>
+                    {!loading && !errorMessage && requests.length === 0 ? (
+                        <p className="panel-empty">No pending edit requests available.</p>
                     ) : null}
 
-                    {!loading && !errorMessage && visibleRequests.length > 0 ? (
+                    {!loading && !errorMessage && requests.length > 0 ? (
                         <div className="request-cards-list">
-                            {visibleRequests.map((request) => (
+                            {requests.map((request) => (
                                 <article key={request._id} className="request-item-card">
                                     <div className="request-item-top">
                                         <div>
@@ -215,24 +192,22 @@ function WardenPassRequestsPage() {
                                                 {request?.studentId?.roomNumber || 'N/A'}
                                             </p>
                                         </div>
-                                        <span className={`pass-chip ${(request.passType || '').toLowerCase().includes('home') ? 'home' : 'day'}`}>
-                                            {request.passType || 'Pass'}
-                                        </span>
+                                        <span className="request-status-chip">{request.status || 'Pending'}</span>
                                     </div>
 
-                                    <div className="request-item-grid">
-                                        <p>
-                                            <strong>Destination:</strong> {request.destination || 'N/A'}
-                                        </p>
-                                        <p>
-                                            <strong>Reason:</strong> {request.reason || 'N/A'}
-                                        </p>
-                                        <p>
-                                            <strong>From:</strong> {formatDateTime(request.fromDate)}
-                                        </p>
-                                        <p>
-                                            <strong>To:</strong> {formatDateTime(request.toDate)}
-                                        </p>
+                                    <p className="request-date">Requested on: {formatDateTime(request.requestDate)}</p>
+
+                                    <div className="changes-list">
+                                        {(request.changes || []).map((change, idx) => (
+                                            <div key={`${request._id}-change-${idx}`} className="change-row">
+                                                <strong>{change.label || change.field || 'Field'}</strong>
+                                                <p>
+                                                    <span>{change.oldValue || 'N/A'}</span>
+                                                    <span className="arrow">{'->'}</span>
+                                                    <span>{change.newValue || 'N/A'}</span>
+                                                </p>
+                                            </div>
+                                        ))}
                                     </div>
 
                                     <div className="request-item-actions">
@@ -263,4 +238,4 @@ function WardenPassRequestsPage() {
     )
 }
 
-export default WardenPassRequestsPage
+export default WardenEditRequestsPage

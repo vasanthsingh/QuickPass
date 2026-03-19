@@ -16,7 +16,12 @@ import StudentHomePassPage from './pages/student/StudentHomePassPage'
 import StudentPassHistoryPage from './pages/student/StudentPassHistoryPage'
 import StudentProfilePage from './pages/student/StudentProfilePage'
 import WardenDashboard from './pages/warden/WardenDashboard'
+import WardenDefaultersPage from './pages/warden/WardenDefaultersPage'
+import WardenEditRequestsPage from './pages/warden/WardenEditRequestsPage'
 import WardenPassRequestsPage from './pages/warden/WardenPassRequestsPage'
+import WardenProfilePage from './pages/warden/WardenProfilePage'
+import WardenSecurityGuardPage from './pages/warden/WardenSecurityGuardPage'
+import WardenStudentDatabasePage from './pages/warden/WardenStudentDatabasePage'
 
 function App() {
   return (
@@ -91,6 +96,46 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['warden']}>
               <WardenPassRequestsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/warden/edit-requests"
+          element={
+            <ProtectedRoute allowedRoles={['warden']}>
+              <WardenEditRequestsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/warden/student-database"
+          element={
+            <ProtectedRoute allowedRoles={['warden']}>
+              <WardenStudentDatabasePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/warden/security-guards"
+          element={
+            <ProtectedRoute allowedRoles={['warden']}>
+              <WardenSecurityGuardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/warden/defaulters"
+          element={
+            <ProtectedRoute allowedRoles={['warden']}>
+              <WardenDefaultersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/warden/profile"
+          element={
+            <ProtectedRoute allowedRoles={['warden']}>
+              <WardenProfilePage />
             </ProtectedRoute>
           }
         />

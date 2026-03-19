@@ -15,7 +15,7 @@ const passSchema = new mongoose.Schema({
     // Details
     destination: { type: String, required: true },
     reason: { type: String, required: true },
-    transportMode: { type: String, enum: ['Walk', 'Auto', 'Bus', 'Bike', 'Train', 'Car'] },
+    transportMode: { type: String, enum: ['Walk', 'Auto', 'Bus', 'Bike', 'Train', 'Car', 'Flight', 'Other'] },
 
     // Approval Workflow Status
     status: {

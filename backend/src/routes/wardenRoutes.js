@@ -11,6 +11,7 @@ const {
     rejectProfileRequestByWarden,
     createStudentByWarden,
     createSecurityByWarden,
+    getSecurityDatabaseByWarden,
     deleteSecurityByWarden,
     getAllStudentsByWarden,
     getStudentDatabaseByWarden,
@@ -52,6 +53,9 @@ router.post('/students/add', verifyToken, isWarden, createStudentByWarden);
 
 // POST /api/warden/security/add - Create security guard (Warden only)
 router.post('/security/add', verifyToken, isWarden, createSecurityByWarden);
+
+// GET /api/warden/security/database - Get security guard database table data (Warden only)
+router.get('/security/database', verifyToken, isWarden, getSecurityDatabaseByWarden);
 
 // DELETE /api/warden/security/:id - Delete security guard (Warden only)
 router.delete('/security/:id', verifyToken, isWarden, deleteSecurityByWarden);

@@ -335,6 +335,69 @@ const deleteSecurityByWarden = async (req, res) => {
     }
 };
 
+// @desc    Get security guard database view for warden panel
+// @access  Private - Warden only
+const getSecurityDatabaseByWarden = async (req, res) => {
+    try {
+        const search = (req.query.search || '').trim();
+        const status = (req.query.status || '').trim();
+
+        const filter = {};
+
+        if (status && status !== 'All') {
+            filter.status = status;
+        }
+
+        if (search) {
+            filter.$or = [
+                { fullName: { $regex: search, $options: 'i' } },
+                { guardId: { $regex: search, $options: 'i' } },
+                { phoneNumber: { $regex: search, $options: 'i' } },
+                { email: { $regex: search, $options: 'i' } },
+                { assignedGate: { $regex: search, $options: 'i' } }
+            ];
+        }
+
+        const guards = await Guard.find(filter)
+            .select('fullName guardId phoneNumber email assignedGate shiftTime status dateJoined')
+            .sort({ dateJoined: -1 });
+
+        const rows = guards.map((guard) => ({
+            id: guard._id,
+            guardInfo: {
+                fullName: guard.fullName,
+                guardId: guard.guardId
+            },
+            contact: {
+                phone: guard.phoneNumber,
+                email: guard.email || null
+            },
+            assignment: {
+                gate: guard.assignedGate,
+                shiftTime: guard.shiftTime || null
+            },
+            status: guard.status || 'Active',
+            dateJoined: guard.dateJoined
+        }));
+
+        const activeCount = rows.filter((row) => row.status === 'Active').length;
+        const onLeaveCount = rows.filter((row) => row.status === 'On Leave').length;
+
+        return res.json({
+            message: 'Security guard database retrieved successfully',
+            totalGuards: rows.length,
+            activeCount,
+            onLeaveCount,
+            search,
+            status: status || 'All',
+            guards: rows
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error', error: err.message });
+    }
+};
+
 // @desc    Get all students
 // @access  Private - Warden only
 const getAllStudentsByWarden = async (req, res) => {
@@ -685,6 +748,7 @@ module.exports = {
     rejectProfileRequestByWarden,
     createStudentByWarden,
     createSecurityByWarden,
+    getSecurityDatabaseByWarden,
     deleteSecurityByWarden,
     getAllStudentsByWarden,
     getStudentDatabaseByWarden,

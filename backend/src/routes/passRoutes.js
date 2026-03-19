@@ -4,6 +4,7 @@ const router = express.Router();
 const {
     applyDayPass,
     applyHomePass,
+    guardianDecisionPage,
     guardianRespondToHomePass,
     getPassRequestsForWarden,
     approvePassByWarden,
@@ -20,7 +21,10 @@ router.post('/day', verifyToken, applyDayPass);
 // POST /api/passes/home - Apply for home pass (Student only)
 router.post('/home', verifyToken, applyHomePass);
 
-// GET /api/passes/guardian/respond?token=...&action=accept|reject - Guardian decision (Public)
+// GET /api/passes/guardian/decision?token=... - Guardian page with Approve/Reject options (Public)
+router.get('/guardian/decision', guardianDecisionPage);
+
+// GET /api/passes/guardian/respond?token=...&action=approve|reject - Guardian decision (Public)
 router.get('/guardian/respond', guardianRespondToHomePass);
 
 // POST /api/passes/guardian/respond - Guardian decision (Public)

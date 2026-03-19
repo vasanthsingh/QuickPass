@@ -1,4 +1,4 @@
-.warden-requests-page-shell {
+.warden-profile-shell {
     min-height: 100vh;
     display: grid;
     grid-template-columns: 266px 1fr;
@@ -36,52 +36,37 @@
 }
 
 .warden-menu {
-    flex: 1;
     display: grid;
     gap: 0.25rem;
-    padding: 1.1rem 0.75rem 0;
+    padding: 1.1rem 0;
 }
 
 .warden-menu-item {
-    width: 100%;
+    height: 48px;
     border: 0;
     background: transparent;
-    border-radius: 0.8rem;
-    margin-bottom: 0.35rem;
-    padding: 0.72rem 0.8rem;
-    color: #525263;
+    color: #64748f;
     font-size: 0.92rem;
-    font-weight: 600;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 0.55rem;
+    gap: 0.7rem;
     text-align: left;
+    padding: 0 1.45rem;
     cursor: pointer;
     border-right: 3px solid transparent;
-    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-    position: relative;
+    transition: all 0.22s ease;
 }
 
 .warden-menu-item.active {
-    background: linear-gradient(to right, #e5e4f8, #e6e6e8);
-    color: #5351a2;
-    border-right-color: #5351a2;
-    transform: translateX(4px);
-    box-shadow: 0 8px 18px rgba(83, 81, 162, 0.18);
+    background: #e7ecf5;
+    color: #295bd8;
+    border-right-color: #295bd8;
 }
 
 .warden-menu-item:hover {
-    background: rgba(83, 81, 162, 0.14);
-    color: #5351a2;
-    transform: translateX(5px);
-}
-
-.warden-menu-item svg {
-    transition: transform 0.3s ease;
-}
-
-.warden-menu-item:hover svg {
-    transform: scale(1.15) rotate(5deg);
+    background: #edf1f8;
+    color: #42526a;
 }
 
 .warden-user-box {
@@ -119,10 +104,11 @@
 
 .warden-logout {
     margin: 0.3rem 1.45rem 1.2rem;
-    border: 1px solid rgba(2, 2, 2, 0.2);
+    border: 1px solid #d6dce6;
     border-radius: 0.7rem;
-    background: #ececf6;
-    color: #44445b;
+    height: 42px;
+    background: #ffffff;
+    color: #4c5970;
     font-size: 0.95rem;
     font-weight: 700;
     display: inline-flex;
@@ -134,11 +120,8 @@
 }
 
 .warden-logout:hover {
-    background: #fee2e2;
-    border-color: #fca5a5;
-    color: #991b1b;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(153, 27, 27, 0.15);
+    border-color: #c8d4e7;
+    background: #f7f9fc;
 }
 
 .warden-main {
@@ -173,171 +156,150 @@
     font-weight: 700;
 }
 
-.pass-requests-content {
+.warden-profile-content {
     padding: 1.35rem;
     display: grid;
     gap: 1rem;
 }
 
-.request-summary-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1rem;
-}
-
-.summary-card {
+.warden-profile-card {
     border: 1px solid #d5dbe7;
     border-radius: 12px;
     background: #f7f9fc;
-    box-shadow: 0 2px 8px rgba(28, 37, 54, 0.06);
+    box-shadow: 0 2px 8px rgba(28, 37, 54, 0.05);
     padding: 1rem;
 }
 
-.summary-card p {
-    margin: 0;
-    color: #68768f;
-    font-size: 0.82rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 800;
-}
-
-.summary-card h2 {
-    margin: 0.45rem 0 0;
-    font-size: 1.9rem;
-}
-
-.requests-toolbar {
-    border: 1px solid #d5dbe7;
-    border-radius: 12px;
-    background: #f7f9fc;
-    box-shadow: 0 2px 8px rgba(28, 37, 54, 0.05);
-    padding: 0.85rem 1rem;
-    display: flex;
+.card-title-row {
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 0.7rem;
+    gap: 0.45rem;
+    margin-bottom: 0.8rem;
+    color: #304b76;
 }
 
-.requests-toolbar h3 {
+.card-title-row h3 {
     margin: 0;
     font-size: 1rem;
 }
 
-.requests-toolbar select {
-    border: 1px solid #d4dbe8;
-    border-radius: 9px;
-    background: #ffffff;
-    color: #4f617f;
-    font-weight: 700;
-    font-size: 0.83rem;
-    padding: 0.45rem 0.6rem;
-    outline: none;
-}
-
-.request-cards-list {
-    display: grid;
-    gap: 0.85rem;
-}
-
-.request-item-card {
-    border: 1px solid #d5dbe7;
-    border-radius: 12px;
-    background: #f7f9fc;
-    box-shadow: 0 2px 8px rgba(28, 37, 54, 0.05);
-    padding: 0.95rem;
-}
-
-.request-item-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 0.7rem;
-}
-
-.request-item-top h4 {
-    margin: 0;
-    font-size: 1rem;
-}
-
-.request-item-top p {
-    margin: 0.25rem 0 0;
-    color: #667691;
-    font-size: 0.84rem;
+.profile-note {
+    margin: 0 0 0.75rem;
+    color: #5f6f87;
+    font-size: 0.82rem;
     font-weight: 600;
 }
 
-.pass-chip {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    padding: 0.2rem 0.7rem;
-    font-size: 0.84rem;
+.warden-profile-readonly-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.readonly-item {
+    border: 1px solid #d3dcec;
+    border-radius: 0.75rem;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    padding: 0.65rem 0.75rem;
+    display: grid;
+    gap: 0.2rem;
+    box-shadow: 0 1px 4px rgba(28, 37, 54, 0.06);
+}
+
+.readonly-item span {
+    font-size: 0.74rem;
     font-weight: 700;
+    color: #6e7f99;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
-.pass-chip.day {
-    color: #2f63dd;
-    background: #e6eeff;
+.readonly-item strong {
+    font-size: 0.92rem;
+    color: #243553;
+    font-weight: 800;
 }
 
-.pass-chip.home {
-    color: #7f3ef0;
-    background: #efe6ff;
+@media (max-width: 1200px) {
+    .warden-profile-readonly-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
-.request-item-grid {
-    margin-top: 0.7rem;
+.warden-profile-form {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.55rem 0.9rem;
+    gap: 0.7rem 0.8rem;
 }
 
-.request-item-grid p {
-    margin: 0;
-    font-size: 0.86rem;
-    color: #4f617e;
-    line-height: 1.45;
-}
-
-.request-item-actions {
-    margin-top: 0.9rem;
-    display: flex;
-    gap: 0.55rem;
-    flex-wrap: wrap;
-}
-
-.action-btn {
-    border: 0;
-    border-radius: 0.65rem;
-    padding: 0.5rem 0.68rem;
+.warden-profile-form label {
     font-size: 0.82rem;
     font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    cursor: pointer;
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    color: #3f3f55;
 }
 
-.action-btn:disabled {
-    opacity: 0.75;
+.warden-profile-form input {
+    width: 100%;
+    margin-top: 0.3rem;
+    border: 1px solid #d7deea;
+    border-radius: 0.65rem;
+    padding: 0.62rem 0.68rem;
+    background: #fcfdff;
+    font-family: inherit;
+}
+
+.warden-profile-form input:focus {
+    outline: none;
+    border-color: #5351a2;
+    box-shadow: 0 0 0 4px rgba(83, 81, 162, 0.14);
+}
+
+.warden-profile-form input:disabled {
+    background: #eef2f8;
+    color: #5b6e88;
     cursor: not-allowed;
 }
 
-.action-btn.approve {
-    color: #ffffff;
-    background: linear-gradient(130deg, #5351a2, #3f3d87);
+.form-error,
+.form-success {
+    margin: 0;
+    border-radius: 0.6rem;
+    padding: 0.52rem 0.68rem;
+    font-size: 0.8rem;
+    grid-column: 1 / -1;
 }
 
-.action-btn.reject {
-    color: #ffffff;
-    background: linear-gradient(130deg, #5b5258, #2b272b);
+.form-error {
+    color: #991b1b;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
 }
 
-.action-btn:hover {
-    transform: translateY(-2px);
+.form-success {
+    color: #166534;
+    background: #ecfdf5;
+    border: 1px solid #bbf7d0;
+}
+
+.card-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.card-actions button {
+    border: 0;
+    background: linear-gradient(135deg, #5351a2, #020202);
+    color: #ffffff;
+    border-radius: 0.65rem;
+    padding: 0.55rem 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.card-actions button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 .panel-empty,
@@ -360,14 +322,8 @@
     background: #fff0f2;
 }
 
-@media (max-width: 1100px) {
-    .request-summary-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
 @media (max-width: 980px) {
-    .warden-requests-page-shell {
+    .warden-profile-shell {
         grid-template-columns: 1fr;
     }
 
@@ -411,11 +367,15 @@
         padding: 0.9rem 1rem;
     }
 
-    .pass-requests-content {
+    .warden-profile-content {
         padding: 1rem;
     }
 
-    .request-item-grid {
+    .warden-profile-form {
+        grid-template-columns: 1fr;
+    }
+
+    .warden-profile-readonly-grid {
         grid-template-columns: 1fr;
     }
 }

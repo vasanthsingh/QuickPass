@@ -1,6 +1,7 @@
 const Pass = require('../models/passModel');
 const Student = require('../models/studentModel');
 const crypto = require('crypto');
+const { sendGuardianApprovalSms } = require('../utils/smsService');
 
 const DAY_PASS_START_MINUTES = 5 * 60;   // 05:00
 const DAY_PASS_END_MINUTES = 21 * 60;    // 21:00
@@ -56,9 +57,112 @@ const generateGuardianLinks = (req, token) => {
     const baseUrl = getApiBaseUrl(req);
     const encodedToken = encodeURIComponent(token);
     return {
-        accept: `${baseUrl}/api/passes/guardian/respond?token=${encodedToken}&action=accept`,
+        decision: `${baseUrl}/api/passes/guardian/decision?token=${encodedToken}`,
+        approve: `${baseUrl}/api/passes/guardian/respond?token=${encodedToken}&action=approve`,
         reject: `${baseUrl}/api/passes/guardian/respond?token=${encodedToken}&action=reject`
     };
+};
+
+// @desc    Guardian decision page with Approve / Reject options
+// @access  Public
+const guardianDecisionPage = async (req, res) => {
+    try {
+        const token = req.query.token;
+        if (!token) {
+            return sendGuardianDecisionResponse(req, res, {
+                message: 'Approval token is required',
+                success: false
+            }, 400);
+        }
+
+        const pass = await Pass.findOne({
+            guardianApprovalToken: token,
+            passType: 'Home Pass',
+            status: 'Pending',
+            guardianApprovalStatus: 'Pending'
+        }).populate('studentId', 'fullName rollNumber');
+
+        if (!pass) {
+            return sendGuardianDecisionResponse(req, res, {
+                message: 'This link is invalid or already used.',
+                success: false
+            }, 404);
+        }
+
+        const guardianLinks = generateGuardianLinks(req, token);
+        return res.send(`
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guardian Approval</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background: #f6f7fb; color: #1f2937; }
+        .wrap { max-width: 560px; margin: 42px auto; background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08); }
+        h1 { margin: 0 0 8px; font-size: 24px; }
+        p { margin: 6px 0; line-height: 1.5; }
+        .meta { margin-top: 12px; color: #4b5563; font-size: 14px; }
+        .actions { display: flex; gap: 10px; margin-top: 18px; }
+        .btn { text-decoration: none; padding: 10px 14px; border-radius: 8px; font-weight: 700; color: #fff; }
+        .btn-approve { background: #0a7a3f; }
+        .btn-reject { background: #b91c1c; }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <h1>Guardian Decision Required</h1>
+        <p>Please review and choose one option for this outpass request.</p>
+        <div class="meta">
+            <p><strong>Student:</strong> ${pass.studentId?.fullName || 'Student'}</p>
+            <p><strong>Roll No:</strong> ${pass.studentId?.rollNumber || '-'}</p>
+            <p><strong>Destination:</strong> ${pass.destination}</p>
+            <p><strong>Reason:</strong> ${pass.reason}</p>
+        </div>
+        <div class="actions">
+            <a class="btn btn-approve" href="${guardianLinks.approve}">Approve</a>
+            <a class="btn btn-reject" href="${guardianLinks.reject}">Reject</a>
+        </div>
+    </div>
+</body>
+</html>`);
+    } catch (err) {
+        console.error(err);
+        return sendGuardianDecisionResponse(req, res, {
+            message: 'Server error',
+            success: false
+        }, 500);
+    }
+};
+
+const sendGuardianDecisionResponse = (req, res, { message, success }, statusCode = 200) => {
+    if (req.method === 'GET') {
+        const color = success ? '#0a7a3f' : '#9b1c1c';
+        const title = success ? 'Decision saved' : 'Unable to process decision';
+        return res.status(statusCode).send(`
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guardian Approval</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background: #f6f7fb; color: #1f2937; }
+        .wrap { max-width: 560px; margin: 48px auto; background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08); }
+        h1 { margin: 0 0 10px; color: ${color}; font-size: 22px; }
+        p { margin: 0; line-height: 1.5; }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <h1>${title}</h1>
+        <p>${message}</p>
+    </div>
+</body>
+</html>`);
+    }
+
+    return res.status(statusCode).json({ message });
 };
 
 const getStudentFromToken = async (req, res) => {
@@ -271,14 +375,42 @@ const applyHomePass = async (req, res) => {
             status: 'Pending'
         });
 
+        const smsDispatch = await sendGuardianApprovalSms({
+            guardianPhone: student.parentPhone,
+            studentName: student.fullName,
+            decisionLink: guardianLinks.decision
+        });
+
+        if (smsDispatch.requiresManualShare) {
+            await Pass.findByIdAndDelete(createdPass._id);
+            return res.status(503).json({
+                message: 'Direct guardian delivery is not configured. Enable an SMS provider to send approval link directly to parent mobile number.'
+            });
+        }
+
+        if (!smsDispatch.sent) {
+            await Pass.findByIdAndDelete(createdPass._id);
+            return res.status(502).json({
+                message: 'Failed to send guardian approval link directly to parent phone number.',
+                reason: smsDispatch.reason || 'Provider delivery failed'
+            });
+        }
+
+        const dispatchMessage = 'Home Pass request submitted successfully. Approval link was sent directly to guardian mobile number.';
+
+        const safeDispatch = {
+            sent: smsDispatch.sent,
+            provider: smsDispatch.provider,
+            to: smsDispatch.to
+        };
+
         return res.status(201).json({
-            message: 'Home Pass request submitted successfully. Guardian approval link generated.',
+            message: dispatchMessage,
             pass: createdPass,
             guardianApproval: {
                 phoneNumber: student.parentPhone,
-                message: `Outpass request for ${student.fullName}. Accept: ${guardianLinks.accept} Reject: ${guardianLinks.reject}`,
-                acceptLink: guardianLinks.accept,
-                rejectLink: guardianLinks.reject
+                channel: smsDispatch.provider || 'unknown',
+                smsDispatch: safeDispatch
             }
         });
     } catch (err) {
@@ -300,8 +432,11 @@ const guardianRespondToHomePass = async (req, res) => {
             return res.status(400).json({ message: 'token and action are required' });
         }
 
-        if (!['accept', 'reject'].includes(action)) {
-            return res.status(400).json({ message: 'action must be accept or reject' });
+        if (!['accept', 'approve', 'reject'].includes(action)) {
+            return sendGuardianDecisionResponse(req, res, {
+                message: 'action must be approve or reject',
+                success: false
+            }, 400);
         }
 
         const pass = await Pass.findOne({
@@ -312,22 +447,24 @@ const guardianRespondToHomePass = async (req, res) => {
         });
 
         if (!pass) {
-            return res.status(404).json({ message: 'Invalid or already used guardian approval link' });
+            return sendGuardianDecisionResponse(req, res, {
+                message: 'Invalid or already used guardian approval link',
+                success: false
+            }, 404);
         }
 
         pass.guardianApprovalAt = new Date();
         pass.guardianApprovalToken = undefined;
 
-        if (action === 'accept') {
+        if (action === 'accept' || action === 'approve') {
             pass.isGuardianApproved = true;
             pass.guardianApprovalStatus = 'Approved';
             pass.guardianRejectionReason = undefined;
 
             await pass.save();
-            return res.json({
+            return sendGuardianDecisionResponse(req, res, {
                 message: 'Guardian approved successfully. Warden can now review this pass.',
-                passId: pass._id,
-                guardianApprovalStatus: pass.guardianApprovalStatus
+                success: true
             });
         }
 
@@ -338,14 +475,16 @@ const guardianRespondToHomePass = async (req, res) => {
         pass.rejectionReason = pass.guardianRejectionReason;
 
         await pass.save();
-        return res.json({
+        return sendGuardianDecisionResponse(req, res, {
             message: 'Guardian rejected this pass request',
-            passId: pass._id,
-            guardianApprovalStatus: pass.guardianApprovalStatus
+            success: true
         });
     } catch (err) {
         console.error(err);
-        return res.status(500).json({ message: 'Server error', error: err.message });
+        return sendGuardianDecisionResponse(req, res, {
+            message: 'Server error',
+            success: false
+        }, 500);
     }
 };
 
@@ -529,6 +668,7 @@ const cancelMyPassRequest = async (req, res) => {
 module.exports = {
     applyDayPass,
     applyHomePass,
+    guardianDecisionPage,
     guardianRespondToHomePass,
     getPassRequestsForWarden,
     approvePassByWarden,

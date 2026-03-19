@@ -161,30 +161,30 @@ function WardenDashboard() {
 
                 <nav className="warden-menu">
                     <button type="button" className="warden-menu-item active">
-                        <ListBulletsIcon size={18} weight="bold" />
+                        <CalendarBlankIcon size={18} weight="bold" />
                         <span>Overview</span>
                     </button>
                     <button type="button" className="warden-menu-item" onClick={() => navigate('/warden/pass-requests')}>
                         <ClockIcon size={18} weight="bold" />
                         <span>Pass Requests</span>
                     </button>
-                    <button type="button" className="warden-menu-item">
+                    <button type="button" className="warden-menu-item" onClick={() => navigate('/warden/edit-requests')}>
                         <NotePencilIcon size={18} weight="bold" />
                         <span>Edit Requests</span>
                     </button>
-                    <button type="button" className="warden-menu-item">
+                    <button type="button" className="warden-menu-item" onClick={() => navigate('/warden/student-database')}>
                         <StudentIcon size={18} weight="bold" />
                         <span>Student Database</span>
                     </button>
-                    <button type="button" className="warden-menu-item">
+                    <button type="button" className="warden-menu-item" onClick={() => navigate('/warden/security-guards')}>
                         <ShieldCheckIcon size={18} weight="bold" />
                         <span>Security Guard</span>
                     </button>
-                    <button type="button" className="warden-menu-item">
+                    <button type="button" className="warden-menu-item" onClick={() => navigate('/warden/defaulters')}>
                         <WarningDiamondIcon size={18} weight="bold" />
                         <span>Defaulters</span>
                     </button>
-                    <button type="button" className="warden-menu-item">
+                    <button type="button" className="warden-menu-item" onClick={() => navigate('/warden/profile')}>
                         <UserCircleIcon size={18} weight="bold" />
                         <span>My Profile</span>
                     </button>
