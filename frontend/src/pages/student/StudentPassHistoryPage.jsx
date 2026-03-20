@@ -1,6 +1,7 @@
 import { ArrowLeftIcon, ClockCounterClockwiseIcon } from '@phosphor-icons/react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { QRCodeSVG } from 'qrcode.react'
 import { useAuth } from '../../context/AuthContext'
 import api from '../../lib/axios'
 import { formatDate, getAuthHeaders, getDisplayStatus, getLocalPassesForStudent, getStatusClass } from './passUtils'
@@ -62,6 +63,7 @@ function StudentPassHistoryPage() {
 
                     {!loading && passes.map((pass) => {
                         const statusLabel = getDisplayStatus(pass)
+                        const canShowQr = Boolean(pass?.qrToken) && ['Approved', 'Out'].includes(pass?.status)
                         return (
                             <article key={pass._id} className="history-card">
                                 <div className="history-row">
@@ -74,6 +76,19 @@ function StudentPassHistoryPage() {
                                 </p>
                                 <p className="history-meta">Destination: {pass.destination || 'N/A'}</p>
                                 <p className="history-meta">Reason: {pass.reason || 'N/A'}</p>
+
+                                {canShowQr ? (
+                                    <div className="qr-panel">
+                                        <div className="qr-box">
+                                            <QRCodeSVG value={pass.qrToken} size={142} includeMargin />
+                                        </div>
+                                        <div className="qr-details">
+                                            <p className="qr-title">Gate QR Ready</p>
+                                            <p className="history-meta">Show this QR at gate for outgoing and incoming scan.</p>
+                                            <p className="history-meta">Pass ID: {pass._id}</p>
+                                        </div>
+                                    </div>
+                                ) : null}
                             </article>
                         )
                     })}

@@ -1,6 +1,7 @@
 const Pass = require('../models/passModel');
 const Student = require('../models/studentModel');
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
 const { sendGuardianApprovalSms } = require('../utils/smsService');
 
 const DAY_PASS_START_MINUTES = 5 * 60;   // 05:00
@@ -41,6 +42,33 @@ const normalizeDate = (dateInput) => {
     if (Number.isNaN(date.getTime())) return null;
     date.setHours(0, 0, 0, 0);
     return date;
+};
+
+const buildPassEndDateTime = (pass) => {
+    const result = buildDateTime(pass?.toDate, pass?.toTime);
+    return result || null;
+};
+
+const generatePassQrToken = (pass) => {
+    const qrSecret = process.env.PASS_QR_SECRET || process.env.JWT_SECRET || 'your-secret-key';
+    const endDateTime = buildPassEndDateTime(pass);
+
+    // Token remains valid at least 1 hour so guards can still complete flow around edge times.
+    const nowSeconds = Math.floor(Date.now() / 1000);
+    const expirySeconds = endDateTime ? Math.floor(endDateTime.getTime() / 1000) + (60 * 60) : nowSeconds + (24 * 60 * 60);
+    const safeExpirySeconds = Math.max(expirySeconds, nowSeconds + (60 * 60));
+
+    return jwt.sign(
+        {
+            type: 'OUTPASS_QR',
+            passId: String(pass._id),
+            studentId: String(pass.studentId)
+        },
+        qrSecret,
+        {
+            expiresIn: safeExpirySeconds - nowSeconds
+        }
+    );
 };
 
 const hasBlockingPass = async (studentId) => {
@@ -566,6 +594,10 @@ const approvePassByWarden = async (req, res) => {
         pass.approvedBy = req.user.id;
         pass.rejectedBy = undefined;
         pass.rejectionReason = undefined;
+        pass.qrToken = generatePassQrToken(pass);
+        pass.qrIssuedAt = new Date();
+        pass.actualOutTime = undefined;
+        pass.actualInTime = undefined;
 
         await pass.save();
 

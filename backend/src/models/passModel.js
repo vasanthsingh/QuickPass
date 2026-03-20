@@ -44,6 +44,10 @@ const passSchema = new mongoose.Schema({
     actualOutTime: { type: Date }, // Filled by Security when scanning QR
     actualInTime: { type: Date },  // Filled by Security upon return
 
+    // QR lifecycle: generated after warden approval and scanned at gate.
+    qrToken: { type: String },
+    qrIssuedAt: { type: Date },
+
     createdAt: { type: Date, default: Date.now }
 });
 
