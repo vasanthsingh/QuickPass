@@ -296,15 +296,6 @@ function SecurityDashboard() {
                                 </div>
                             ) : null}
 
-                            <label htmlFor="qrPayload">QR Scan Data (Fallback)</label>
-                            <textarea
-                                id="qrPayload"
-                                rows={4}
-                                value={qrToken}
-                                onChange={(event) => setQrToken(event.target.value)}
-                                placeholder="If camera is unavailable, paste scanner value here"
-                            />
-
                             <label htmlFor="passIdManual">Pass ID (Manual Alternative)</label>
                             <input
                                 id="passIdManual"
