@@ -1,5 +1,6 @@
 const Pass = require('../models/passModel');
 const Student = require('../models/studentModel');
+const SystemSetting = require('../models/systemSettingModel');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { sendGuardianApprovalSms } = require('../utils/smsService');
@@ -79,6 +80,12 @@ const hasBlockingPass = async (studentId) => {
     }).sort({ createdAt: -1 });
 
     return existing;
+};
+
+const isPassRequestEnabled = async () => {
+    const setting = await SystemSetting.findOne({ key: 'global' });
+    if (!setting) return true;
+    return setting.passRequestsEnabled !== false;
 };
 
 const generateGuardianLinks = (req, token) => {
@@ -217,6 +224,13 @@ const getStudentFromToken = async (req, res) => {
 // @access  Private - Student only
 const applyDayPass = async (req, res) => {
     try {
+        const passRequestEnabled = await isPassRequestEnabled();
+        if (!passRequestEnabled) {
+            return res.status(403).json({
+                message: 'Pass requests are temporarily disabled by administration'
+            });
+        }
+
         const student = await getStudentFromToken(req, res);
         if (!student) return;
 
@@ -310,6 +324,13 @@ const applyDayPass = async (req, res) => {
 // @access  Private - Student only
 const applyHomePass = async (req, res) => {
     try {
+        const passRequestEnabled = await isPassRequestEnabled();
+        if (!passRequestEnabled) {
+            return res.status(403).json({
+                message: 'Pass requests are temporarily disabled by administration'
+            });
+        }
+
         const student = await getStudentFromToken(req, res);
         if (!student) return;
 

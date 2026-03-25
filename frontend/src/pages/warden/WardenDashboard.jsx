@@ -3,6 +3,7 @@ import {
     ClockIcon,
     IdentificationBadgeIcon,
     ListBulletsIcon,
+    MegaphoneSimpleIcon,
     NotePencilIcon,
     PaperPlaneTiltIcon,
     ShieldCheckIcon,
@@ -43,6 +44,7 @@ function WardenDashboard() {
     const [profileRequestsCount, setProfileRequestsCount] = useState(0)
     const [studentsOutCount, setStudentsOutCount] = useState(0)
     const [recentMovements, setRecentMovements] = useState([])
+    const [announcements, setAnnouncements] = useState([])
     const [statusFilter, setStatusFilter] = useState('All')
     const [studentStats, setStudentStats] = useState({ totalStudents: 0, activeCount: 0, defaulterCount: 0 })
     const [loading, setLoading] = useState(true)
@@ -142,6 +144,21 @@ function WardenDashboard() {
 
     useEffect(() => {
         loadDashboardData()
+    }, [token])
+
+    useEffect(() => {
+        const loadAnnouncements = async () => {
+            if (!token) return
+
+            try {
+                const response = await api.get('/announcements/me', { headers: getAuthHeaders(token) })
+                setAnnouncements(response.data?.announcements || [])
+            } catch {
+                setAnnouncements([])
+            }
+        }
+
+        loadAnnouncements()
     }, [token])
 
     const handleLogout = () => {
@@ -312,6 +329,34 @@ function WardenDashboard() {
                                         ))}
                                     </tbody>
                                 </table>
+                            </div>
+                        ) : null}
+                    </section>
+
+                    <section className="warden-announcements-panel">
+                        <div className="panel-header">
+                            <h2>
+                                <MegaphoneSimpleIcon size={18} weight="bold" />
+                                <span>Announcements</span>
+                            </h2>
+                        </div>
+
+                        {announcements.length === 0 ? <p className="panel-empty">No announcements available.</p> : null}
+
+                        {announcements.length > 0 ? (
+                            <div className="warden-announcement-list">
+                                {announcements.map((item) => (
+                                    <article key={item._id} className="warden-announcement-item">
+                                        <div className="announcement-head">
+                                            <h3>{item.title}</h3>
+                                            <span className={`announcement-priority ${String(item.priority || 'Normal').toLowerCase()}`}>
+                                                {item.priority || 'Normal'}
+                                            </span>
+                                        </div>
+                                        <p>{item.message}</p>
+                                        <small>{new Date(item.createdAt).toLocaleString()}</small>
+                                    </article>
+                                ))}
                             </div>
                         ) : null}
                     </section>

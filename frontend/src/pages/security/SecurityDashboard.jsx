@@ -5,8 +5,8 @@ import {
     ClockIcon,
     ExclamationMarkIcon,
     ListBulletsIcon,
+    MegaphoneSimpleIcon,
     PaperPlaneTiltIcon,
-    ShieldWarningIcon,
     ShieldCheckIcon,
     SignOutIcon,
 } from '@phosphor-icons/react'
@@ -43,9 +43,7 @@ function SecurityDashboard() {
     const [error, setError] = useState('')
     const [recentScans, setRecentScans] = useState([])
     const [recentLoading, setRecentLoading] = useState(false)
-    const [overrideReason, setOverrideReason] = useState('')
-    const [overrideBusy, setOverrideBusy] = useState(false)
-    const [overrideMessage, setOverrideMessage] = useState('')
+    const [announcements, setAnnouncements] = useState([])
     const lastAutoScanAtRef = useRef(0)
 
     const guardName = user?.fullName || 'Security Guard'
@@ -103,6 +101,23 @@ function SecurityDashboard() {
         fetchRecentScans()
     }, [token])
 
+    useEffect(() => {
+        const loadAnnouncements = async () => {
+            if (!token) return
+
+            try {
+                const response = await api.get('/announcements/me', {
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+                setAnnouncements(response.data?.announcements || [])
+            } catch {
+                setAnnouncements([])
+            }
+        }
+
+        loadAnnouncements()
+    }, [token])
+
     const submitScan = async (tokenValue, passIdValue) => {
         setError('')
         setResult(null)
@@ -151,40 +166,6 @@ function SecurityDashboard() {
     const handleScanSubmit = async (event) => {
         event.preventDefault()
         submitScan(qrToken, manualPassId)
-    }
-
-    const handleOverrideSubmit = async () => {
-        setOverrideMessage('')
-
-        if (!overrideReason.trim() || overrideReason.trim().length < 8) {
-            setOverrideMessage('Please enter a clear reason (minimum 8 characters).')
-            return
-        }
-
-        try {
-            setOverrideBusy(true)
-            const response = await api.post(
-                '/security/override',
-                {
-                    reason: overrideReason.trim(),
-                    direction,
-                    scanMessage: result?.message,
-                    qrToken,
-                    passId: result?.details?.passId,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            )
-            setOverrideMessage(response.data?.message || 'Override request sent.')
-            setOverrideReason('')
-        } catch (err) {
-            setOverrideMessage(err.response?.data?.message || 'Failed to send override request.')
-        } finally {
-            setOverrideBusy(false)
-        }
     }
 
     const details = result?.details
@@ -306,15 +287,6 @@ function SecurityDashboard() {
                                 </div>
                             ) : null}
 
-                            <label htmlFor="qrPayload">QR Scan Data (Fallback)</label>
-                            <textarea
-                                id="qrPayload"
-                                rows={4}
-                                value={qrToken}
-                                onChange={(event) => setQrToken(event.target.value)}
-                                placeholder="If camera is unavailable, paste scanner value here"
-                            />
-
                             <label htmlFor="passIdManual">Pass ID (Manual Alternative)</label>
                             <input
                                 id="passIdManual"
@@ -330,23 +302,6 @@ function SecurityDashboard() {
                             <button className="scan-submit" type="submit" disabled={loading}>
                                 {loading ? 'Validating...' : `Validate ${direction === 'OUT' ? 'Outgoing' : 'Incoming'} QR`}
                             </button>
-
-                            <div className="override-form">
-                                <h3>
-                                    <ShieldWarningIcon size={16} weight="bold" />
-                                    Manual Override Request
-                                </h3>
-                                <textarea
-                                    rows={3}
-                                    value={overrideReason}
-                                    onChange={(event) => setOverrideReason(event.target.value)}
-                                    placeholder="Example: Student forgot phone, ID verified physically, request temporary override"
-                                />
-                                <button className="scan-submit override" type="button" onClick={handleOverrideSubmit} disabled={overrideBusy}>
-                                    {overrideBusy ? 'Sending...' : 'Send To Warden'}
-                                </button>
-                                {overrideMessage ? <p className="override-message">{overrideMessage}</p> : null}
-                            </div>
                         </form>
 
                         <section className="result-card">
@@ -404,6 +359,34 @@ function SecurityDashboard() {
                             </div>
                         </section>
                     </div>
+
+                    <section className="security-announcements-panel">
+                        <div className="panel-title-row">
+                            <h2>
+                                <MegaphoneSimpleIcon size={18} weight="bold" />
+                                <span>Announcements</span>
+                            </h2>
+                        </div>
+
+                        {announcements.length === 0 ? <p className="result-empty">No announcements available.</p> : null}
+
+                        {announcements.length > 0 ? (
+                            <div className="security-announcement-list">
+                                {announcements.map((item) => (
+                                    <article key={item._id} className="security-announcement-item">
+                                        <div className="announcement-head">
+                                            <h3>{item.title}</h3>
+                                            <span className={`announcement-priority ${String(item.priority || 'Normal').toLowerCase()}`}>
+                                                {item.priority || 'Normal'}
+                                            </span>
+                                        </div>
+                                        <p>{item.message}</p>
+                                        <small>{new Date(item.createdAt).toLocaleString()}</small>
+                                    </article>
+                                ))}
+                            </div>
+                        ) : null}
+                    </section>
                 </section>
             </main>
         </div>

@@ -304,42 +304,6 @@
     cursor: not-allowed;
 }
 
-.override-form {
-    margin-top: 0.9rem;
-    border-top: 1px dashed #d3dae7;
-    padding-top: 0.8rem;
-}
-
-.override-form h3 {
-    margin: 0 0 0.45rem;
-    font-size: 0.9rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    color: #394a67;
-}
-
-.override-form textarea {
-    width: 100%;
-    border: 1px solid #d4dbe8;
-    border-radius: 0.7rem;
-    padding: 0.65rem;
-    font: inherit;
-    resize: vertical;
-    background: #ffffff;
-}
-
-.scan-submit.override {
-    margin-top: 0.55rem;
-    background: linear-gradient(132deg, #4c545e 0%, #2f3744 100%);
-}
-
-.override-message {
-    margin: 0.5rem 0 0;
-    font-size: 0.82rem;
-    color: #31435f;
-}
-
 .result-card h2 {
     margin: 0;
     font-size: 1rem;
@@ -496,4 +460,73 @@
     outline: none;
     border-color: #5351a2;
     box-shadow: 0 0 0 4px rgba(83, 81, 162, 0.12);
+}
+
+.security-announcements-panel {
+    border: 1px solid #d5dbe7;
+    border-radius: 14px;
+    background: #f7f9fc;
+    box-shadow: 0 2px 8px rgba(28, 37, 54, 0.05);
+    padding: 1rem;
+}
+
+.security-announcement-list {
+    margin-top: 0.6rem;
+    display: grid;
+    gap: 0.7rem;
+}
+
+.security-announcement-item {
+    border: 1px solid #d5dbe7;
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 0.75rem;
+}
+
+.security-announcement-item h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #213654;
+}
+
+.security-announcement-item p {
+    margin: 0.45rem 0;
+    font-size: 0.86rem;
+    color: #4d5f7d;
+}
+
+.security-announcement-item small {
+    color: #6d7d96;
+    font-size: 0.76rem;
+    font-weight: 600;
+}
+
+.announcement-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+}
+
+.announcement-priority {
+    border-radius: 999px;
+    padding: 0.2rem 0.55rem;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.announcement-priority.normal {
+    background: #edf2ff;
+    color: #3553b4;
+}
+
+.announcement-priority.high {
+    background: #fff3df;
+    color: #be7005;
+}
+
+.announcement-priority.urgent {
+    background: #ffe9e9;
+    color: #b42323;
 }

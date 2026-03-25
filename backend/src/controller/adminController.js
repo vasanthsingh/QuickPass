@@ -2,6 +2,9 @@
 const Admin = require('../models/adminModel');
 const Warden = require('../models/wardenModel');
 const Guard = require('../models/securityModel');
+const Student = require('../models/studentModel');
+const Announcement = require('../models/announcementModel');
+const SystemSetting = require('../models/systemSettingModel');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -11,6 +14,15 @@ const formatMongoError = (err) => {
         return `${duplicateField} already exists`;
     }
     return err.message;
+};
+
+const allowedAssignedGates = Guard.schema.path('assignedGate').enumValues;
+const allowedShiftTimes = Guard.schema.path('shiftTime').enumValues;
+const defaultPassPolicy = {
+    maxDayPassesPerWeek: 3,
+    maxHomePassesPerMonth: 2,
+    curfewTime: '21:00',
+    requireGuardianApprovalForHomePass: true
 };
 
 // @desc    Register a new admin (Admin only)
@@ -405,9 +417,24 @@ const createSecurity = async (req, res) => {
             dateJoined
         } = req.body;
 
-        if (!fullName || !guardId || !password || !phoneNumber || !assignedGate || !dateJoined) {
+        const normalizedAssignedGate = typeof assignedGate === 'string' ? assignedGate.trim() : assignedGate;
+        const normalizedShiftTime = typeof shiftTime === 'string' ? shiftTime.trim() : shiftTime;
+
+        if (!fullName || !guardId || !password || !phoneNumber || !normalizedAssignedGate || !dateJoined) {
             return res.status(400).json({
                 message: 'fullName, guardId, password, phoneNumber, assignedGate and dateJoined are required'
+            });
+        }
+
+        if (!allowedAssignedGates.includes(normalizedAssignedGate)) {
+            return res.status(400).json({
+                message: `assignedGate must be one of: ${allowedAssignedGates.join(', ')}`
+            });
+        }
+
+        if (normalizedShiftTime && !allowedShiftTimes.includes(normalizedShiftTime)) {
+            return res.status(400).json({
+                message: `shiftTime must be one of: ${allowedShiftTimes.join(', ')}`
             });
         }
 
@@ -428,8 +455,8 @@ const createSecurity = async (req, res) => {
             password: hashedPassword,
             phoneNumber,
             email,
-            assignedGate,
-            shiftTime,
+            assignedGate: normalizedAssignedGate,
+            shiftTime: normalizedShiftTime || undefined,
             status,
             dateJoined
         });
@@ -503,8 +530,31 @@ const updateSecurity = async (req, res) => {
         if (fullName !== undefined) guard.fullName = fullName;
         if (phoneNumber !== undefined) guard.phoneNumber = phoneNumber;
         if (email !== undefined) guard.email = email;
-        if (assignedGate !== undefined) guard.assignedGate = assignedGate;
-        if (shiftTime !== undefined) guard.shiftTime = shiftTime;
+
+        if (assignedGate !== undefined) {
+            const normalizedAssignedGate = typeof assignedGate === 'string' ? assignedGate.trim() : assignedGate;
+
+            if (!allowedAssignedGates.includes(normalizedAssignedGate)) {
+                return res.status(400).json({
+                    message: `assignedGate must be one of: ${allowedAssignedGates.join(', ')}`
+                });
+            }
+
+            guard.assignedGate = normalizedAssignedGate;
+        }
+
+        if (shiftTime !== undefined) {
+            const normalizedShiftTime = typeof shiftTime === 'string' ? shiftTime.trim() : shiftTime;
+
+            if (normalizedShiftTime && !allowedShiftTimes.includes(normalizedShiftTime)) {
+                return res.status(400).json({
+                    message: `shiftTime must be one of: ${allowedShiftTimes.join(', ')}`
+                });
+            }
+
+            guard.shiftTime = normalizedShiftTime || undefined;
+        }
+
         if (status !== undefined) guard.status = status;
         if (dateJoined !== undefined) guard.dateJoined = dateJoined;
 
@@ -551,6 +601,255 @@ const deleteSecurity = async (req, res) => {
     }
 };
 
+// @desc    Get pass request control status
+// @access  Private - Admin only
+const getPassControlStatus = async (req, res) => {
+    try {
+        let setting = await SystemSetting.findOne({ key: 'global' });
+        if (!setting) {
+            setting = await SystemSetting.create({ key: 'global', passRequestsEnabled: true });
+        }
+
+        return res.json({
+            message: 'Pass control status retrieved successfully',
+            passRequestsEnabled: Boolean(setting.passRequestsEnabled)
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error', error: err.message });
+    }
+};
+
+// @desc    Update pass request control status
+// @access  Private - Admin only
+const updatePassControlStatus = async (req, res) => {
+    try {
+        const { passRequestsEnabled } = req.body;
+
+        if (typeof passRequestsEnabled !== 'boolean') {
+            return res.status(400).json({ message: 'passRequestsEnabled must be a boolean' });
+        }
+
+        const setting = await SystemSetting.findOneAndUpdate(
+            { key: 'global' },
+            {
+                key: 'global',
+                passRequestsEnabled,
+                updatedAt: new Date()
+            },
+            {
+                upsert: true,
+                new: true,
+                setDefaultsOnInsert: true
+            }
+        );
+
+        return res.json({
+            message: passRequestsEnabled ? 'Pass requests are enabled' : 'Pass requests are disabled',
+            passRequestsEnabled: Boolean(setting.passRequestsEnabled)
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error', error: err.message });
+    }
+};
+
+// @desc    Create announcement
+// @access  Private - Admin only
+const createAnnouncement = async (req, res) => {
+    try {
+        const { title, message, targetAudience, priority } = req.body;
+
+        if (!title || !message) {
+            return res.status(400).json({ message: 'title and message are required' });
+        }
+
+        const announcement = await Announcement.create({
+            title: title.trim(),
+            message: message.trim(),
+            targetAudience,
+            priority,
+            createdBy: req.user?.id
+        });
+
+        return res.status(201).json({
+            message: 'Announcement created successfully',
+            announcement
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error', error: formatMongoError(err) });
+    }
+};
+
+// @desc    Get all announcements
+// @access  Private - Admin only
+const getAnnouncements = async (req, res) => {
+    try {
+        const announcements = await Announcement.find({ isActive: true })
+            .sort({ createdAt: -1 })
+            .populate('createdBy', 'name username')
+            .limit(100);
+
+        return res.json({
+            message: 'Announcements retrieved successfully',
+            count: announcements.length,
+            announcements
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error', error: err.message });
+    }
+};
+
+// @desc    Delete announcement
+// @access  Private - Admin only
+const deleteAnnouncement = async (req, res) => {
+    try {
+        const announcement = await Announcement.findByIdAndUpdate(
+            req.params.id,
+            { isActive: false },
+            { new: true }
+        );
+
+        if (!announcement) {
+            return res.status(404).json({ message: 'Announcement not found' });
+        }
+
+        return res.json({ message: 'Announcement deleted successfully' });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error', error: err.message });
+    }
+};
+
+// @desc    Get pass policy settings
+// @access  Private - Admin only
+const getPassPolicy = async (req, res) => {
+    try {
+        let setting = await SystemSetting.findOne({ key: 'global' });
+        if (!setting) {
+            setting = await SystemSetting.create({
+                key: 'global',
+                passRequestsEnabled: true,
+                passPolicy: defaultPassPolicy
+            });
+        }
+
+        return res.json({
+            message: 'Pass policy retrieved successfully',
+            passPolicy: {
+                ...defaultPassPolicy,
+                ...(setting.passPolicy || {})
+            }
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error', error: err.message });
+    }
+};
+
+// @desc    Update pass policy settings
+// @access  Private - Admin only
+const updatePassPolicy = async (req, res) => {
+    try {
+        const {
+            maxDayPassesPerWeek,
+            maxHomePassesPerMonth,
+            curfewTime,
+            requireGuardianApprovalForHomePass
+        } = req.body;
+
+        if (!Number.isInteger(maxDayPassesPerWeek) || maxDayPassesPerWeek < 0) {
+            return res.status(400).json({ message: 'maxDayPassesPerWeek must be a non-negative integer' });
+        }
+
+        if (!Number.isInteger(maxHomePassesPerMonth) || maxHomePassesPerMonth < 0) {
+            return res.status(400).json({ message: 'maxHomePassesPerMonth must be a non-negative integer' });
+        }
+
+        if (typeof curfewTime !== 'string' || !/^([01]\d|2[0-3]):([0-5]\d)$/.test(curfewTime)) {
+            return res.status(400).json({ message: 'curfewTime must be in HH:MM format' });
+        }
+
+        if (typeof requireGuardianApprovalForHomePass !== 'boolean') {
+            return res.status(400).json({ message: 'requireGuardianApprovalForHomePass must be a boolean' });
+        }
+
+        const setting = await SystemSetting.findOneAndUpdate(
+            { key: 'global' },
+            {
+                key: 'global',
+                passPolicy: {
+                    maxDayPassesPerWeek,
+                    maxHomePassesPerMonth,
+                    curfewTime,
+                    requireGuardianApprovalForHomePass
+                },
+                updatedAt: new Date()
+            },
+            { upsert: true, new: true, setDefaultsOnInsert: true }
+        );
+
+        return res.json({
+            message: 'Pass policy updated successfully',
+            passPolicy: setting.passPolicy
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error', error: err.message });
+    }
+};
+
+// @desc    Get defaulter list
+// @access  Private - Admin only
+const getDefaulterStudents = async (req, res) => {
+    try {
+        const students = await Student.find({ isDefaulter: true })
+            .sort({ createdAt: -1 })
+            .select('fullName rollNumber hostelBlock roomNumber year branch studentPhone parentPhone isDefaulter');
+
+        return res.json({
+            message: 'Defaulters retrieved successfully',
+            count: students.length,
+            defaulters: students
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error', error: err.message });
+    }
+};
+
+// @desc    Update student defaulter status
+// @access  Private - Admin only
+const updateStudentDefaulterStatus = async (req, res) => {
+    try {
+        const { isDefaulter } = req.body;
+
+        if (typeof isDefaulter !== 'boolean') {
+            return res.status(400).json({ message: 'isDefaulter must be a boolean' });
+        }
+
+        const student = await Student.findByIdAndUpdate(
+            req.params.id,
+            { isDefaulter },
+            { new: true }
+        ).select('fullName rollNumber isDefaulter');
+
+        if (!student) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+
+        return res.json({
+            message: isDefaulter ? 'Student marked as defaulter' : 'Student removed from defaulters',
+            student
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error', error: err.message });
+    }
+};
+
 module.exports = {
     createAdmin,
     adminLogin,
@@ -569,5 +868,14 @@ module.exports = {
     getAllSecurity,
     getSecurityById,
     updateSecurity,
-    deleteSecurity
+    deleteSecurity,
+    getPassControlStatus,
+    updatePassControlStatus,
+    createAnnouncement,
+    getAnnouncements,
+    deleteAnnouncement,
+    getPassPolicy,
+    updatePassPolicy,
+    getDefaulterStudents,
+    updateStudentDefaulterStatus
 };

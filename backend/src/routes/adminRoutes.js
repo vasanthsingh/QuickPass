@@ -19,7 +19,16 @@ const {
     getAllSecurity,
     getSecurityById,
     updateSecurity,
-    deleteSecurity
+    deleteSecurity,
+    getPassControlStatus,
+    updatePassControlStatus,
+    createAnnouncement,
+    getAnnouncements,
+    deleteAnnouncement,
+    getPassPolicy,
+    updatePassPolicy,
+    getDefaulterStudents,
+    updateStudentDefaulterStatus
 } = require('../controller/adminController');
 const {
     createStudent,
@@ -35,6 +44,33 @@ router.post('/login', adminLogin);
 
 // GET /api/admin/dashboard - Get dashboard stats (Admin only)
 router.get('/dashboard', verifyToken, isAdmin, getDashboardStats);
+
+// GET /api/admin/pass-control - Get pass request control status (Admin only)
+router.get('/pass-control', verifyToken, isAdmin, getPassControlStatus);
+
+// PUT /api/admin/pass-control - Update pass request control status (Admin only)
+router.put('/pass-control', verifyToken, isAdmin, updatePassControlStatus);
+
+// POST /api/admin/announcements - Create announcement (Admin only)
+router.post('/announcements', verifyToken, isAdmin, createAnnouncement);
+
+// GET /api/admin/announcements - Get all announcements (Admin only)
+router.get('/announcements', verifyToken, isAdmin, getAnnouncements);
+
+// DELETE /api/admin/announcements/:id - Delete announcement (Admin only)
+router.delete('/announcements/:id', verifyToken, isAdmin, deleteAnnouncement);
+
+// GET /api/admin/pass-policy - Get pass policy settings (Admin only)
+router.get('/pass-policy', verifyToken, isAdmin, getPassPolicy);
+
+// PUT /api/admin/pass-policy - Update pass policy settings (Admin only)
+router.put('/pass-policy', verifyToken, isAdmin, updatePassPolicy);
+
+// GET /api/admin/defaulters - Get defaulter students (Admin only)
+router.get('/defaulters', verifyToken, isAdmin, getDefaulterStudents);
+
+// PUT /api/admin/students/:id/defaulter - Update defaulter status (Admin only)
+router.put('/students/:id/defaulter', verifyToken, isAdmin, updateStudentDefaulterStatus);
 
 // GET /api/admin - Get all admins (Admin only)
 router.get('/', verifyToken, isAdmin, getAllAdmins);
