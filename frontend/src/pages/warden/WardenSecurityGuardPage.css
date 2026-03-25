@@ -7,8 +7,9 @@
 }
 
 .warden-sidebar {
-    background: #f7f9fc;
-    border-right: 1px solid #d6dce6;
+    background: rgba(248, 248, 253, 0.84);
+    border-right: 1px solid rgba(2, 2, 2, 0.2);
+    backdrop-filter: blur(12px);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -44,8 +45,9 @@
 .warden-menu-item {
     height: 48px;
     border: 0;
+    border-radius: 0.8rem;
     background: transparent;
-    color: #64748f;
+    color: #525263;
     font-size: 0.92rem;
     font-weight: 700;
     display: flex;
@@ -55,18 +57,21 @@
     padding: 0 1.45rem;
     cursor: pointer;
     border-right: 3px solid transparent;
-    transition: all 0.22s ease;
+    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .warden-menu-item.active {
-    background: #e7ecf5;
-    color: #295bd8;
-    border-right-color: #295bd8;
+    background: linear-gradient(to right, #e5e4f8, #e6e6e8);
+    color: #5351a2;
+    border-right-color: #5351a2;
+    transform: translateX(4px);
+    box-shadow: 0 8px 18px rgba(83, 81, 162, 0.18);
 }
 
 .warden-menu-item:hover {
-    background: #edf1f8;
-    color: #42526a;
+    background: rgba(83, 81, 162, 0.14);
+    color: #5351a2;
+    transform: translateX(5px);
 }
 
 .warden-user-box {
@@ -382,10 +387,13 @@
     }
 
     .warden-sidebar {
-        min-height: auto;
-        border-right: 0;
-        border-bottom: 1px solid #d6dce6;
-    }
+    background: rgba(248, 248, 253, 0.84);
+    border-right: 1px solid rgba(2, 2, 2, 0.2);
+    backdrop-filter: blur(12px);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
 
     .warden-menu {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -394,17 +402,30 @@
     }
 
     .warden-menu-item {
-        border-right: 0;
-        border: 1px solid #d5dce8;
-        border-radius: 10px;
-        height: 42px;
-        padding: 0 0.75rem;
-        font-size: 0.83rem;
-    }
+    height: 48px;
+    border: 0;
+    border-radius: 0.8rem;
+    background: transparent;
+    color: #525263;
+    font-size: 0.92rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    text-align: left;
+    padding: 0 1.45rem;
+    cursor: pointer;
+    border-right: 3px solid transparent;
+    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
 
     .warden-menu-item.active {
-        border-color: #c8d8ff;
-    }
+    background: linear-gradient(to right, #e5e4f8, #e6e6e8);
+    color: #5351a2;
+    border-right-color: #5351a2;
+    transform: translateX(4px);
+    box-shadow: 0 8px 18px rgba(83, 81, 162, 0.18);
+}
 
     .warden-user-box {
         margin-top: 0.3rem;
@@ -434,3 +455,5 @@
         width: 100%;
     }
 }
+
+

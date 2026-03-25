@@ -3,6 +3,7 @@ import {
     BedIcon,
     ClockCounterClockwiseIcon,
     HouseLineIcon,
+    MegaphoneSimpleIcon,
     PaperPlaneTiltIcon,
     SignOutIcon,
     SquaresFourIcon,
@@ -21,6 +22,7 @@ function StudentDashboard() {
     const { user, token, logout } = useAuth()
     const [profile, setProfile] = useState(user || null)
     const [passes, setPasses] = useState([])
+    const [announcements, setAnnouncements] = useState([])
     const [loadingPasses, setLoadingPasses] = useState(true)
 
     const studentName = profile?.fullName || user?.fullName || 'Student'
@@ -55,6 +57,19 @@ function StudentDashboard() {
 
         loadPasses()
     }, [token, user?.rollNumber])
+
+    useEffect(() => {
+        const loadAnnouncements = async () => {
+            try {
+                const response = await api.get('/announcements/me', { headers: getAuthHeaders(token) })
+                setAnnouncements(response.data?.announcements || [])
+            } catch {
+                setAnnouncements([])
+            }
+        }
+
+        loadAnnouncements()
+    }, [token])
 
     const latestPass = passes[0]
     const latestStatus = latestPass ? getDisplayStatus(latestPass) : null
@@ -177,6 +192,33 @@ function StudentDashboard() {
                             </>
                         ) : null}
                     </div>
+
+                    <section className="student-announcements-card">
+                        <div className="status-header-row">
+                            <h3>
+                                <MegaphoneSimpleIcon size={18} weight="bold" /> Announcements
+                            </h3>
+                        </div>
+
+                        {announcements.length === 0 ? <p>No announcements available.</p> : null}
+
+                        {announcements.length > 0 ? (
+                            <div className="student-announcement-list">
+                                {announcements.map((item) => (
+                                    <article key={item._id} className="student-announcement-item">
+                                        <div className="announcement-head">
+                                            <h4>{item.title}</h4>
+                                            <span className={`announcement-priority ${String(item.priority || 'Normal').toLowerCase()}`}>
+                                                {item.priority || 'Normal'}
+                                            </span>
+                                        </div>
+                                        <p>{item.message}</p>
+                                        <small>{new Date(item.createdAt).toLocaleString()}</small>
+                                    </article>
+                                ))}
+                            </div>
+                        ) : null}
+                    </section>
                 </section>
             </main>
         </div>

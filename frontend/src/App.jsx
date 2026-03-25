@@ -7,6 +7,12 @@ import SecurityLoginPage from './pages/authPages/SecurityLoginPage'
 import StudentLoginPage from './pages/authPages/StudentLoginPage'
 import WardenLoginPage from './pages/authPages/WardenLoginPage'
 import AdminPlaceholder from './pages/admin/AdminPlaceholder'
+import AdminAnnouncementsPage from './pages/admin/AdminAnnouncementsPage'
+import AdminDefaultersPage from './pages/admin/AdminDefaultersPage'
+import AdminPassPolicyPage from './pages/admin/AdminPassPolicyPage'
+import AdminProfilePage from './pages/admin/AdminProfilePage'
+import AdminSecurityPage from './pages/admin/AdminSecurityPage'
+import AdminWardensPage from './pages/admin/AdminWardensPage'
 import HomePage from './pages/homePage/HomePage'
 import FeaturesPage from './pages/public/FeaturesPage'
 import SecurityDashboard from './pages/security/SecurityDashboard'
@@ -39,6 +45,54 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminPlaceholder />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/wardens"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminWardensPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/security"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminSecurityPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/profile"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/announcements"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminAnnouncementsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/pass-policy"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminPassPolicyPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/defaulters"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminDefaultersPage />
             </ProtectedRoute>
           }
         />

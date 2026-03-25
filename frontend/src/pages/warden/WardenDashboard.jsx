@@ -3,6 +3,7 @@ import {
     ClockIcon,
     IdentificationBadgeIcon,
     ListBulletsIcon,
+    MegaphoneSimpleIcon,
     NotePencilIcon,
     PaperPlaneTiltIcon,
     ShieldCheckIcon,
@@ -43,6 +44,7 @@ function WardenDashboard() {
     const [profileRequestsCount, setProfileRequestsCount] = useState(0)
     const [studentsOutCount, setStudentsOutCount] = useState(0)
     const [recentMovements, setRecentMovements] = useState([])
+    const [announcements, setAnnouncements] = useState([])
     const [statusFilter, setStatusFilter] = useState('All')
     const [studentStats, setStudentStats] = useState({ totalStudents: 0, activeCount: 0, defaulterCount: 0 })
     const [loading, setLoading] = useState(true)
@@ -54,8 +56,8 @@ function WardenDashboard() {
     const assignedHostel = profile?.assignedHostel || user?.assignedHostel || 'Not assigned'
 
     const visibleMovements = useMemo(() => {
-        if (statusFilter === 'All') return recentMovements.slice(0, 10)
-        return recentMovements.filter((item) => item.status === statusFilter).slice(0, 10)
+        if (statusFilter === 'All') return recentMovements
+        return recentMovements.filter((item) => item.status === statusFilter)
     }, [recentMovements, statusFilter])
 
     const todayLabel = useMemo(
@@ -78,12 +80,9 @@ function WardenDashboard() {
         try {
             const headers = getAuthHeaders(token)
 
-            const [profileResult, pendingResult, approvedResult, rejectedResult, outResult, profileRequestResult, studentsResult] = await Promise.allSettled([
+            const [profileResult, requestsResult, profileRequestResult, studentsResult] = await Promise.allSettled([
                 api.get('/warden/profile', { headers }),
-                api.get('/warden/pass-requests?status=Pending', { headers }),
-                api.get('/warden/pass-requests?status=Approved', { headers }),
-                api.get('/warden/pass-requests?status=Rejected', { headers }),
-                api.get('/warden/pass-requests?status=Out', { headers }),
+                api.get('/warden/pass-requests?status=All', { headers }),
                 api.get('/warden/profile-requests', { headers }),
                 api.get('/warden/students/database', { headers }),
             ])
@@ -92,19 +91,16 @@ function WardenDashboard() {
                 setProfile(profileResult.value.data?.profile || user)
             }
 
-            const pending = pendingResult.status === 'fulfilled' ? pendingResult.value.data?.requests || [] : []
-            const approved = approvedResult.status === 'fulfilled' ? approvedResult.value.data?.requests || [] : []
-            const rejected = rejectedResult.status === 'fulfilled' ? rejectedResult.value.data?.requests || [] : []
-            const out = outResult.status === 'fulfilled' ? outResult.value.data?.requests || [] : []
+            const requests = requestsResult.status === 'fulfilled' ? requestsResult.value.data?.requests || [] : []
+            const pending = requests.filter((item) => item.status === 'Pending')
+            const out = requests.filter((item) => item.status === 'Out')
 
             setPendingRequests(pending)
             setStudentsOutCount(out.length)
 
-            const merged = [...pending, ...approved, ...rejected, ...out]
-            const deduped = Array.from(new Map(merged.map((item) => [item._id, item])).values())
-                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            const sortedRequests = [...requests].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
-            setRecentMovements(deduped)
+            setRecentMovements(sortedRequests)
 
             if (profileRequestResult.status === 'fulfilled') {
                 const requests = profileRequestResult.value.data?.requests || []
@@ -126,10 +122,7 @@ function WardenDashboard() {
 
             if (
                 profileResult.status === 'rejected' &&
-                pendingResult.status === 'rejected' &&
-                approvedResult.status === 'rejected' &&
-                rejectedResult.status === 'rejected' &&
-                outResult.status === 'rejected' &&
+                requestsResult.status === 'rejected' &&
                 profileRequestResult.status === 'rejected' &&
                 studentsResult.status === 'rejected'
             ) {
@@ -142,6 +135,21 @@ function WardenDashboard() {
 
     useEffect(() => {
         loadDashboardData()
+    }, [token])
+
+    useEffect(() => {
+        const loadAnnouncements = async () => {
+            if (!token) return
+
+            try {
+                const response = await api.get('/announcements/me', { headers: getAuthHeaders(token) })
+                setAnnouncements(response.data?.announcements || [])
+            } catch {
+                setAnnouncements([])
+            }
+        }
+
+        loadAnnouncements()
     }, [token])
 
     const handleLogout = () => {
@@ -263,6 +271,8 @@ function WardenDashboard() {
                                     <option value="Approved">Approved</option>
                                     <option value="Rejected">Rejected</option>
                                     <option value="Out">Out</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Expired">Expired</option>
                                 </select>
                             </div>
                         </div>
@@ -282,8 +292,10 @@ function WardenDashboard() {
                                         <tr>
                                             <th>Student</th>
                                             <th>Pass Type</th>
-                                            <th>Exit Time</th>
+                                            <th>Requested Exit</th>
                                             <th>Expected Return</th>
+                                            <th>Actual Out</th>
+                                            <th>Actual In</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
@@ -303,6 +315,8 @@ function WardenDashboard() {
                                                 </td>
                                                 <td>{formatDateTime(request.fromDate)}</td>
                                                 <td>{formatDateTime(request.toDate)}</td>
+                                                <td>{formatDateTime(request.actualOutTime)}</td>
+                                                <td>{formatDateTime(request.actualInTime)}</td>
                                                 <td>
                                                     <span className={`status-text status-${String(request.status || '').toLowerCase()}`}>
                                                         {request.status || 'Pending'}
@@ -312,6 +326,34 @@ function WardenDashboard() {
                                         ))}
                                     </tbody>
                                 </table>
+                            </div>
+                        ) : null}
+                    </section>
+
+                    <section className="warden-announcements-panel">
+                        <div className="panel-header">
+                            <h2>
+                                <MegaphoneSimpleIcon size={18} weight="bold" />
+                                <span>Announcements</span>
+                            </h2>
+                        </div>
+
+                        {announcements.length === 0 ? <p className="panel-empty">No announcements available.</p> : null}
+
+                        {announcements.length > 0 ? (
+                            <div className="warden-announcement-list">
+                                {announcements.map((item) => (
+                                    <article key={item._id} className="warden-announcement-item">
+                                        <div className="announcement-head">
+                                            <h3>{item.title}</h3>
+                                            <span className={`announcement-priority ${String(item.priority || 'Normal').toLowerCase()}`}>
+                                                {item.priority || 'Normal'}
+                                            </span>
+                                        </div>
+                                        <p>{item.message}</p>
+                                        <small>{new Date(item.createdAt).toLocaleString()}</small>
+                                    </article>
+                                ))}
                             </div>
                         ) : null}
                     </section>

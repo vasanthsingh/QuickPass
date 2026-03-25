@@ -1,7 +1,6 @@
 const Guard = require('../models/securityModel');
 const Pass = require('../models/passModel');
 const GateLog = require('../models/gatelogModel');
-const SecurityOverrideRequest = require('../models/securityOverrideModel');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -352,46 +351,9 @@ const getRecentScans = async (req, res) => {
     }
 };
 
-// @desc    Raise a manual override request from gate
-// @access  Private - Security only
-const createOverrideRequest = async (req, res) => {
-    try {
-        if (!req.user || req.user.role !== 'Security') {
-            return res.status(403).json({ message: 'Security access required' });
-        }
-
-        const { reason, direction, scanMessage, qrToken, passId } = req.body || {};
-        if (!reason || String(reason).trim().length < 8) {
-            return res.status(400).json({ message: 'reason is required (minimum 8 characters)' });
-        }
-
-        const guard = await Guard.findById(req.user.id).select('assignedGate');
-
-        const override = await SecurityOverrideRequest.create({
-            guardId: req.user.id,
-            gateNumber: guard?.assignedGate || 'Gate',
-            direction: parseScanDirection(direction) || 'OUT',
-            reason: String(reason).trim(),
-            scanMessage: scanMessage ? String(scanMessage) : undefined,
-            qrTokenSnippet: qrToken ? String(qrToken).slice(0, 40) : undefined,
-            relatedPassId: passId || undefined,
-            status: 'Pending'
-        });
-
-        return res.status(201).json({
-            message: 'Override request sent to warden queue',
-            request: override
-        });
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ message: 'Server error', error: err.message });
-    }
-};
-
 module.exports = {
     securityLogin,
     updateSecurityPassword,
     scanPassQr,
-    getRecentScans,
-    createOverrideRequest
+    getRecentScans
 };
