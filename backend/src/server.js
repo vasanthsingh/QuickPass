@@ -10,7 +10,12 @@ const PORT = process.env.PORT || 5175;
 
 mongoose.set('bufferCommands', false);
 
-app.use(cors());
+app.use(
+    cors({
+      origin: process.env.FRONTEND_URL || "http://localhost:5173",
+      credentials: true,
+    }),
+  );
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
