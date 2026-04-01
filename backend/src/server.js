@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5175;
 
 mongoose.set('bufferCommands', false);
 
@@ -21,6 +21,7 @@ app.use('/api/warden', require('./routes/wardenRoutes'));
 app.use('/api/security', require('./routes/securityRoutes'));
 app.use('/api/passes', require('./routes/passRoutes'));
 app.use('/api/announcements', require('./routes/announcementRoutes'));
+
 
 // Health Check
 app.get('/api/health', (req, res) => {
