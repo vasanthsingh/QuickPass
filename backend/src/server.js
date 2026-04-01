@@ -10,7 +10,26 @@ const PORT = process.env.PORT || 5175;
 
 mongoose.set('bufferCommands', false);
 
+const allowedOrigins = [
+    process.env.FRONTEND_URL,
+    'https://quickpassfrontend-flame.vercel.app',
+    'http://localhost:5173'
+].filter(Boolean);
 
+const corsOptions = {
+    origin(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        return callback(new Error('Not allowed by CORS'));
+    },
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
