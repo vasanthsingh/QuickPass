@@ -8,6 +8,7 @@ const studentSchema = new mongoose.Schema({
     parentPhone: { type: String, required: true },
     studentEmail: { type: String },
     parentEmail: { type: String },
+    profilePhotoUrl: { type: String },
     hostelBlock: { type: String, required: true },
     roomNumber: { type: String, required: true },
     year: { type: String },

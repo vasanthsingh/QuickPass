@@ -1,17 +1,29 @@
 const normalizeIndianPhone = (phone) => {
     if (!phone) return null;
-    const digits = String(phone).replace(/\D/g, '');
+    const raw = String(phone).trim();
+    const digits = raw.replace(/\D/g, '');
 
+    // Accept +<countrycode><number> and sanitize separators/spaces.
+    if (raw.startsWith('+')) {
+        const e164 = `+${raw.slice(1).replace(/\D/g, '')}`;
+        return /^\+[1-9]\d{7,14}$/.test(e164) ? e164 : null;
+    }
+
+    // Common Indian formats entered by users.
     if (digits.length === 10) {
         return `+91${digits}`;
+    }
+
+    if (digits.length === 11 && digits.startsWith('0')) {
+        return `+91${digits.slice(1)}`;
     }
 
     if (digits.length === 12 && digits.startsWith('91')) {
         return `+${digits}`;
     }
 
-    if (String(phone).startsWith('+')) {
-        return String(phone);
+    if (digits.length === 13 && digits.startsWith('091')) {
+        return `+91${digits.slice(3)}`;
     }
 
     return null;

@@ -1,7 +1,6 @@
 const Guard = require('../models/securityModel');
 const Pass = require('../models/passModel');
 const GateLog = require('../models/gatelogModel');
-const SecurityOverrideRequest = require('../models/securityOverrideModel');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -21,6 +20,7 @@ const buildScanDetails = (pass, direction) => ({
         id: pass.studentId?._id,
         fullName: pass.studentId?.fullName,
         rollNumber: pass.studentId?.rollNumber,
+        profilePhotoUrl: pass.studentId?.profilePhotoUrl,
         hostelBlock: pass.studentId?.hostelBlock,
         roomNumber: pass.studentId?.roomNumber
     },
@@ -64,6 +64,8 @@ const getPassWindow = (pass) => ({
 });
 
 const buildWarning = (code, message) => ({ code, message });
+
+const OUT_SCAN_EARLY_GRACE_MINUTES = 10;
 
 // @desc    Security guard login
 // @access  Public
@@ -178,7 +180,7 @@ const scanPassQr = async (req, res) => {
         let pass = null;
 
         if (!tokenToVerify && passId) {
-            pass = await Pass.findById(passId).populate('studentId', 'fullName rollNumber hostelBlock roomNumber');
+            pass = await Pass.findById(passId).populate('studentId', 'fullName rollNumber profilePhotoUrl hostelBlock roomNumber');
             if (!pass) {
                 return res.status(404).json({ valid: false, message: 'Pass not found for provided pass ID' });
             }
@@ -203,7 +205,7 @@ const scanPassQr = async (req, res) => {
         }
 
         if (!pass) {
-            pass = await Pass.findById(decoded.passId).populate('studentId', 'fullName rollNumber hostelBlock roomNumber');
+            pass = await Pass.findById(decoded.passId).populate('studentId', 'fullName rollNumber profilePhotoUrl hostelBlock roomNumber');
         }
 
         if (!pass) {
@@ -235,12 +237,16 @@ const scanPassQr = async (req, res) => {
                 });
             }
 
-            if (startAt && now < startAt) {
+            const earliestAllowedOutScanTime = startAt
+                ? new Date(startAt.getTime() - (OUT_SCAN_EARLY_GRACE_MINUTES * 60 * 1000))
+                : null;
+
+            if (earliestAllowedOutScanTime && now < earliestAllowedOutScanTime) {
                 return res.status(400).json({
                     valid: false,
                     message: 'Pass is not yet active for outing (too early scan)',
                     details: buildScanDetails(pass, 'OUT'),
-                    warnings: [buildWarning('TOO_EARLY', 'Outing is allowed only after the scheduled start time.')]
+                    warnings: [buildWarning('TOO_EARLY', `Outing is allowed only within ${OUT_SCAN_EARLY_GRACE_MINUTES} minutes before the scheduled start time.`)]
                 });
             }
 
@@ -352,46 +358,9 @@ const getRecentScans = async (req, res) => {
     }
 };
 
-// @desc    Raise a manual override request from gate
-// @access  Private - Security only
-const createOverrideRequest = async (req, res) => {
-    try {
-        if (!req.user || req.user.role !== 'Security') {
-            return res.status(403).json({ message: 'Security access required' });
-        }
-
-        const { reason, direction, scanMessage, qrToken, passId } = req.body || {};
-        if (!reason || String(reason).trim().length < 8) {
-            return res.status(400).json({ message: 'reason is required (minimum 8 characters)' });
-        }
-
-        const guard = await Guard.findById(req.user.id).select('assignedGate');
-
-        const override = await SecurityOverrideRequest.create({
-            guardId: req.user.id,
-            gateNumber: guard?.assignedGate || 'Gate',
-            direction: parseScanDirection(direction) || 'OUT',
-            reason: String(reason).trim(),
-            scanMessage: scanMessage ? String(scanMessage) : undefined,
-            qrTokenSnippet: qrToken ? String(qrToken).slice(0, 40) : undefined,
-            relatedPassId: passId || undefined,
-            status: 'Pending'
-        });
-
-        return res.status(201).json({
-            message: 'Override request sent to warden queue',
-            request: override
-        });
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ message: 'Server error', error: err.message });
-    }
-};
-
 module.exports = {
     securityLogin,
     updateSecurityPassword,
     scanPassQr,
-    getRecentScans,
-    createOverrideRequest
+    getRecentScans
 };

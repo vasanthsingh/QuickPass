@@ -10,20 +10,21 @@ function StudentHomePassPage() {
     const navigate = useNavigate()
     const { user, token } = useAuth()
 
-    const today = useMemo(() => new Date().toISOString().split('T')[0], [])
-    const tomorrow = useMemo(() => {
-        const date = new Date()
-        date.setDate(date.getDate() + 1)
-        return date.toISOString().split('T')[0]
+    const today = useMemo(() => {
+        const now = new Date()
+        const year = now.getFullYear()
+        const month = String(now.getMonth() + 1).padStart(2, '0')
+        const day = String(now.getDate()).padStart(2, '0')
+        return `${year}-${month}-${day}`
     }, [])
 
     const [formData, setFormData] = useState({
         destination: '',
         reason: '',
         transport: '',
-        fromDate: tomorrow,
+        fromDate: today,
         fromTime: '09:00',
-        toDate: tomorrow,
+        toDate: today,
         toTime: '18:00',
     })
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -63,7 +64,9 @@ function StudentHomePassPage() {
             const backendMessage = response?.data?.message || 'Home Pass request submitted successfully.'
             setSuccessMessage(backendMessage)
         } catch (err) {
-            const errorMsg = err.response?.data?.message || 'Failed to submit home pass. Please try again.'
+            const baseMessage = err.response?.data?.message || 'Failed to submit home pass. Please try again.'
+            const providerReason = err.response?.data?.reason
+            const errorMsg = providerReason ? `${baseMessage} (${providerReason})` : baseMessage
             setError(errorMsg)
 
             // Only save to local storage if backend is truly unavailable (no response)
@@ -170,7 +173,7 @@ function StudentHomePassPage() {
                     <div className="two-col">
                         <label>
                             From Date
-                            <input type="date" name="fromDate" min={tomorrow} value={formData.fromDate} onChange={handleChange} required />
+                            <input type="date" name="fromDate" min={today} value={formData.fromDate} onChange={handleChange} required />
                         </label>
 
                         <label>
@@ -182,7 +185,7 @@ function StudentHomePassPage() {
                     <div className="two-col">
                         <label>
                             To Date
-                            <input type="date" name="toDate" min={formData.fromDate || tomorrow} value={formData.toDate} onChange={handleChange} required />
+                            <input type="date" name="toDate" min={formData.fromDate || today} value={formData.toDate} onChange={handleChange} required />
                         </label>
 
                         <label>

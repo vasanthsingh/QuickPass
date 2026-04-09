@@ -13,6 +13,16 @@ const formatMongoError = (err) => {
     return err.message;
 };
 
+const buildPublicPhotoPath = (filePath) => {
+    if (!filePath) return null;
+    const normalized = String(filePath).replace(/\\/g, '/');
+    const uploadsIndex = normalized.lastIndexOf('/uploads/');
+    if (uploadsIndex >= 0) {
+        return normalized.slice(uploadsIndex);
+    }
+    return null;
+};
+
 // @desc    Warden login
 // @access  Public
 const wardenLogin = async (req, res) => {
@@ -208,6 +218,10 @@ const createStudentByWarden = async (req, res) => {
             });
         }
 
+        if (!req.file) {
+            return res.status(400).json({ message: 'Student profile photo is required' });
+        }
+
         const existingStudent = await Student.findOne({ rollNumber });
         if (existingStudent) {
             return res.status(400).json({ message: 'Student with this rollNumber already exists' });
@@ -224,6 +238,7 @@ const createStudentByWarden = async (req, res) => {
             parentPhone,
             studentEmail,
             parentEmail,
+            profilePhotoUrl: buildPublicPhotoPath(req.file.path),
             hostelBlock,
             roomNumber,
             year,
@@ -241,6 +256,7 @@ const createStudentByWarden = async (req, res) => {
                 parentPhone: student.parentPhone,
                 studentEmail: student.studentEmail,
                 parentEmail: student.parentEmail,
+                profilePhotoUrl: student.profilePhotoUrl,
                 hostelBlock: student.hostelBlock,
                 roomNumber: student.roomNumber,
                 year: student.year,
@@ -542,6 +558,7 @@ const updateStudentByWarden = async (req, res) => {
                 parentPhone: student.parentPhone,
                 studentEmail: student.studentEmail,
                 parentEmail: student.parentEmail,
+                profilePhotoUrl: student.profilePhotoUrl,
                 hostelBlock: student.hostelBlock,
                 roomNumber: student.roomNumber,
                 year: student.year,
@@ -679,6 +696,7 @@ const approveProfileRequestByWarden = async (req, res) => {
                 parentPhone: student.parentPhone,
                 studentEmail: student.studentEmail,
                 parentEmail: student.parentEmail,
+                profilePhotoUrl: student.profilePhotoUrl,
                 year: student.year,
                 branch: student.branch,
                 hostelBlock: student.hostelBlock,

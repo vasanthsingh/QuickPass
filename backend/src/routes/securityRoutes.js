@@ -5,8 +5,7 @@ const {
     securityLogin,
     updateSecurityPassword,
     scanPassQr,
-    getRecentScans,
-    createOverrideRequest
+    getRecentScans
 } = require('../controller/securityController');
 const { verifyToken } = require('../middleware/authMiddleware');
 
@@ -21,8 +20,5 @@ router.post('/scan', verifyToken, scanPassQr);
 
 // GET /api/security/scans/recent?limit=10 - Get recent scan activity for logged-in guard
 router.get('/scans/recent', verifyToken, getRecentScans);
-
-// POST /api/security/override - Raise manual override request with reason
-router.post('/override', verifyToken, createOverrideRequest);
 
 module.exports = router;

@@ -32,6 +32,25 @@ function WardenStudentDatabasePage() {
     const [stats, setStats] = useState({ totalStudents: 0, activeCount: 0, defaulterCount: 0 })
     const [loading, setLoading] = useState(true)
     const [errorMessage, setErrorMessage] = useState('')
+    const [createFormOpen, setCreateFormOpen] = useState(false)
+    const [createLoading, setCreateLoading] = useState(false)
+    const [createError, setCreateError] = useState('')
+    const [createSuccess, setCreateSuccess] = useState('')
+    const [profilePhotoFile, setProfilePhotoFile] = useState(null)
+    const [profilePhotoPreview, setProfilePhotoPreview] = useState('')
+    const [studentForm, setStudentForm] = useState({
+        fullName: '',
+        rollNumber: '',
+        studentPhone: '',
+        parentPhone: '',
+        studentEmail: '',
+        parentEmail: '',
+        hostelBlock: '',
+        roomNumber: '',
+        year: '',
+        branch: '',
+        password: '',
+    })
 
     const wardenName = profile?.fullName || user?.fullName || 'Warden'
     const wardenId = profile?.wardenId || user?.wardenId || 'N/A'
@@ -98,6 +117,99 @@ function WardenStudentDatabasePage() {
         loadData('')
     }
 
+    const handleStudentFieldChange = (field) => (event) => {
+        const value = event.target.value
+        setStudentForm((prev) => ({ ...prev, [field]: value }))
+    }
+
+    const handlePhotoChange = (event) => {
+        const file = event.target.files?.[0] || null
+        setProfilePhotoFile(file)
+        setCreateError('')
+
+        if (profilePhotoPreview) {
+            URL.revokeObjectURL(profilePhotoPreview)
+        }
+
+        setProfilePhotoPreview(file ? URL.createObjectURL(file) : '')
+    }
+
+    const resetCreateForm = () => {
+        setStudentForm({
+            fullName: '',
+            rollNumber: '',
+            studentPhone: '',
+            parentPhone: '',
+            studentEmail: '',
+            parentEmail: '',
+            hostelBlock: '',
+            roomNumber: '',
+            year: '',
+            branch: '',
+            password: '',
+        })
+        setProfilePhotoFile(null)
+        if (profilePhotoPreview) {
+            URL.revokeObjectURL(profilePhotoPreview)
+        }
+        setProfilePhotoPreview('')
+        setCreateError('')
+        setCreateSuccess('')
+    }
+
+    const handleCreateStudent = async (event) => {
+        event.preventDefault()
+        setCreateError('')
+        setCreateSuccess('')
+
+        if (!profilePhotoFile) {
+            setCreateError('Please upload the student profile photo.')
+            return
+        }
+
+        const requiredFields = ['fullName', 'rollNumber', 'studentPhone', 'parentPhone', 'hostelBlock', 'roomNumber']
+        const hasMissingRequired = requiredFields.some((field) => !String(studentForm[field] || '').trim())
+
+        if (hasMissingRequired) {
+            setCreateError('Please fill all required student details.')
+            return
+        }
+
+        try {
+            setCreateLoading(true)
+
+            const formData = new FormData()
+            Object.entries(studentForm).forEach(([key, value]) => {
+                const trimmed = String(value || '').trim()
+                if (trimmed) {
+                    formData.append(key, trimmed)
+                }
+            })
+            formData.append('profilePhoto', profilePhotoFile)
+
+            await api.post('/warden/students/add', formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+
+            setCreateSuccess('Student created successfully.')
+            resetCreateForm()
+            setCreateFormOpen(false)
+            await loadData(appliedSearch)
+        } catch (error) {
+            setCreateError(error.response?.data?.message || 'Unable to create student right now.')
+        } finally {
+            setCreateLoading(false)
+        }
+    }
+
+    useEffect(() => () => {
+        if (profilePhotoPreview) {
+            URL.revokeObjectURL(profilePhotoPreview)
+        }
+    }, [profilePhotoPreview])
+
     return (
         <div className="warden-studentdb-shell">
             <aside className="warden-sidebar">
@@ -155,8 +267,14 @@ function WardenStudentDatabasePage() {
 
             <main className="warden-main">
                 <header className="warden-header">
-                    <h1>Student Database</h1>
-                    <p className="date-label">Search and manage student records quickly</p>
+                    <div>
+                        <h1>Student Database</h1>
+                        <p className="date-label">Search and manage student records quickly</p>
+                    </div>
+
+                    <button type="button" className="warden-primary-btn" onClick={() => setCreateFormOpen((prev) => !prev)}>
+                        {createFormOpen ? 'Close Add Student' : 'Add New Student'}
+                    </button>
                 </header>
 
                 <section className="studentdb-content">
@@ -195,6 +313,56 @@ function WardenStudentDatabasePage() {
                             <option value="Defaulter">Defaulter</option>
                         </select>
                     </div>
+
+                    {createFormOpen ? (
+                        <form className="student-create-card" onSubmit={handleCreateStudent}>
+                            <div className="panel-title-row">
+                                <h2>Add New Student</h2>
+                                <p>Warden enters student details and uploads a clear profile photo.</p>
+                            </div>
+
+                            <div className="student-create-grid">
+                                <input className="student-create-input" value={studentForm.fullName} onChange={handleStudentFieldChange('fullName')} placeholder="Full Name *" />
+                                <input className="student-create-input" value={studentForm.rollNumber} onChange={handleStudentFieldChange('rollNumber')} placeholder="Roll Number *" />
+                                <input className="student-create-input" value={studentForm.studentPhone} onChange={handleStudentFieldChange('studentPhone')} placeholder="Student Phone *" />
+                                <input className="student-create-input" value={studentForm.parentPhone} onChange={handleStudentFieldChange('parentPhone')} placeholder="Parent Phone *" />
+                                <input className="student-create-input" value={studentForm.studentEmail} onChange={handleStudentFieldChange('studentEmail')} placeholder="Student Email" />
+                                <input className="student-create-input" value={studentForm.parentEmail} onChange={handleStudentFieldChange('parentEmail')} placeholder="Parent Email" />
+                                <input className="student-create-input" value={studentForm.hostelBlock} onChange={handleStudentFieldChange('hostelBlock')} placeholder="Hostel Block *" />
+                                <input className="student-create-input" value={studentForm.roomNumber} onChange={handleStudentFieldChange('roomNumber')} placeholder="Room Number *" />
+                                <input className="student-create-input" value={studentForm.year} onChange={handleStudentFieldChange('year')} placeholder="Year" />
+                                <input className="student-create-input" value={studentForm.branch} onChange={handleStudentFieldChange('branch')} placeholder="Branch" />
+                                <input className="student-create-input" value={studentForm.password} onChange={handleStudentFieldChange('password')} placeholder="Password (optional)" type="password" />
+                            </div>
+
+                            <div className="student-photo-row">
+                                <label className="photo-upload-box">
+                                    <input type="file" accept="image/*" onChange={handlePhotoChange} />
+                                    <span>{profilePhotoFile ? profilePhotoFile.name : 'Upload profile photo *'}</span>
+                                </label>
+
+                                <div className="photo-preview-box">
+                                    {profilePhotoPreview ? (
+                                        <img src={profilePhotoPreview} alt="Student preview" />
+                                    ) : (
+                                        <span>Photo preview appears here</span>
+                                    )}
+                                </div>
+                            </div>
+
+                            {createError ? <p className="panel-error">{createError}</p> : null}
+                            {createSuccess ? <p className="panel-success">{createSuccess}</p> : null}
+
+                            <div className="student-create-actions">
+                                <button type="button" className="studentdb-btn secondary" onClick={resetCreateForm} disabled={createLoading}>
+                                    Reset
+                                </button>
+                                <button type="submit" className="studentdb-btn" disabled={createLoading}>
+                                    {createLoading ? 'Creating...' : 'Create Student'}
+                                </button>
+                            </div>
+                        </form>
+                    ) : null}
 
                     {appliedSearch ? <p className="studentdb-search-tag">Showing results for: {appliedSearch}</p> : null}
 

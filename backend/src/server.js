@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -13,6 +14,7 @@ mongoose.set('bufferCommands', false);
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Routes
 app.use('/api/admin', require('./routes/adminRoutes'));
@@ -20,6 +22,7 @@ app.use('/api/students', require('./routes/studentRoutes'));
 app.use('/api/warden', require('./routes/wardenRoutes'));
 app.use('/api/security', require('./routes/securityRoutes'));
 app.use('/api/passes', require('./routes/passRoutes'));
+app.use('/api/announcements', require('./routes/announcementRoutes'));
 
 // Health Check
 app.get('/api/health', (req, res) => {

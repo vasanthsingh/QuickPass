@@ -24,6 +24,7 @@ const {
     approvePassByWarden,
     rejectPassByWarden
 } = require('../controller/passController');
+const { uploadStudentPhoto } = require('../middleware/uploadMiddleware');
 
 const { verifyToken, isWarden } = require('../middleware/authMiddleware');
 
@@ -49,7 +50,7 @@ router.put('/profile-requests/:id/approve', verifyToken, isWarden, approveProfil
 router.put('/profile-requests/:id/reject', verifyToken, isWarden, rejectProfileRequestByWarden);
 
 // POST /api/warden/students/add - Create student (Warden only)
-router.post('/students/add', verifyToken, isWarden, createStudentByWarden);
+router.post('/students/add', verifyToken, isWarden, uploadStudentPhoto.single('profilePhoto'), createStudentByWarden);
 
 // POST /api/warden/security/add - Create security guard (Warden only)
 router.post('/security/add', verifyToken, isWarden, createSecurityByWarden);
