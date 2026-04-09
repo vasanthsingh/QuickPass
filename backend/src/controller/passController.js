@@ -9,7 +9,7 @@ const DAY_PASS_START_MINUTES = 5 * 60;   // 05:00
 const DAY_PASS_END_MINUTES = 21 * 60;    // 21:00
 
 const getApiBaseUrl = (req) => {
-    return process.env.PUBLIC_API_BASE_URL || `${req.protocol}://${req.get('host')}`;
+    return process.env.FRONTEND_URL || `${req.protocol}://${req.get('host')}`;
 };
 
 const parseTimeToMinutes = (time) => {
