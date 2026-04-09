@@ -96,7 +96,6 @@ function AdminPassPolicyPage() {
                         </div>
 
                         <form className="admin-form-grid" onSubmit={handleSave}>
-<<<<<<< HEAD
                             <div className="admin-form-field">
                                 <label htmlFor="maxDayPassesPerWeek">Max Day Passes Per Week</label>
                                 <input
@@ -145,38 +144,6 @@ function AdminPassPolicyPage() {
                             </div>
 
                             <button type="submit" className="policy-save-btn" disabled={busy}>
-=======
-                            <input
-                                type="number"
-                                min="0"
-                                value={policy.maxDayPassesPerWeek}
-                                onChange={(e) => setPolicy((prev) => ({ ...prev, maxDayPassesPerWeek: e.target.value }))}
-                                placeholder="Max Day Passes Per Week"
-                            />
-                            <input
-                                type="number"
-                                min="0"
-                                value={policy.maxHomePassesPerMonth}
-                                onChange={(e) => setPolicy((prev) => ({ ...prev, maxHomePassesPerMonth: e.target.value }))}
-                                placeholder="Max Home Passes Per Month"
-                            />
-                            <input
-                                type="time"
-                                value={policy.curfewTime}
-                                onChange={(e) => setPolicy((prev) => ({ ...prev, curfewTime: e.target.value }))}
-                            />
-                            <select
-                                value={policy.requireGuardianApprovalForHomePass ? 'yes' : 'no'}
-                                onChange={(e) => setPolicy((prev) => ({
-                                    ...prev,
-                                    requireGuardianApprovalForHomePass: e.target.value === 'yes',
-                                }))}
-                            >
-                                <option value="yes">Guardian Approval Required</option>
-                                <option value="no">Guardian Approval Not Required</option>
-                            </select>
-                            <button type="submit" disabled={busy}>
->>>>>>> 57b7c61e36b9851c1308f8a7a02cf3681b63ebe7
                                 <FloppyDiskIcon size={16} weight="bold" /> {busy ? 'Saving...' : 'Save Policy'}
                             </button>
                             {message ? <p className="form-message">{message}</p> : null}

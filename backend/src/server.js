@@ -23,10 +23,6 @@ app.use('/api/warden', require('./routes/wardenRoutes'));
 app.use('/api/security', require('./routes/securityRoutes'));
 app.use('/api/passes', require('./routes/passRoutes'));
 app.use('/api/announcements', require('./routes/announcementRoutes'));
-<<<<<<< HEAD
-=======
-
->>>>>>> 9044c0323bdff0ba71c087027fc27d9e30f87d8f
 
 // Health Check
 app.get('/', (req, res) => {
