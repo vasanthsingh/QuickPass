@@ -10,9 +10,6 @@
     background: rgba(248, 248, 253, 0.84);
     border-right: 1px solid rgba(2, 2, 2, 0.2);
     backdrop-filter: blur(12px);
-    background: rgba(248, 248, 253, 0.84);
-    border-right: 1px solid rgba(2, 2, 2, 0.2);
-    backdrop-filter: blur(12px);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -50,9 +47,7 @@
     height: 48px;
     border: 0;
     border-radius: 0.8rem;
-    border-radius: 0.8rem;
     background: transparent;
-    color: #525263;
     color: #525263;
     font-size: 0.92rem;
     font-weight: 700;
@@ -64,7 +59,6 @@
     cursor: pointer;
     border-right: 3px solid transparent;
     transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .warden-menu-item.active {
@@ -73,17 +67,9 @@
     border-right-color: #5351a2;
     transform: translateX(4px);
     box-shadow: 0 8px 18px rgba(83, 81, 162, 0.18);
-    background: linear-gradient(to right, #e5e4f8, #e6e6e8);
-    color: #5351a2;
-    border-right-color: #5351a2;
-    transform: translateX(4px);
-    box-shadow: 0 8px 18px rgba(83, 81, 162, 0.18);
 }
 
 .warden-menu-item:hover {
-    background: rgba(83, 81, 162, 0.14);
-    color: #5351a2;
-    transform: translateX(5px);
     background: rgba(83, 81, 162, 0.14);
     color: #5351a2;
     transform: translateX(5px);
