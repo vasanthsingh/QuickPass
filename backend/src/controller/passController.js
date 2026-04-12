@@ -7,6 +7,7 @@ const { sendGuardianApprovalSms } = require('../utils/smsService');
 
 const DAY_PASS_START_MINUTES = 5 * 60;   // 05:00
 const DAY_PASS_END_MINUTES = 21 * 60;    // 21:00
+const CAMPUS_TZ_OFFSET_MINUTES = Number(process.env.CAMPUS_TZ_OFFSET_MINUTES || 330);
 
 const getApiBaseUrl = (req) => {
     return process.env.FRONTEND_URL || `${req.protocol}://${req.get('host')}`;
@@ -31,11 +32,21 @@ const buildDateTime = (dateInput, timeInput) => {
     const minutes = parseTimeToMinutes(timeInput);
     if (Number.isNaN(minutes)) return null;
 
-    const result = new Date(parsedDate);
-    result.setHours(0, 0, 0, 0);
-    result.setMinutes(minutes);
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
 
-    return result;
+    // fromDate/toDate are stored as date-only values. Convert campus-local date/time to UTC.
+    const utcTimestamp = Date.UTC(
+        parsedDate.getUTCFullYear(),
+        parsedDate.getUTCMonth(),
+        parsedDate.getUTCDate(),
+        hours,
+        remainingMinutes,
+        0,
+        0
+    ) - (CAMPUS_TZ_OFFSET_MINUTES * 60 * 1000);
+
+    return new Date(utcTimestamp);
 };
 
 const normalizeDate = (dateInput) => {

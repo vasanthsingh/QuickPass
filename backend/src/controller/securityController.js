@@ -52,10 +52,21 @@ const buildDateTime = (dateInput, timeInput) => {
     const minutes = parseTimeToMinutes(timeInput);
     if (Number.isNaN(minutes)) return null;
 
-    const date = new Date(baseDate);
-    date.setHours(0, 0, 0, 0);
-    date.setMinutes(minutes);
-    return date;
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+
+    // fromDate/toDate are stored as date-only values. Convert campus-local date/time to UTC.
+    const utcTimestamp = Date.UTC(
+        baseDate.getUTCFullYear(),
+        baseDate.getUTCMonth(),
+        baseDate.getUTCDate(),
+        hours,
+        remainingMinutes,
+        0,
+        0
+    ) - (CAMPUS_TZ_OFFSET_MINUTES * 60 * 1000);
+
+    return new Date(utcTimestamp);
 };
 
 const getPassWindow = (pass) => ({
@@ -66,6 +77,7 @@ const getPassWindow = (pass) => ({
 const buildWarning = (code, message) => ({ code, message });
 
 const OUT_SCAN_EARLY_GRACE_MINUTES = 10;
+const CAMPUS_TZ_OFFSET_MINUTES = Number(process.env.CAMPUS_TZ_OFFSET_MINUTES || 330);
 
 // @desc    Security guard login
 // @access  Public
